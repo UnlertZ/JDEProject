@@ -32,6 +32,17 @@ function extractYear(val) {
   return digits ? parseInt(digits[0], 10) : null;
 }
 
+// Helper: สกัด Sort Key สำหรับรหัสถัง (เช่น EX01 -> EX000001)
+function getTankSortKey(val) {
+  if (!val) return '';
+  const s = String(val).trim();
+  const m = s.match(/^([A-Za-z]+)(\d+)$/);
+  if (m) {
+    return m[1].toUpperCase() + m[2].padStart(6, '0');
+  }
+  return s;
+}
+
 // Helper: ฟอร์แมตวันที่เริ่มใช้เป็น 01/01/YYYY
 function formatInuseDate(val) {
   if (!val) return '';

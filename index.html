@@ -338,6 +338,16 @@
   <script>
     let dataTableInstance = null;
 
+    function getTankSortKey(val) {
+      if (!val) return '';
+      const s = String(val).trim();
+      const m = s.match(/^([A-Za-z]+)(\d+)$/);
+      if (m) {
+        return m[1].toUpperCase() + m[2].padStart(6, '0');
+      }
+      return s;
+    }
+
     async function renderDashboard() {
       if (typeof renderNavbarAuth === 'function') renderNavbarAuth();
       const tanks = await fetchAllTanks();
@@ -545,22 +555,26 @@
         });
       });
 
-      // Filter Logic
-      $.fn.dataTable.ext.search.push(function (settings, data, dataIndex, rowData, counter) {
-        const rowNode = dataTableInstance.row(counter).node();
-        if (!rowNode) return true;
-        const selType = $('#filterType').val();
-        const selArea = $('#filterArea').val();
-        const selCheck = $('#filterCheck').val();
-        const selReady = $('#filterReady').val();
+      // Filter Logic (ลงทะเบียนเพียงครั้งเดียว)
+      if (!window._dtFilterRegistered) {
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex, rowData, counter) {
+          if (!dataTableInstance) return true;
+          const rowNode = dataTableInstance.row(counter).node();
+          if (!rowNode) return true;
+          const selType = $('#filterType').val();
+          const selArea = $('#filterArea').val();
+          const selCheck = $('#filterCheck').val();
+          const selReady = $('#filterReady').val();
 
-        if (selType && $(rowNode).data('type') !== selType) return false;
-        if (selArea && $(rowNode).data('area') !== selArea) return false;
-        if (selCheck && $(rowNode).data('check') !== selCheck) return false;
-        if (selReady && $(rowNode).data('ready') !== selReady) return false;
+          if (selType && $(rowNode).data('type') !== selType) return false;
+          if (selArea && $(rowNode).data('area') !== selArea) return false;
+          if (selCheck && $(rowNode).data('check') !== selCheck) return false;
+          if (selReady && $(rowNode).data('ready') !== selReady) return false;
 
-        return true;
-      });
+          return true;
+        });
+        window._dtFilterRegistered = true;
+      }
 
       $('#filterType, #filterArea, #filterCheck, #filterReady').off('change').on('change', function () {
         dataTableInstance.draw();
