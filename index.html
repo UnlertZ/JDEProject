@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css?v=20260930_jde" />
+  <link rel="stylesheet" href="css/style.css?v=20260930_v2" />
 </head>
 <body>
 
@@ -65,42 +65,47 @@
 
     <!-- Top Header Banner Card -->
     <div class="dashboard-header-card p-3 p-md-4 mb-4">
-      <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
-        <div>
-          <div class="d-flex align-items-center gap-2 mb-1.5 flex-wrap">
-            <span class="badge rounded-pill bg-danger px-2.5 py-1 text-white shadow-xs" style="font-size:0.75rem;">
+      <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-3">
+        <div class="header-left">
+          <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+            <span class="badge rounded-pill bg-danger px-3 py-1.5 text-white shadow-sm" style="font-size:0.8rem;">
               <i class="bi bi-shield-fill-check me-1"></i>JDE Peet's Safety System
             </span>
-            <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2 py-1" style="font-size:0.72rem;">
-              <i class="bi bi-circle-fill text-success me-1" style="font-size:0.45rem;"></i>Cloudflare D1 Live
+            <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2 py-1.5" style="font-size:0.75rem;">
+              <i class="bi bi-circle-fill text-success me-1 pulse-animation" style="font-size:0.5rem;"></i>Cloudflare D1 Live
             </span>
           </div>
-          <h2 class="fw-bold text-dark mb-1 d-flex align-items-center gap-2" style="font-size: clamp(1.25rem, 2.5vw, 1.65rem);">
-            <i class="bi bi-fire text-danger"></i>รายการถังดับเพลิงและสถานะการตรวจสอบ
+          <h2 class="fw-bold text-dark mb-2 d-flex align-items-center gap-2" style="font-size: clamp(1.4rem, 3vw, 1.8rem); letter-spacing: -0.5px;">
+            <i class="bi bi-fire text-danger icon-rotate"></i>รายการถังดับเพลิงและสถานะการตรวจสอบ
           </h2>
-          <p class="text-muted small mb-0">ระบบบริหารจัดการและตรวจเช็คสภาพความพร้อมใช้งานประจำเดือน</p>
+          <div class="d-flex align-items-center flex-wrap gap-3 text-muted small">
+            <p class="mb-0 border-end pe-3">ระบบบริหารจัดการและตรวจเช็คสภาพความพร้อมใช้งานประจำเดือน</p>
+            <div class="d-flex align-items-center gap-1 text-secondary" id="liveClockContainer">
+              <i class="bi bi-clock"></i> <span id="liveClock">กำลังโหลดเวลา...</span>
+            </div>
+          </div>
         </div>
 
         <!-- Action Toolbar -->
-        <div class="d-flex flex-wrap align-items-center gap-2 action-btn-group">
-          <a href="check.html" class="btn btn-success shadow-sm fw-bold px-3 action-btn-touch btn-primary-action">
-            <i class="bi bi-clipboard2-check-fill me-1.5"></i>ตรวจเช็คถัง
+        <div class="d-flex flex-wrap align-items-center gap-2 action-btn-group pt-lg-2">
+          <a href="check.html" class="btn btn-success shadow-sm fw-bold px-4 py-2 action-btn-touch btn-primary-action rounded-pill">
+            <i class="bi bi-clipboard2-check-fill me-2"></i>ตรวจเช็คถัง
           </a>
-          <a href="add.html" id="btnAddTank" class="btn btn-danger shadow-sm fw-semibold action-btn-touch d-none">
+          <a href="add.html" id="btnAddTank" class="btn btn-danger shadow-sm fw-semibold action-btn-touch rounded-pill d-none">
             <i class="bi bi-plus-circle me-1"></i>เพิ่มถังใหม่
           </a>
-          <a href="approvals.html" id="btnApprovals" class="btn btn-warning shadow-sm fw-semibold action-btn-touch d-none">
+          <a href="approvals.html" id="btnApprovals" class="btn btn-warning shadow-sm fw-semibold action-btn-touch rounded-pill d-none">
             <i class="bi bi-person-check-fill me-1"></i>อนุมัติสมาชิก <span id="btnApprovalsBadge" class="badge bg-danger ms-1 d-none">0</span>
           </a>
           <!-- Export & Import Excel (Admin P2+) -->
-          <button id="btnExportExcel" onclick="exportToExcel()" class="btn btn-outline-success shadow-sm action-btn-touch d-none" title="ดาวน์โหลดฐานข้อมูลเป็นไฟล์ Excel">
+          <button id="btnExportExcel" onclick="exportToExcel()" class="btn btn-outline-success shadow-sm action-btn-touch rounded-pill d-none" title="ดาวน์โหลดฐานข้อมูลเป็นไฟล์ Excel">
             <i class="bi bi-file-earmark-excel me-1"></i>ส่งออก
           </button>
-          <label id="btnImportExcel" class="btn btn-outline-secondary shadow-sm mb-0 cursor-pointer action-btn-touch d-none" title="นำเข้าไฟล์ Excel เพื่ออัปเดตข้อมูล">
+          <label id="btnImportExcel" class="btn btn-outline-secondary shadow-sm mb-0 cursor-pointer action-btn-touch rounded-pill d-none" title="นำเข้าไฟล์ Excel เพื่ออัปเดตข้อมูล">
             <i class="bi bi-upload me-1"></i>นำเข้า
             <input type="file" id="excelFileInput" accept=".xlsx, .xls" class="d-none" onchange="handleExcelImport(event)">
           </label>
-          <button id="btnResetDb" onclick="resetDatabase()" class="btn btn-outline-danger shadow-sm action-btn-touch d-none" title="คืนค่าเริ่มต้น">
+          <button id="btnResetDb" onclick="resetDatabase()" class="btn btn-outline-danger shadow-sm action-btn-touch rounded-pill d-none" title="คืนค่าเริ่มต้น">
             <i class="bi bi-arrow-counterclockwise"></i>
           </button>
         </div>
@@ -111,147 +116,189 @@
     <div class="row g-2 g-md-3 mb-4">
       <!-- Card 1: Total Tanks -->
       <div class="col-6 col-lg-3">
-        <div class="card card-summary bg-primary text-white h-100 p-3">
-          <div class="d-flex justify-content-between align-items-start">
+        <div class="card card-summary bg-primary-gradient text-white h-100 p-3">
+          <div class="card-pattern-overlay"></div>
+          <div class="d-flex justify-content-between align-items-start position-relative z-1">
             <div>
-              <div class="metric-label">ถังทั้งหมด</div>
-              <div class="metric-number mt-1" id="cardTotal">0</div>
+              <div class="metric-label opacity-75">ถังทั้งหมด</div>
+              <div class="metric-number mt-1 animated-counter" id="cardTotal">0</div>
             </div>
-            <div class="card-summary-icon-box">
+            <div class="card-summary-icon-box pulse-hover">
               <i class="bi bi-database-fill"></i>
             </div>
           </div>
-          <div class="mt-2.5 d-flex align-items-center justify-content-between">
-            <span class="metric-sub">ในระบบทั้งหมด</span>
-            <span class="metric-badge"><i class="bi bi-check2 me-1"></i>100%</span>
+          <div class="mt-3 position-relative z-1">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="metric-sub opacity-75 small">ในระบบทั้งหมด</span>
+              <span class="metric-badge fw-bold small"><i class="bi bi-check2 me-1"></i>100%</span>
+            </div>
+            <div class="progress" style="height: 4px; background-color: rgba(255,255,255,0.2);">
+              <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
           </div>
+          <div class="card-glow-accent"></div>
         </div>
       </div>
 
       <!-- Card 2: Checked Tanks -->
       <div class="col-6 col-lg-3">
-        <div class="card card-summary bg-success text-white h-100 p-3">
-          <div class="d-flex justify-content-between align-items-start">
+        <div class="card card-summary bg-success-gradient text-white h-100 p-3">
+          <div class="card-pattern-overlay"></div>
+          <div class="d-flex justify-content-between align-items-start position-relative z-1">
             <div>
-              <div class="metric-label">ตรวจเช็คแล้ว</div>
-              <div class="metric-number mt-1" id="cardChecked">0</div>
+              <div class="metric-label opacity-75">ตรวจเช็คแล้ว</div>
+              <div class="metric-number mt-1 animated-counter" id="cardChecked">0</div>
             </div>
-            <div class="card-summary-icon-box">
+            <div class="card-summary-icon-box pulse-hover">
               <i class="bi bi-check-circle-fill"></i>
             </div>
           </div>
-          <div class="mt-2.5 d-flex align-items-center justify-content-between">
-            <span class="metric-sub">ตรวจรอบเดือนนี้</span>
-            <span class="metric-badge" id="badgePercentChecked">0%</span>
+          <div class="mt-3 position-relative z-1">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="metric-sub opacity-75 small">ตรวจรอบเดือนนี้</span>
+              <span class="metric-badge fw-bold small" id="badgePercentChecked">0%</span>
+            </div>
+            <div class="progress" style="height: 4px; background-color: rgba(255,255,255,0.2);">
+              <div class="progress-bar bg-white" id="barPercentChecked" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
           </div>
+          <div class="card-glow-accent"></div>
         </div>
       </div>
 
       <!-- Card 3: Unchecked Tanks -->
       <div class="col-6 col-lg-3">
-        <div class="card card-summary bg-warning text-white h-100 p-3">
-          <div class="d-flex justify-content-between align-items-start">
+        <div class="card card-summary bg-warning-gradient text-dark h-100 p-3">
+          <div class="card-pattern-overlay"></div>
+          <div class="d-flex justify-content-between align-items-start position-relative z-1">
             <div>
-              <div class="metric-label">ยังไม่ได้ตรวจ</div>
-              <div class="metric-number mt-1" id="cardNotChecked">0</div>
+              <div class="metric-label opacity-75 text-dark">ยังไม่ได้ตรวจ</div>
+              <div class="metric-number mt-1 animated-counter text-dark" id="cardNotChecked">0</div>
             </div>
-            <div class="card-summary-icon-box">
+            <div class="card-summary-icon-box bg-white text-warning pulse-hover shadow-sm">
               <i class="bi bi-clock-history"></i>
             </div>
           </div>
-          <div class="mt-2.5 d-flex align-items-center justify-content-between">
-            <span class="metric-sub">รอการเข้าตรวจ</span>
-            <span class="metric-badge" id="badgePercentNotChecked">0%</span>
+          <div class="mt-3 position-relative z-1">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="metric-sub opacity-75 text-dark small">รอการเข้าตรวจ</span>
+              <span class="metric-badge bg-white text-dark fw-bold small" id="badgePercentNotChecked">0%</span>
+            </div>
+            <div class="progress" style="height: 4px; background-color: rgba(0,0,0,0.1);">
+              <div class="progress-bar bg-dark" id="barPercentNotChecked" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
           </div>
+          <div class="card-glow-accent"></div>
         </div>
       </div>
 
       <!-- Card 4: Not Ready Tanks -->
       <div class="col-6 col-lg-3">
-        <div class="card card-summary bg-danger text-white h-100 p-3">
-          <div class="d-flex justify-content-between align-items-start">
+        <div class="card card-summary bg-danger-gradient text-white h-100 p-3">
+          <div class="card-pattern-overlay"></div>
+          <div class="d-flex justify-content-between align-items-start position-relative z-1">
             <div>
-              <div class="metric-label">ไม่พร้อมใช้งาน</div>
-              <div class="metric-number mt-1" id="cardNotReady">0</div>
+              <div class="metric-label opacity-75">ไม่พร้อมใช้งาน</div>
+              <div class="metric-number mt-1 animated-counter" id="cardNotReady">0</div>
             </div>
-            <div class="card-summary-icon-box">
+            <div class="card-summary-icon-box pulse-hover">
               <i class="bi bi-exclamation-octagon-fill"></i>
             </div>
           </div>
-          <div class="mt-2.5 d-flex align-items-center justify-content-between">
-            <span class="metric-sub">พบข้อบกพร่อง</span>
-            <span class="metric-badge bg-white text-danger fw-bold"><i class="bi bi-shield-x me-1"></i>แก้ไขด่วน</span>
+          <div class="mt-3 position-relative z-1">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="metric-sub opacity-75 small">พบข้อบกพร่อง</span>
+              <span class="metric-badge bg-white text-danger fw-bold small shadow-sm"><i class="bi bi-shield-x me-1"></i>แก้ไขด่วน</span>
+            </div>
+            <div class="progress sparkline-placeholder" style="height: 4px; background-color: transparent;">
+              <!-- Sparkline placeholder area via CSS background -->
+            </div>
           </div>
+          <div class="card-glow-accent"></div>
         </div>
       </div>
     </div>
 
     <!-- Filter Card & View Controls -->
-    <div class="card filter-card mb-4 shadow-sm">
-      <div class="card-header bg-white border-bottom py-2.5 px-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
-        <div class="d-flex align-items-center gap-2">
-          <span class="fw-bold text-dark small">
-            <i class="bi bi-funnel-fill text-danger me-1"></i>ตัวกรองข้อมูล
+    <div class="card filter-card mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
+      <div class="card-header bg-white border-bottom py-3 px-3 px-md-4 d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <div class="d-flex align-items-center gap-2" role="button" data-bs-toggle="collapse" data-bs-target="#filterBody" aria-expanded="true" aria-controls="filterBody">
+          <span class="fw-bold text-dark d-flex align-items-center">
+            <i class="bi bi-funnel-fill text-danger me-2"></i>ตัวกรองและค้นหา
+            <i class="bi bi-chevron-down ms-2 text-muted small filter-chevron transition-rotate"></i>
           </span>
-          <span id="filterCountBadge" class="badge rounded-pill bg-secondary small">ทั้งหมด 0 ถัง</span>
+          <span id="filterCountBadge" class="badge rounded-pill bg-secondary small shadow-sm">ทั้งหมด 0 ถัง</span>
+          <span id="activeFilterDot" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle d-none">
+            <span class="visually-hidden">New alerts</span>
+          </span>
         </div>
 
         <!-- View Switcher (ตาราง / การ์ด) -->
-        <div class="d-flex align-items-center gap-2">
-          <span class="small text-muted d-none d-sm-inline">มุมมอง:</span>
-          <div class="btn-group btn-group-sm" role="group">
-            <button type="button" id="btnViewTable" class="btn btn-outline-secondary view-switch-btn active" onclick="switchView('table')">
+        <div class="d-flex align-items-center gap-2 ms-auto">
+          <span class="small text-muted d-none d-sm-inline fw-medium">มุมมอง:</span>
+          <div class="btn-group btn-group-sm bg-light rounded-3 p-1 border" role="group">
+            <button type="button" id="btnViewTable" class="btn btn-outline-secondary border-0 view-switch-btn active rounded-2" onclick="switchView('table')">
               <i class="bi bi-table me-1"></i>ตาราง
             </button>
-            <button type="button" id="btnViewCards" class="btn btn-outline-secondary view-switch-btn" onclick="switchView('cards')">
+            <button type="button" id="btnViewCards" class="btn btn-outline-secondary border-0 view-switch-btn rounded-2" onclick="switchView('cards')">
               <i class="bi bi-grid-fill me-1"></i>การ์ด
             </button>
           </div>
         </div>
       </div>
 
-      <div class="card-body p-3">
-        <div class="row g-2 align-items-center">
-          <div class="col-12 col-sm-6 col-md-3">
-            <div class="input-group input-group-sm">
-              <span class="input-group-text bg-light"><i class="bi bi-fire text-danger"></i></span>
-              <select id="filterType" class="form-select form-select-sm">
-                <option value="">-- ทุกประเภทถัง --</option>
-              </select>
+      <div class="collapse show" id="filterBody">
+        <div class="card-body p-3 p-md-4 bg-light bg-opacity-50">
+          <div class="row g-3 align-items-center">
+            <!-- Search Input -->
+            <div class="col-12 col-md-3">
+              <div class="search-box position-relative">
+                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                <input type="text" id="searchInput" class="form-control form-control-sm ps-5 rounded-pill shadow-xs" placeholder="ค้นหารหัสถัง...">
+              </div>
             </div>
-          </div>
-          <div class="col-12 col-sm-6 col-md-3">
-            <div class="input-group input-group-sm">
-              <span class="input-group-text bg-light"><i class="bi bi-geo-alt text-danger"></i></span>
-              <select id="filterArea" class="form-select form-select-sm">
-                <option value="">-- ทุกพื้นที่ / แผนก --</option>
-              </select>
+            
+            <div class="col-12 col-sm-6 col-md-2">
+              <div class="input-group input-group-sm custom-select-group shadow-xs rounded-pill overflow-hidden">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-fire text-danger"></i></span>
+                <select id="filterType" class="form-select form-select-sm border-start-0 ps-0">
+                  <option value="">ทุกประเภท</option>
+                </select>
+              </div>
             </div>
-          </div>
-          <div class="col-6 col-md-2">
-            <div class="input-group input-group-sm">
-              <span class="input-group-text bg-light"><i class="bi bi-check2-circle text-success"></i></span>
-              <select id="filterCheck" class="form-select form-select-sm">
-                <option value="">-- สถานะตรวจ --</option>
-                <option value="เช็คแล้ว">เช็คแล้ว</option>
-                <option value="ยังไม่เช็ค">ยังไม่ได้ตรวจ</option>
-              </select>
+            <div class="col-12 col-sm-6 col-md-2">
+              <div class="input-group input-group-sm custom-select-group shadow-xs rounded-pill overflow-hidden">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-geo-alt text-danger"></i></span>
+                <select id="filterArea" class="form-select form-select-sm border-start-0 ps-0">
+                  <option value="">ทุกพื้นที่</option>
+                </select>
+              </div>
             </div>
-          </div>
-          <div class="col-6 col-md-2">
-            <div class="input-group input-group-sm">
-              <span class="input-group-text bg-light"><i class="bi bi-activity text-warning"></i></span>
-              <select id="filterReady" class="form-select form-select-sm">
-                <option value="">-- ความพร้อม --</option>
-                <option value="Ready">พร้อมใช้งาน</option>
-                <option value="Not Ready">ไม่พร้อมใช้งาน</option>
-              </select>
+            <div class="col-6 col-md-2">
+              <div class="input-group input-group-sm custom-select-group shadow-xs rounded-pill overflow-hidden">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-check2-circle text-success"></i></span>
+                <select id="filterCheck" class="form-select form-select-sm border-start-0 ps-0">
+                  <option value="">สถานะตรวจ</option>
+                  <option value="เช็คแล้ว">เช็คแล้ว</option>
+                  <option value="ยังไม่เช็ค">ยังไม่ได้ตรวจ</option>
+                </select>
+              </div>
             </div>
-          </div>
-          <div class="col-12 col-md-2 text-md-end">
-            <button id="btnClearFilter" class="btn btn-outline-secondary btn-sm w-100 action-btn-touch">
-              <i class="bi bi-x-circle me-1"></i>ล้างตัวกรอง
-            </button>
+            <div class="col-6 col-md-2">
+              <div class="input-group input-group-sm custom-select-group shadow-xs rounded-pill overflow-hidden">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-activity text-warning"></i></span>
+                <select id="filterReady" class="form-select form-select-sm border-start-0 ps-0">
+                  <option value="">ความพร้อม</option>
+                  <option value="Ready">พร้อมใช้งาน</option>
+                  <option value="Not Ready">ไม่พร้อมใช้งาน</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-12 col-md-1 text-md-end mt-3 mt-md-0">
+              <button id="btnClearFilter" class="btn btn-light btn-sm w-100 action-btn-touch rounded-pill border shadow-xs text-secondary hover-danger transition-all">
+                <i class="bi bi-arrow-counterclockwise"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -396,9 +443,30 @@
   </div>
 
   <!-- Footer -->
-  <footer class="bg-white text-muted py-3 mt-4 text-center small shadow-sm">
-    <div class="container">
-      <span>🔥 FireTank Inspection System — Online Cloud Edition</span>
+  <footer class="bg-dark text-white py-4 mt-5 shadow-lg border-top border-danger border-3">
+    <div class="container-fluid px-4">
+      <div class="row align-items-center">
+        <div class="col-12 col-md-4 text-center text-md-start mb-3 mb-md-0">
+          <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-2">
+            <img src="images/jdepeets_logo.svg" alt="JDE Peet's" height="24" style="filter: brightness(0) invert(1);">
+            <span class="fs-6 fw-bold border-start ps-2 border-secondary">Safety System</span>
+          </div>
+          <p class="text-white-50 small mb-0">ระบบบริหารจัดการและตรวจเช็คถังดับเพลิงออนไลน์</p>
+        </div>
+        <div class="col-12 col-md-4 text-center mb-3 mb-md-0">
+          <a href="check.html" class="btn btn-outline-light btn-sm rounded-pill px-4">
+            <i class="bi bi-clipboard2-check me-1"></i>ไปที่หน้าตรวจเช็คถัง
+          </a>
+        </div>
+        <div class="col-12 col-md-4 text-center text-md-end">
+          <div class="small text-white-50">
+            &copy; <span id="currentYear"></span> JDE Peet's All rights reserved.
+          </div>
+          <div class="small text-white-50 mt-1">
+            Version <span class="badge bg-secondary text-light fw-normal">v2.0.0 (Cloud Edition)</span>
+          </div>
+        </div>
+      </div>
     </div>
   </footer>
 
@@ -414,9 +482,9 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <!-- Application Logic -->
-  <script src="js/initial_data.js?v=20260930_jde"></script>
-  <script src="js/storage.js?v=20260930_jde"></script>
-  <script src="js/auth.js?v=20260930_jde"></script>
+  <script src="js/initial_data.js?v=20260930_v2"></script>
+  <script src="js/storage.js?v=20260930_v2"></script>
+  <script src="js/auth.js?v=20260930_v2"></script>
 
   <script>
     let dataTableInstance = null;
@@ -479,6 +547,11 @@
       const percentNotChecked = total > 0 ? Math.round((notChecked / total) * 100) : 0;
       $('#badgePercentChecked').html(`<i class="bi bi-pie-chart me-1"></i>${percentChecked}%`);
       $('#badgePercentNotChecked').html(`<i class="bi bi-clock me-1"></i>${percentNotChecked}%`);
+      
+      // อัปเดต Progress Bar
+      $('#barPercentChecked').css('width', `${percentChecked}%`).attr('aria-valuenow', percentChecked);
+      $('#barPercentNotChecked').css('width', `${percentNotChecked}%`).attr('aria-valuenow', percentNotChecked);
+      
       $('#filterCountBadge').text(`ทั้งหมด ${total} ถัง`);
 
       // เติม Options ในตัวกรอง
@@ -659,28 +732,43 @@
           const selArea = $('#filterArea').val();
           const selCheck = $('#filterCheck').val();
           const selReady = $('#filterReady').val();
+          const searchVal = $('#searchInput').val().toLowerCase();
 
           if (selType && $(rowNode).data('type') !== selType) return false;
           if (selArea && $(rowNode).data('area') !== selArea) return false;
           if (selCheck && $(rowNode).data('check') !== selCheck) return false;
           if (selReady && $(rowNode).data('ready') !== selReady) return false;
+          
+          if (searchVal) {
+            const tankId = String($(rowNode).data('tank-id')).toLowerCase();
+            if (!tankId.includes(searchVal)) return false;
+          }
 
           return true;
         });
         window._dtFilterRegistered = true;
       }
 
-      $('#filterType, #filterArea, #filterCheck, #filterReady').off('change').on('change', function () {
+      $('#filterType, #filterArea, #filterCheck, #filterReady, #searchInput').off('input change').on('input change', function () {
         if (dataTableInstance) dataTableInstance.draw();
         renderMobileCards();
         updateFilterBadge();
+        
+        // Update active filter dot
+        const hasFilter = $('#filterType').val() || $('#filterArea').val() || $('#filterCheck').val() || $('#filterReady').val() || $('#searchInput').val();
+        if (hasFilter) {
+          $('#activeFilterDot').removeClass('d-none');
+        } else {
+          $('#activeFilterDot').addClass('d-none');
+        }
       });
 
       $('#btnClearFilter').off('click').on('click', function () {
-        $('#filterType, #filterArea, #filterCheck, #filterReady').val('');
+        $('#filterType, #filterArea, #filterCheck, #filterReady, #searchInput').val('');
         if (dataTableInstance) dataTableInstance.draw();
         renderMobileCards();
         updateFilterBadge();
+        $('#activeFilterDot').addClass('d-none');
       });
 
       $('[data-bs-toggle="tooltip"]').tooltip();
@@ -745,6 +833,7 @@
       const selArea = $('#filterArea').val();
       const selCheck = $('#filterCheck').val();
       const selReady = $('#filterReady').val();
+      const searchVal = $('#searchInput').val() ? $('#searchInput').val().toLowerCase() : '';
 
       const currentUser = getCurrentUser();
       const allTanks = getAllTanks();
@@ -759,6 +848,8 @@
         if (selArea && tank.Area !== selArea) return false;
         if (selCheck && checkStatus !== selCheck) return false;
         if (selReady && tank.ReadyorNot !== selReady) return false;
+        if (searchVal && (!tank.FireTank || !tank.FireTank.toLowerCase().includes(searchVal))) return false;
+        
         return true;
       });
 
@@ -902,6 +993,18 @@
 
     $(document).ready(function () {
       renderDashboard();
+      
+      // Update Live Clock
+      function updateClock() {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Asia/Bangkok' };
+        $('#liveClock').text(now.toLocaleDateString('th-TH', options));
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+      
+      // Update Current Year in Footer
+      $('#currentYear').text(new Date().getFullYear());
     });
 
     // ─── Modal: แสดงรายละเอียดถัง ───
