@@ -5,3 +5,4 @@ wrangler.toml
 .git
 .gitignore
 .assetsignore
+*.sql

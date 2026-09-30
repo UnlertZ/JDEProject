@@ -178,12 +178,25 @@ async function fetchAllTanks() {
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       const msg = err.error || err.message || `HTTP ${res.status}`;
+      console.warn('Realtime fetch failed, falling back to INITIAL_TANKS:', msg);
+      if (typeof INITIAL_TANKS !== 'undefined' && Array.isArray(INITIAL_TANKS) && INITIAL_TANKS.length > 0) {
+        _memoryTanks = INITIAL_TANKS.map(applyThirtyDaysRule);
+        _memoryTanks.sort((a, b) => (a.FireTank || '').localeCompare(b.FireTank || '', undefined, { numeric: true, sensitivity: 'base' }));
+        return _memoryTanks;
+      }
       showD1ConnectionError(msg);
       _memoryTanks = [];
       return [];
     }
     const data = await res.json();
     if (Array.isArray(data)) {
+      if (data.length === 0 && typeof INITIAL_TANKS !== 'undefined' && INITIAL_TANKS.length > 0) {
+        console.warn('D1 returned 0 tanks, auto-seeding in background...');
+        fetch('/api/seed', { method: 'POST' }).catch(() => {});
+        _memoryTanks = INITIAL_TANKS.map(applyThirtyDaysRule);
+        _memoryTanks.sort((a, b) => (a.FireTank || '').localeCompare(b.FireTank || '', undefined, { numeric: true, sensitivity: 'base' }));
+        return _memoryTanks;
+      }
       _memoryTanks = data.map(applyThirtyDaysRule);
       _memoryTanks.sort((a, b) => (a.FireTank || '').localeCompare(b.FireTank || '', undefined, { numeric: true, sensitivity: 'base' }));
       return _memoryTanks;
@@ -191,7 +204,12 @@ async function fetchAllTanks() {
     _memoryTanks = [];
     return [];
   } catch (err) {
-    console.error('Realtime fetch failed:', err);
+    console.error('Realtime fetch failed, falling back to INITIAL_TANKS:', err);
+    if (typeof INITIAL_TANKS !== 'undefined' && Array.isArray(INITIAL_TANKS) && INITIAL_TANKS.length > 0) {
+      _memoryTanks = INITIAL_TANKS.map(applyThirtyDaysRule);
+      _memoryTanks.sort((a, b) => (a.FireTank || '').localeCompare(b.FireTank || '', undefined, { numeric: true, sensitivity: 'base' }));
+      return _memoryTanks;
+    }
     showD1ConnectionError(`การเชื่อมต่อไปยัง Cloudflare ขัดข้อง: ${err.message}`);
     _memoryTanks = [];
     return [];
