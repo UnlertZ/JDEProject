@@ -404,3 +404,226 @@ footer {
   border-top: 1px solid var(--jde-border) !important;
   color: var(--jde-text-muted) !important;
 }
+
+/* ─── Modern Redesign & Mobile Responsive Enhancements ─── */
+
+/* 1. Header Banner */
+.dashboard-header-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAF6EE 100%);
+  border: 1px solid var(--jde-border) !important;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(63, 58, 49, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-header-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--jde-terracotta), var(--jde-gold), var(--jde-green));
+}
+
+/* 2. Enhanced Summary Cards */
+.card-summary {
+  border: none;
+  border-radius: 16px !important;
+  box-shadow: 0 6px 20px rgba(63, 58, 49, 0.09) !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-summary:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(63, 58, 49, 0.16) !important;
+}
+
+.card-summary-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #FFFFFF !important;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.metric-number {
+  font-size: 2.1rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.5px;
+  color: #FFFFFF !important;
+}
+
+.metric-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  opacity: 0.88;
+}
+
+.metric-sub {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.metric-badge {
+  font-size: 0.72rem;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.22);
+  color: #FFFFFF;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (max-width: 576px) {
+  .metric-number {
+    font-size: 1.6rem;
+  }
+  .card-summary-icon-box {
+    width: 38px;
+    height: 38px;
+    font-size: 1.15rem;
+    border-radius: 10px;
+  }
+  .metric-label {
+    font-size: 0.72rem;
+  }
+  .metric-sub {
+    font-size: 0.72rem;
+  }
+}
+
+/* 3. Filter Box Modernization */
+.filter-card {
+  background: #FFFFFF;
+  border: 1px solid var(--jde-border) !important;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(63, 58, 49, 0.04);
+}
+
+.filter-card .form-select, .filter-card .form-control {
+  border-radius: 8px;
+  font-size: 0.88rem;
+  border: 1px solid var(--jde-border);
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
+}
+
+/* 4. View Switcher (Table vs Mobile Cards) */
+.view-switch-btn {
+  padding: 0.35rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.view-switch-btn.active {
+  background-color: var(--jde-espresso) !important;
+  color: #FFFFFF !important;
+  border-color: var(--jde-espresso) !important;
+  box-shadow: 0 2px 8px rgba(63, 58, 49, 0.25);
+}
+
+/* 5. Mobile Tank Card Layout */
+.tank-mobile-card {
+  background: #FFFFFF;
+  border: 1px solid var(--jde-border);
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(63, 58, 49, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+}
+
+.tank-mobile-card:active, .tank-mobile-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--jde-gold);
+  box-shadow: 0 6px 18px rgba(63, 58, 49, 0.1);
+}
+
+.tank-mobile-card-header {
+  background: linear-gradient(135deg, #FAF6EE 0%, #F3EBDD 100%);
+  border-bottom: 1px solid var(--jde-border);
+  padding: 0.75rem 1rem;
+}
+
+.tank-mobile-card-body {
+  padding: 1rem;
+}
+
+.tank-info-chip {
+  background: #F8F5EE;
+  border: 1px solid var(--jde-border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+}
+
+/* 6. Sticky Column for Horizontal Scrolling on Phone */
+.table-responsive-jde {
+  position: relative;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+}
+
+@media (max-width: 991px) {
+  #tankTable thead th:nth-child(1),
+  #tankTable tbody td:nth-child(1) {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background-color: #FFFFFF;
+    box-shadow: 1px 0 0 var(--jde-border);
+  }
+  #tankTable thead th:nth-child(1) {
+    background-color: var(--jde-espresso) !important;
+  }
+  #tankTable thead th:nth-child(2),
+  #tankTable tbody td:nth-child(2) {
+    position: sticky;
+    left: 40px;
+    z-index: 2;
+    background-color: #FFFFFF;
+    box-shadow: 2px 0 4px rgba(0,0,0,0.06);
+  }
+  #tankTable thead th:nth-child(2) {
+    background-color: var(--jde-espresso) !important;
+  }
+}
+
+/* 7. Action Buttons Bar on Mobile */
+@media (max-width: 768px) {
+  .action-btn-group {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .action-btn-group .btn-primary-action {
+    grid-column: span 2;
+  }
+  .action-btn-touch {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+  }
+}
+
