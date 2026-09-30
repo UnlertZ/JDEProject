@@ -219,13 +219,17 @@
 
           <!-- ─── ส่วนที่ 3: แนบรูปภาพ ─── -->
           <h5 class="fw-bold mb-3 text-secondary border-bottom pb-2">
-            <i class="bi bi-camera text-primary me-2"></i>แนบรูปถ่ายการตรวจเช็ค
+            <i class="bi bi-camera text-primary me-2"></i>แนบรูปถ่ายการตรวจเช็ค <span class="badge bg-danger ms-1" style="font-size:0.75rem;">จำเป็นต้องแนบ</span>
           </h5>
           <div class="mb-4">
-            <label class="form-label small fw-semibold">รูปภาพถังดับเพลิง (PicTank):</label>
+            <label class="form-label small fw-semibold">รูปภาพถังดับเพลิง (PicTank): <span class="text-danger fw-bold">* (หากไม่แนบรูป จะไม่สามารถบันทึกได้)</span></label>
             <input type="file" id="picTankInput" accept="image/*" class="form-control" onchange="previewImage(event)">
+            <div id="imageError" class="text-danger small mt-1 fw-bold d-none">
+              <i class="bi bi-exclamation-octagon-fill me-1"></i>กรุณาถ่ายหรือแนบรูปภาพถังดับเพลิงก่อนบันทึกผลการตรวจเช็ค
+            </div>
             <div id="imagePreviewContainer" class="mt-2 d-none">
-              <img id="imagePreview" src="" class="img-thumbnail" style="max-height: 140px;" alt="พรีวิวรูปภาพ">
+              <img id="imagePreview" src="" class="img-thumbnail border-2 border-success" style="max-height: 140px;" alt="พรีวิวรูปภาพ">
+              <div class="text-success small mt-1 fw-semibold"><i class="bi bi-check-circle-fill me-1"></i>แนบรูปภาพเรียบร้อยแล้ว</div>
             </div>
           </div>
 
@@ -389,6 +393,12 @@
         currentUploadedBase64 = await compressImage(file, 1200, 0.75);
         $('#imagePreview').attr('src', currentUploadedBase64);
         $('#imagePreviewContainer').removeClass('d-none');
+        $('#imageError').addClass('d-none');
+        $('#picTankInput').removeClass('is-invalid').addClass('is-valid');
+      } else {
+        currentUploadedBase64 = null;
+        $('#imagePreviewContainer').addClass('d-none');
+        $('#picTankInput').removeClass('is-valid');
       }
     }
 
@@ -399,6 +409,21 @@
         alert('กรุณาเลือกหมายเลขถังดับเพลิง');
         return;
       }
+
+      // ─── Validate แนบรูปภาพ (หากไม่แนบรูป จะไม่สามารถบันทึกได้) ───
+      if (!currentUploadedBase64) {
+        $('#imageError').removeClass('d-none');
+        $('#picTankInput').addClass('is-invalid').removeClass('is-valid');
+        const inputEl = document.getElementById('picTankInput');
+        if (inputEl) {
+          inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          inputEl.focus();
+        }
+        alert('⚠️ ไม่สามารถบันทึกได้: กรุณาถ่ายหรือแนบรูปภาพถังดับเพลิงก่อนบันทึกผลการตรวจเช็ค');
+        return;
+      }
+      $('#imageError').addClass('d-none');
+      $('#picTankInput').removeClass('is-invalid').addClass('is-valid');
 
       const g = $('input[name="gauge_status"]:checked').val() === 'normal';
       const b = $('input[name="body_status"]:checked').val() === 'normal';

@@ -233,15 +233,15 @@
           </span>
         </div>
 
-        <!-- View Switcher (ตาราง / การ์ด) -->
+        <!-- View Switcher (สลับโหมด PC / Mobile) -->
         <div class="d-flex align-items-center gap-2 ms-auto">
-          <span class="small text-muted d-none d-sm-inline fw-medium">มุมมอง:</span>
-          <div class="btn-group btn-group-sm bg-light rounded-3 p-1 border" role="group">
-            <button type="button" id="btnViewTable" class="btn btn-outline-secondary border-0 view-switch-btn active rounded-2" onclick="switchView('table')">
-              <i class="bi bi-table me-1"></i>ตาราง
+          <span class="small text-muted d-none d-sm-inline fw-semibold"><i class="bi bi-display me-1 text-secondary"></i>โหมดแสดงผล:</span>
+          <div class="btn-group btn-group-sm bg-light rounded-pill p-1 border shadow-xs" role="group" aria-label="สลับโหมด PC และ Mobile">
+            <button type="button" id="btnViewTable" class="btn btn-outline-secondary border-0 view-switch-btn active rounded-pill px-3" onclick="switchView('pc')" title="โหมด PC (แสดงผลแบบตารางข้อมูลเต็มรูปแบบ)">
+              <i class="bi bi-laptop me-1"></i>โหมด PC
             </button>
-            <button type="button" id="btnViewCards" class="btn btn-outline-secondary border-0 view-switch-btn rounded-2" onclick="switchView('cards')">
-              <i class="bi bi-grid-fill me-1"></i>การ์ด
+            <button type="button" id="btnViewCards" class="btn btn-outline-secondary border-0 view-switch-btn rounded-pill px-3" onclick="switchView('mobile')" title="โหมด Mobile (แสดงผลแบบการ์ด เหมาะสำหรับโทรศัพท์)">
+              <i class="bi bi-phone me-1"></i>โหมด Mobile
             </button>
           </div>
         </div>
@@ -780,31 +780,35 @@
         if (tankId) openTankDetailModal(tankId);
       });
 
-      // ตรวจสอบมุมมองเริ่มต้น (มือถือเริ่มต้นด้วย Cards)
+      // ตรวจสอบโหมดแสดงผลเริ่มต้น (มือถือเริ่มต้นด้วย Mobile)
       const savedMode = localStorage.getItem('jde_view_mode');
-      if (savedMode) {
-        switchView(savedMode);
+      if (savedMode === 'mobile' || savedMode === 'cards') {
+        switchView('mobile');
+      } else if (savedMode === 'pc' || savedMode === 'table') {
+        switchView('pc');
       } else if (window.innerWidth < 768) {
-        switchView('cards');
+        switchView('mobile');
+      } else {
+        switchView('pc');
       }
     }
 
-    // ─── ควบคุมการสลับมุมมอง (ตาราง / การ์ด) ───
+    // ─── ควบคุมการสลับโหมด (PC / Mobile) ───
     function switchView(mode) {
-      if (mode === 'cards') {
+      if (mode === 'mobile' || mode === 'cards') {
         $('#btnViewCards').addClass('active');
         $('#btnViewTable').removeClass('active');
         $('#tableViewContainer').addClass('d-none');
         $('#cardViewContainer').removeClass('d-none');
         renderMobileCards();
-        try { localStorage.setItem('jde_view_mode', 'cards'); } catch(e){}
+        try { localStorage.setItem('jde_view_mode', 'mobile'); } catch(e){}
       } else {
         $('#btnViewTable').addClass('active');
         $('#btnViewCards').removeClass('active');
         $('#tableViewContainer').removeClass('d-none');
         $('#cardViewContainer').addClass('d-none');
         if (dataTableInstance) dataTableInstance.columns.adjust().draw();
-        try { localStorage.setItem('jde_view_mode', 'table'); } catch(e){}
+        try { localStorage.setItem('jde_view_mode', 'pc'); } catch(e){}
       }
     }
 

@@ -577,3 +577,28 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Header Action Toolbar */
 .action-btn-group .btn { border-radius: 50rem; }
+
+/* ─── Mode Switcher (PC vs Mobile Mode) ─── */
+.view-switch-btn {
+  font-weight: 700 !important;
+  font-size: 0.88rem !important;
+  padding: 0.4rem 1rem !important;
+  border-radius: 50rem !important;
+  color: var(--jde-espresso) !important;
+  background: transparent;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid transparent !important;
+}
+
+.view-switch-btn:hover {
+  color: var(--jde-terracotta) !important;
+  background-color: rgba(63, 58, 49, 0.08) !important;
+}
+
+.view-switch-btn.active {
+  background-color: var(--jde-espresso) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 3px 10px rgba(63, 58, 49, 0.28) !important;
+  border-color: var(--jde-espresso) !important;
+}
+
