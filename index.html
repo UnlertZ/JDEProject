@@ -1840,19 +1840,30 @@
       btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>กำลังบันทึก...');
 
       try {
+        const payload = {
+          monthKey,
+          mode,
+          inspector,
+          readyCount,
+          notReadyCount,
+          requestorPermitDo: user.PermitDo
+        };
+
         const res = await fetch('/api/history/seed-month', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            monthKey,
-            mode,
-            inspector,
-            readyCount,
-            notReadyCount,
-            requestorPermitDo: user.PermitDo
-          })
+          body: JSON.stringify(payload)
         });
-        const data = await res.json();
+
+        const contentType = res.headers.get('content-type') || '';
+        let data = {};
+        if (contentType.includes('application/json')) {
+          data = await res.json();
+        } else {
+          const text = await res.text();
+          throw new Error(`เซิร์ฟเวอร์ส่งกลับรูปแบบไม่ถูกต้อง (${res.status}): ${text.slice(0, 100)}`);
+        }
+
         if (res.ok && data.success) {
           alert(`✅ ${data.message}`);
           const modalInstance = bootstrap.Modal.getInstance(document.getElementById('quickSeedModal'));
@@ -1862,7 +1873,7 @@
           $('#monthSelect').val(monthKey);
           onMonthChange();
         } else {
-          alert(`❌ ไม่สามารถบันทึกได้: ${data.message || 'Error'}`);
+          alert(`❌ ไม่สามารถบันทึกได้: ${data.message || data.error || 'Server error'}`);
         }
       } catch (err) {
         alert(`❌ เกิดข้อผิดพลาด: ${err.message}`);

@@ -37,12 +37,42 @@ function getDaysSinceCheck(lastcheckVal) {
   return Math.floor(diffMs / (1000 * 60 * 60 * 24));
 }
 
+function isCheckedInCurrentMonth(lastcheckVal) {
+  if (!lastcheckVal) return false;
+  const s = String(lastcheckVal).trim();
+  if (!s || s === '-' || s === '—') return false;
+
+  let checkYear = null;
+  let checkMonth = null;
+
+  if (/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/.test(s)) {
+    const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+    if (m) {
+      checkMonth = parseInt(m[2], 10);
+      checkYear = parseInt(m[3], 10);
+    }
+  } else if (/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/.test(s)) {
+    const m = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+    if (m) {
+      checkYear = parseInt(m[1], 10);
+      checkMonth = parseInt(m[2], 10);
+    }
+  }
+
+  if (!checkYear || !checkMonth) return false;
+
+  const now = new Date();
+  const curYear = now.getFullYear();
+  const curMonth = now.getMonth() + 1;
+
+  return (checkYear === curYear && checkMonth === curMonth);
+}
+
 function formatTankResponse(row) {
   let tankCheck = row.tankcheck || 'ยังไม่เช็ค';
-  // กฎ 30 วัน: หากตรวจเกิน 30 วันแล้ว ให้เปลี่ยนเป็นยังไม่เช็ค
+  // กฎรอบเดือน: เช็คทุกต้นเดือนใหม่
   if (tankCheck === 'เช็คแล้ว') {
-    const days = getDaysSinceCheck(row.lastcheck);
-    if (days !== null && days >= 30) {
+    if (!isCheckedInCurrentMonth(row.lastcheck)) {
       tankCheck = 'ยังไม่เช็ค';
     }
   }

@@ -761,6 +761,13 @@ export default {
           return new Response(JSON.stringify({ success: true, message: `ลบข้อมูลรอบเดือน ${targetKey} สำเร็จ` }), { headers: { 'Content-Type': 'application/json' } });
         }
       }
+
+      if (pathname.startsWith('/api/')) {
+        return new Response(JSON.stringify({ success: false, message: `API route not found: [${method}] ${pathname}` }), {
+          status: 404,
+          headers: { 'Content-Type': 'application/json; charset=utf-8' }
+        });
+      }
     } catch (apiErr) {
       return new Response(JSON.stringify({ success: false, error: apiErr.message }), {
         status: 500,
