@@ -328,14 +328,15 @@
       $('#infoType').text(tank.Types || '-');
       $('#infoArea').text(tank.Area || '-');
       $('#infoWeight').text(tank['Weight (lb)'] || '-');
-      $('#infoInuse').text(tank.Inuse || '-');
+      $('#infoInuse').text(formatDateOnly(tank.Inuse));
       $('#infoExptank').text(tank.Exptank || '-');
       const daysSince = getDaysSinceCheck(tank.Lastcheck);
       const isExpired = daysSince !== null && daysSince >= 30;
+      const formattedLast = formatDateOnly(tank.Lastcheck);
       if (isExpired) {
-        $('#infoLastcheck').html(`${tank.Lastcheck} <span class="badge bg-warning text-white ms-1" style="font-size:0.7rem;"><i class="bi bi-clock-history me-1"></i>ครบ 30 วันแล้ว</span>`);
+        $('#infoLastcheck').html(`${formattedLast} <span class="badge bg-warning text-white ms-1" style="font-size:0.7rem;"><i class="bi bi-clock-history me-1"></i>ครบ 30 วันแล้ว</span>`);
       } else {
-        $('#infoLastcheck').text(tank.Lastcheck || '-');
+        $('#infoLastcheck').text(formattedLast);
       }
       $('#infoInspector').text(tank.Inspector || '-');
       $('#weightInput').val(tank['Weight (lb)'] || '');

@@ -59,6 +59,63 @@ function formatInuseDate(val) {
   return s;
 }
 
+// Helper: ฟอร์แมตวันที่ให้แสดงเฉพาะ dd/mm/yyyy (ไม่แสดง hh:mm:ss)
+function formatDateOnly(val) {
+  if (!val) return '—';
+  const s = String(val).trim();
+  if (!s || s === '-' || s === '—') return '—';
+
+  const mIso = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+  if (mIso) {
+    const y = mIso[1];
+    const m = mIso[2].padStart(2, '0');
+    const d = mIso[3].padStart(2, '0');
+    return `${d}/${m}/${y}`;
+  }
+
+  const mDm = s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);
+  if (mDm) {
+    const d = mDm[1].padStart(2, '0');
+    const m = mDm[2].padStart(2, '0');
+    const y = mDm[3];
+    return `${d}/${m}/${y}`;
+  }
+
+  return s.split(' ')[0] || s;
+}
+
+// ─── ประวัติรอบเดือนและสถิติรายปี API Helpers ───
+async function fetchMonthlyList() {
+  try {
+    const res = await fetch('/api/history/months');
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.error('fetchMonthlyList error:', e);
+  }
+  return { current: null, history: [] };
+}
+
+async function fetchMonthSnapshot(monthKey) {
+  try {
+    const res = await fetch(`/api/history/snapshot?month=${encodeURIComponent(monthKey)}`);
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.error('fetchMonthSnapshot error:', e);
+  }
+  return null;
+}
+
+async function fetchYearlyStats(year) {
+  try {
+    const y = year || new Date().getFullYear();
+    const res = await fetch(`/api/history/yearly?year=${y}`);
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.error('fetchYearlyStats error:', e);
+  }
+  return null;
+}
+
 // Helper: คำนวณอายุถัง เช่น "5ปี"
 function calculateExptank(inuse, lastcheck) {
   const inuseYear = extractYear(inuse);

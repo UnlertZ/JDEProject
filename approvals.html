@@ -98,7 +98,8 @@
         </div>
       </div>
       <div class="card-body p-0">
-        <div class="table-responsive">
+        <!-- Desktop Table View -->
+        <div class="d-none d-md-block table-responsive">
           <table class="table table-hover align-middle mb-0 w-100">
             <thead class="table-dark">
               <tr>
@@ -115,6 +116,10 @@
             </tbody>
           </table>
         </div>
+        <!-- Mobile Card View -->
+        <div class="d-md-none p-3" id="pendingMobileCards">
+          <!-- Render via JS -->
+        </div>
       </div>
     </div>
 
@@ -127,7 +132,8 @@
         </div>
       </div>
       <div class="card-body p-0">
-        <div class="table-responsive">
+        <!-- Desktop Table View -->
+        <div class="d-none d-md-block table-responsive">
           <table class="table table-striped align-middle mb-0 w-100">
             <thead class="table-dark">
               <tr>
@@ -144,6 +150,10 @@
             </tbody>
           </table>
         </div>
+        <!-- Mobile Card View -->
+        <div class="d-md-none p-3" id="activeUsersMobileCards">
+          <!-- Render via JS -->
+        </div>
       </div>
     </div>
 
@@ -151,8 +161,11 @@
 
   <!-- Footer -->
   <footer class="bg-white text-muted py-3 mt-4 text-center small shadow-sm">
-    <div class="container">
+    <div class="container d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
       <span>🔥 FireTank Inspection System — Online Cloud Edition</span>
+      <a href="index.html" class="btn btn-outline-secondary btn-sm rounded-pill px-4">
+        <i class="bi bi-house-door-fill me-1"></i>กลับสู่หน้าแรก
+      </a>
     </div>
   </footer>
 
@@ -192,10 +205,12 @@
 
       // ── ตารางรออนุมัติ ──
       const pendingTbody = document.getElementById('pendingTableBody');
+      const pendingCards = document.getElementById('pendingMobileCards');
       pendingTbody.innerHTML = '';
+      if (pendingCards) pendingCards.innerHTML = '';
 
       if (pendingUsers.length === 0) {
-        pendingTbody.innerHTML = `
+        const emptyHtml = `
           <tr>
             <td colspan="6" class="text-center py-4 text-muted">
               <i class="bi bi-check2-circle fs-3 text-success d-block mb-1"></i>
@@ -203,6 +218,15 @@
             </td>
           </tr>
         `;
+        pendingTbody.innerHTML = emptyHtml;
+        if (pendingCards) {
+          pendingCards.innerHTML = `
+            <div class="text-center py-4 text-muted bg-white rounded-3 border">
+              <i class="bi bi-check2-circle fs-3 text-success d-block mb-1"></i>
+              ไม่มีคำขอรอการอนุมัติในขณะนี้
+            </div>
+          `;
+        }
       } else {
         pendingUsers.forEach((u, idx) => {
           pendingTbody.innerHTML += `
@@ -224,12 +248,30 @@
               </td>
             </tr>
           `;
+          if (pendingCards) {
+            pendingCards.innerHTML += `
+              <div class="card mb-2 border rounded-3 p-3 shadow-xs bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="fw-bold text-dark fs-6">${u.Username}</span>
+                  <span class="badge bg-warning text-dark">P1 (ตรวจเช็ค)</span>
+                </div>
+                <div class="small text-secondary mb-1"><i class="bi bi-person me-1"></i>${u.EmName}</div>
+                <div class="small text-muted mb-2"><i class="bi bi-clock me-1"></i>${u.RegisteredAt || '-'}</div>
+                <div class="d-flex gap-2">
+                  <button onclick="handleApprove('${u.Username}')" class="btn btn-success btn-sm flex-grow-1"><i class="bi bi-check-lg me-1"></i>อนุมัติ</button>
+                  <button onclick="handleReject('${u.Username}')" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-lg me-1"></i>ปฏิเสธ</button>
+                </div>
+              </div>
+            `;
+          }
         });
       }
 
       // ── ตารางสมาชิกที่ใช้งานอยู่ ──
       const activeTbody = document.getElementById('activeUsersTableBody');
+      const activeCards = document.getElementById('activeUsersMobileCards');
       activeTbody.innerHTML = '';
+      if (activeCards) activeCards.innerHTML = '';
 
       const myUsername = me ? me.Username.toLowerCase() : '';
 
@@ -256,13 +298,13 @@
             // P1 → ปรับขึ้น P2
             permitBtns += `
               <button onclick="handleUpgradePermit('${u.Username}', 2)" 
-                      class="btn btn-outline-danger btn-sm py-0 px-2 me-1" title="เลื่อนเป็น P2-Admin">
+                      class="btn btn-outline-danger btn-sm py-1 px-2.5 me-1" title="เลื่อนเป็น P2-Admin">
                 <i class="bi bi-arrow-up-circle me-1"></i>P2
               </button>`;
             if (currentUserPermit >= 3) {
               permitBtns += `
                 <button onclick="handleUpgradePermit('${u.Username}', 3)" 
-                        class="btn btn-sm py-0 px-2 me-1" style="background:#6f42c1;color:#fff;" title="เลื่อนเป็น P3 (Super Admin)">
+                        class="btn btn-sm py-1 px-2.5 me-1" style="background:#6f42c1;color:#fff;" title="เลื่อนเป็น P3 (Super Admin)">
                   <i class="bi bi-arrow-up-circle me-1"></i>P3
                 </button>`;
             }
@@ -270,7 +312,7 @@
             // P2 → ปรับขึ้น P3 (เฉพาะ P3 ทำได้)
             permitBtns += `
               <button onclick="handleUpgradePermit('${u.Username}', 3)" 
-                      class="btn btn-sm py-0 px-2 me-1" style="background:#6f42c1;color:#fff;" title="เลื่อนเป็น P3">
+                        class="btn btn-sm py-1 px-2.5 me-1" style="background:#6f42c1;color:#fff;" title="เลื่อนเป็น P3">
                 <i class="bi bi-arrow-up-circle me-1"></i>P3
               </button>`;
           }
@@ -278,14 +320,14 @@
             // P2 → ลดกลับ P1
             permitBtns += `
               <button onclick="handleDowngradePermit('${u.Username}', 1)" 
-                      class="btn btn-outline-warning btn-sm py-0 px-2 me-1" title="ลดเป็น P1">
+                      class="btn btn-outline-warning btn-sm py-1 px-2.5 me-1" title="ลดเป็น P1">
                 <i class="bi bi-arrow-down-circle me-1"></i>P1
               </button>`;
           } else if (isP3 && currentUserPermit >= 3) {
             // P3 → ลดกลับ P2
             permitBtns += `
               <button onclick="handleDowngradePermit('${u.Username}', 2)" 
-                      class="btn btn-outline-secondary btn-sm py-0 px-2 me-1" title="ลดเป็น P2">
+                      class="btn btn-outline-secondary btn-sm py-1 px-2.5 me-1" title="ลดเป็น P2">
                 <i class="bi bi-arrow-down-circle me-1"></i>P2
               </button>`;
           }
@@ -294,7 +336,7 @@
         // ปุ่มลบ — ห้ามลบตัวเอง, P2 ห้ามลบ P3
         const canDelete = !isMe && (currentUserPermit >= 3 || !isP3);
         const deleteBtn = canDelete
-          ? `<button onclick="handleDeleteUser('${u.Username}')" class="btn btn-danger btn-sm py-0 px-2" title="ลบออกจากระบบ">
+          ? `<button onclick="handleDeleteUser('${u.Username}')" class="btn btn-danger btn-sm py-1 px-2.5" title="ลบออกจากระบบ">
                <i class="bi bi-trash-fill"></i>
              </button>`
           : '';
@@ -315,6 +357,30 @@
             </td>
           </tr>
         `;
+
+        if (activeCards) {
+          activeCards.innerHTML += `
+            <div class="card mb-2.5 border rounded-3 p-3 shadow-xs bg-white">
+              <div class="d-flex justify-content-between align-items-center mb-1.5">
+                <div class="d-flex align-items-center gap-1.5">
+                  <span class="badge rounded-pill bg-secondary small">${idx + 1}</span>
+                  <strong class="fs-6 text-dark">${u.Username}</strong>
+                  ${selfBadge}
+                </div>
+                ${badgeHtml}
+              </div>
+              <div class="small text-secondary fw-semibold mb-2">
+                <i class="bi bi-person-badge me-1"></i>${u.EmName || '-'} 
+                <span class="text-muted ms-2">(Permit: ${u.PermitDo})</span>
+              </div>
+              <div class="d-flex flex-wrap gap-2 align-items-center pt-2 border-top">
+                ${permitBtns}
+                ${deleteBtn}
+                ${!canEdit && !canDelete ? '<span class="text-muted small"><i class="bi bi-lock-fill me-1"></i>ไม่สามารถแก้ไขได้</span>' : ''}
+              </div>
+            </div>
+          `;
+        }
       });
     }
 

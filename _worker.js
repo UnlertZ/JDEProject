@@ -1,4 +1,4 @@
-﻿/**
+/**
  * _worker.js — Universal Gateway สำหรับ Cloudflare Workers & Pages
  * Self-contained 100% — อ้างอิงและดึงข้อมูลจาก Cloudflare D1 ล้วนๆ (100% Database Driven)
  */
@@ -139,6 +139,22 @@ async function ensureDatabase(db) {
         inspector TEXT,
         responsible TEXT,
         remark TEXT
+      )
+    `).run();
+
+    await db.prepare(`
+      CREATE TABLE IF NOT EXISTS monthly_snapshots (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        month_key TEXT NOT NULL UNIQUE,
+        month_label TEXT NOT NULL,
+        total_tanks INTEGER DEFAULT 0,
+        checked_tanks INTEGER DEFAULT 0,
+        not_checked_tanks INTEGER DEFAULT 0,
+        ready_tanks INTEGER DEFAULT 0,
+        not_ready_tanks INTEGER DEFAULT 0,
+        snapshot_data TEXT NOT NULL,
+        archived_at TEXT NOT NULL,
+        is_closed INTEGER DEFAULT 1
       )
     `).run();
 
@@ -421,6 +437,158 @@ export default {
           }
 
           return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
+        }
+      }
+
+      // 6. /api/history — ประวัติรอบเดือนและสถิติรายปี (Monthly Archive & Annual Chart)
+      if (pathname.startsWith('/api/history')) {
+        const now = new Date();
+        const curYear = now.getFullYear();
+        const curMonth = now.getMonth() + 1;
+        const curMonthKey = `${curYear}-${String(curMonth).padStart(2, '0')}`;
+        const curThaiYear = curYear + 543;
+        const THAI_MONTHS = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+        const THAI_MONTHS_SHORT = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+        const curMonthLabel = `${THAI_MONTHS[curMonth - 1]} ${curThaiYear}`;
+
+        // 6.1 /api/history/months — แสดงรายการเดือนทั้งหมด
+        if (pathname === '/api/history/months') {
+          const q = await env.DB.prepare('SELECT id, month_key, month_label, total_tanks, checked_tanks, not_checked_tanks, ready_tanks, not_ready_tanks, archived_at, is_closed FROM monthly_snapshots ORDER BY month_key DESC').all();
+          let snapshots = q.results || [];
+
+          // ถ้ายังไม่มี snapshot ของเดือนกันยายน 2026 (เดือนก่อนหน้า) ให้ snapshot อัตโนมัติ
+          const prevDate = new Date(curYear, curMonth - 2, 1);
+          const prevYear = prevDate.getFullYear();
+          const prevMonth = prevDate.getMonth() + 1;
+          const prevMonthKey = `${prevYear}-${String(prevMonth).padStart(2, '0')}`;
+          const prevThaiYear = prevYear + 543;
+          const prevMonthLabel = `${THAI_MONTHS[prevMonth - 1]} ${prevThaiYear}`;
+
+          const hasPrev = snapshots.some(s => s.month_key === prevMonthKey);
+          if (!hasPrev) {
+            const tankQ = await env.DB.prepare('SELECT * FROM tanks').all().catch(() => ({ results: [] }));
+            const tankRows = (tankQ.results || []).map(formatTankResponse);
+            if (tankRows.length > 0) {
+              const total = tankRows.length;
+              const checked = tankRows.filter(t => t.Tankcheck === 'เช็คแล้ว').length;
+              const notChecked = total - checked;
+              const ready = tankRows.filter(t => t.ReadyorNot === 'Ready' && t.TankStatus).length;
+              const notReady = total - ready;
+              const snapJson = JSON.stringify(tankRows);
+              const archDate = `${prevYear}-${String(prevMonth).padStart(2, '0')}-30 23:59:59`;
+
+              await env.DB.prepare(`
+                INSERT OR IGNORE INTO monthly_snapshots (month_key, month_label, total_tanks, checked_tanks, not_checked_tanks, ready_tanks, not_ready_tanks, snapshot_data, archived_at, is_closed)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+              `).bind(prevMonthKey, prevMonthLabel, total, checked, notChecked, ready, notReady, snapJson, archDate).run().catch(console.error);
+
+              const qReload = await env.DB.prepare('SELECT id, month_key, month_label, total_tanks, checked_tanks, not_checked_tanks, ready_tanks, not_ready_tanks, archived_at, is_closed FROM monthly_snapshots ORDER BY month_key DESC').all();
+              snapshots = qReload.results || [];
+            }
+          }
+
+          return new Response(JSON.stringify({
+            current: {
+              month_key: curMonthKey,
+              month_label: `${curMonthLabel} (รอบปัจจุบัน)`,
+              is_current: true
+            },
+            history: snapshots
+          }), { headers: { 'Content-Type': 'application/json' } });
+        }
+
+        // 6.2 /api/history/snapshot — ดึงข้อมูลถังในรอบเดือนที่เลือก
+        if (pathname === '/api/history/snapshot') {
+          const targetKey = url.searchParams.get('month');
+          if (!targetKey) return new Response(JSON.stringify({ success: false, message: 'กรุณาระบุเดือน' }), { status: 400 });
+
+          const row = await env.DB.prepare('SELECT * FROM monthly_snapshots WHERE month_key = ?').bind(targetKey).first();
+          if (!row) return new Response(JSON.stringify({ success: false, message: 'ไม่พบข้อมูลของรอบเดือนที่ระบุ' }), { status: 404 });
+
+          let parsedData = [];
+          try {
+            parsedData = JSON.parse(row.snapshot_data);
+          } catch(e) {}
+
+          return new Response(JSON.stringify({
+            success: true,
+            snapshot: {
+              month_key: row.month_key,
+              month_label: row.month_label,
+              total_tanks: row.total_tanks,
+              checked_tanks: row.checked_tanks,
+              not_checked_tanks: row.not_checked_tanks,
+              ready_tanks: row.ready_tanks,
+              not_ready_tanks: row.not_ready_tanks,
+              archived_at: row.archived_at,
+              is_closed: Boolean(row.is_closed)
+            },
+            tanks: parsedData
+          }), { headers: { 'Content-Type': 'application/json' } });
+        }
+
+        // 6.3 /api/history/yearly — ข้อมูล 12 เดือนสำหรับกราฟแท่งและกราฟเปอร์เซ็นต์
+        if (pathname === '/api/history/yearly') {
+          const yearParam = parseInt(url.searchParams.get('year') || curYear, 10);
+          const qYear = await env.DB.prepare('SELECT month_key, total_tanks, ready_tanks, not_ready_tanks, checked_tanks FROM monthly_snapshots WHERE month_key LIKE ?').bind(`${yearParam}-%`).all().catch(() => ({ results: [] }));
+          const snapMap = {};
+          (qYear.results || []).forEach(r => {
+            snapMap[r.month_key] = r;
+          });
+
+          let currentTankStats = null;
+          if (yearParam === curYear) {
+            const liveTanksQ = await env.DB.prepare('SELECT ready_or_not, tank_status, tankcheck, lastcheck FROM tanks').all().catch(() => ({ results: [] }));
+            const liveTanks = liveTanksQ.results || [];
+            const tot = liveTanks.length;
+            const rdy = liveTanks.filter(t => t.ready_or_not === 'Ready' && Boolean(t.tank_status)).length;
+            const chk = liveTanks.filter(t => t.tankcheck === 'เช็คแล้ว').length;
+            currentTankStats = {
+              total_tanks: tot,
+              ready_tanks: rdy,
+              not_ready_tanks: tot - rdy,
+              checked_tanks: chk
+            };
+          }
+
+          const monthsData = [];
+          for (let m = 1; m <= 12; m++) {
+            const mKey = `${yearParam}-${String(m).padStart(2, '0')}`;
+            let stat = snapMap[mKey];
+
+            if (!stat && mKey === curMonthKey && currentTankStats) {
+              stat = currentTankStats;
+            }
+
+            const total = stat ? stat.total_tanks : (m > curMonth && yearParam === curYear ? 0 : 0);
+            const ready = stat ? stat.ready_tanks : 0;
+            const notReady = stat ? stat.not_ready_tanks : 0;
+            const checked = stat ? stat.checked_tanks : 0;
+            const pctReady = total > 0 ? Math.round((ready / total) * 100) : 0;
+            const pctNotReady = total > 0 ? Math.round((notReady / total) * 100) : 0;
+            const pctChecked = total > 0 ? Math.round((checked / total) * 100) : 0;
+
+            monthsData.push({
+              month: m,
+              month_key: mKey,
+              label: THAI_MONTHS_SHORT[m - 1],
+              full_label: `${THAI_MONTHS[m - 1]} ${yearParam + 543}`,
+              total: total,
+              ready: ready,
+              not_ready: notReady,
+              checked: checked,
+              percent_ready: pctReady,
+              percent_not_ready: pctNotReady,
+              percent_checked: pctChecked,
+              has_data: Boolean(stat)
+            });
+          }
+
+          return new Response(JSON.stringify({
+            year: yearParam,
+            thai_year: yearParam + 543,
+            months: monthsData
+          }), { headers: { 'Content-Type': 'application/json' } });
         }
       }
     } catch (apiErr) {

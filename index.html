@@ -64,7 +64,7 @@
   <main class="container-fluid px-2 px-sm-3 px-lg-4 py-3 flex-grow-1">
 
     <!-- Top Header Banner Card -->
-    <div class="dashboard-header-card p-3 p-md-4 mb-4">
+    <div class="dashboard-header-card p-3 p-md-4 mb-3">
       <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-3">
         <div class="header-left">
           <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
@@ -78,17 +78,26 @@
           <h2 class="fw-bold text-dark mb-2 d-flex align-items-center gap-2" style="font-size: clamp(1.4rem, 3vw, 1.8rem); letter-spacing: -0.5px;">
             <i class="bi bi-fire text-danger icon-rotate"></i>รายการถังดับเพลิงและสถานะการตรวจสอบ
           </h2>
-          <div class="d-flex align-items-center flex-wrap gap-3 text-muted small">
+          <div class="d-flex align-items-center flex-wrap gap-3 text-muted small mb-2">
             <p class="mb-0 border-end pe-3">ระบบบริหารจัดการและตรวจเช็คสภาพความพร้อมใช้งานประจำเดือน</p>
             <div class="d-flex align-items-center gap-1 text-secondary" id="liveClockContainer">
               <i class="bi bi-clock"></i> <span id="liveClock">กำลังโหลดเวลา...</span>
             </div>
           </div>
+          <!-- Month Selector Dropdown (เลือกรอบเดือนตรวจสอบ / ย้อนหลัง) -->
+          <div class="d-inline-flex align-items-center gap-2 mt-1 p-1 px-2.5 bg-light rounded-pill border">
+            <label for="monthSelect" class="small fw-bold text-dark mb-0 d-flex align-items-center text-nowrap">
+              <i class="bi bi-calendar3 me-1 text-danger"></i>รอบเดือน:
+            </label>
+            <select id="monthSelect" class="form-select form-select-sm border-0 bg-transparent fw-bold text-dark py-0" style="min-width: 220px; cursor: pointer;" onchange="onMonthChange()">
+              <option value="current">📅 กำลังโหลดรอบเดือน...</option>
+            </select>
+          </div>
         </div>
 
         <!-- Action Toolbar -->
         <div class="d-flex flex-wrap align-items-center gap-2 action-btn-group pt-lg-2">
-          <a href="check.html" class="btn btn-success shadow-sm fw-bold px-4 py-2 action-btn-touch btn-primary-action rounded-pill">
+          <a href="check.html" id="btnGoCheck" class="btn btn-success shadow-sm fw-bold px-4 py-2 action-btn-touch btn-primary-action rounded-pill">
             <i class="bi bi-clipboard2-check-fill me-2"></i>ตรวจเช็คถัง
           </a>
           <a href="add.html" id="btnAddTank" class="btn btn-danger shadow-sm fw-semibold action-btn-touch rounded-pill d-none">
@@ -112,11 +121,27 @@
       </div>
     </div>
 
-    <!-- 4 Summary Cards -->
+    <!-- Past Month Notice Banner (แสดงเมื่อดูประวัติย้อนหลัง) -->
+    <div id="pastMonthNotice" class="alert alert-warning border-warning d-flex flex-column flex-md-row align-items-md-center justify-content-between p-3 mb-3 rounded-3 shadow-sm d-none gap-2">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-lock-fill fs-3 text-warning"></i>
+        <div>
+          <strong id="pastMonthNoticeTitle" class="fs-6">กำลังดูข้อมูลย้อนหลังรอบเดือน</strong>
+          <div class="small text-secondary">ข้อมูลในรอบเดือนที่ผ่านมาถูกปิดรอบและจัดเก็บถาวร (โหมดอ่านอย่างเดียว ไม่สามารถแก้ไขได้)</div>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-dark btn-sm rounded-pill px-3 shadow-xs" onclick="returnToCurrentMonth()">
+          <i class="bi bi-arrow-return-left me-1"></i>กลับสู่รอบเดือนปัจจุบัน
+        </button>
+      </div>
+    </div>
+
+    <!-- 4 Summary Cards (Clickable for Immediate Filtering) -->
     <div class="row g-2 g-md-3 mb-4">
       <!-- Card 1: Total Tanks -->
       <div class="col-6 col-lg-3">
-        <div class="card card-summary bg-primary-gradient text-white h-100 p-3">
+        <div class="card card-summary bg-primary-gradient text-white h-100 p-3" id="cardSummaryTotal" onclick="filterByCard('all')" style="cursor: pointer;" title="คลิกเพื่อแสดงถังทั้งหมด">
           <div class="card-pattern-overlay"></div>
           <div class="d-flex justify-content-between align-items-start position-relative z-1">
             <div>
@@ -135,6 +160,7 @@
             <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.25); border-radius: 4px;">
               <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
+            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อแสดงทั้งหมด</span>
           </div>
           <div class="card-glow-accent"></div>
         </div>
@@ -142,7 +168,7 @@
 
       <!-- Card 2: Checked Tanks -->
       <div class="col-6 col-lg-3">
-        <div class="card card-summary bg-success-gradient text-white h-100 p-3">
+        <div class="card card-summary bg-success-gradient text-white h-100 p-3" id="cardSummaryChecked" onclick="filterByCard('checked')" style="cursor: pointer;" title="คลิกเพื่อกรองเฉพาะถังที่เช็คแล้ว">
           <div class="card-pattern-overlay"></div>
           <div class="d-flex justify-content-between align-items-start position-relative z-1">
             <div>
@@ -161,6 +187,7 @@
             <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.25); border-radius: 4px;">
               <div class="progress-bar bg-white" id="barPercentChecked" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
+            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อกรอง</span>
           </div>
           <div class="card-glow-accent"></div>
         </div>
@@ -168,7 +195,7 @@
 
       <!-- Card 3: Unchecked Tanks -->
       <div class="col-6 col-lg-3">
-        <div class="card card-summary bg-warning-gradient text-white h-100 p-3">
+        <div class="card card-summary bg-warning-gradient text-white h-100 p-3" id="cardSummaryUnchecked" onclick="filterByCard('unchecked')" style="cursor: pointer;" title="คลิกเพื่อกรองเฉพาะถังที่ยังไม่ได้ตรวจ">
           <div class="card-pattern-overlay"></div>
           <div class="d-flex justify-content-between align-items-start position-relative z-1">
             <div>
@@ -187,6 +214,7 @@
             <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.25); border-radius: 4px;">
               <div class="progress-bar bg-white" id="barPercentNotChecked" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
+            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อกรอง</span>
           </div>
           <div class="card-glow-accent"></div>
         </div>
@@ -194,7 +222,7 @@
 
       <!-- Card 4: Not Ready Tanks -->
       <div class="col-6 col-lg-3">
-        <div class="card card-summary bg-danger-gradient text-white h-100 p-3">
+        <div class="card card-summary bg-danger-gradient text-white h-100 p-3" id="cardSummaryNotReady" onclick="filterByCard('not_ready')" style="cursor: pointer;" title="คลิกเพื่อกรองเฉพาะถังที่ไม่พร้อมใช้งาน">
           <div class="card-pattern-overlay"></div>
           <div class="d-flex justify-content-between align-items-start position-relative z-1">
             <div>
@@ -213,8 +241,51 @@
             <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.25); border-radius: 4px;">
               <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
+            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อกรอง</span>
           </div>
           <div class="card-glow-accent"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Annual & Monthly Inspection Analytics Chart ─── -->
+    <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden" id="analyticsChartCard">
+      <div class="card-header bg-white border-bottom py-3 px-3 px-md-4 d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <div class="d-flex align-items-center gap-2">
+          <span class="fw-bold text-dark fs-6 d-flex align-items-center">
+            <i class="bi bi-bar-chart-line-fill text-danger me-2 fs-5"></i>
+            <span>สถิติการตรวจสอบประจำปี <span id="chartYearLabel">2569</span></span>
+          </span>
+          <span id="chartModeBadge" class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle small d-none d-sm-inline">จำนวนถัง (พร้อม vs ไม่พร้อม)</span>
+        </div>
+        <div class="d-flex align-items-center gap-2 ms-auto">
+          <div class="btn-group btn-group-sm rounded-pill p-1 bg-light border shadow-xs" role="group">
+            <button type="button" id="btnChartBar" class="btn btn-outline-secondary border-0 active rounded-pill px-3 fw-bold" onclick="switchChartMode('bar')" title="แผนภูมิแท่งแสดงจำนวนถัง (พร้อมใช้งาน และ ไม่พร้อมใช้งาน)">
+              <i class="bi bi-bar-chart-fill me-1"></i>กราฟแท่งรายปี
+            </button>
+            <button type="button" id="btnChartPercent" class="btn btn-outline-secondary border-0 rounded-pill px-3 fw-bold" onclick="switchChartMode('percent')" title="แผนภูมิแสดงสถิติรายเดือนเป็นเปอร์เซ็นต์ (%)">
+              <i class="bi bi-percent me-1"></i>ดูรายเดือนเป็น %
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body p-3 p-md-4 bg-white">
+        <div style="position: relative; height: 260px; width: 100%;">
+          <canvas id="inspectionChart"></canvas>
+        </div>
+        <div class="d-flex flex-wrap justify-content-center gap-3 gap-md-4 mt-3 pt-2 border-top small" id="chartLegendArea">
+          <div class="d-flex align-items-center gap-1.5">
+            <span class="badge rounded-pill" style="width:12px; height:12px; background-color:#3F7A4C;"></span>
+            <span class="fw-semibold text-secondary">พร้อมใช้งาน (Ready)</span>
+          </div>
+          <div class="d-flex align-items-center gap-1.5">
+            <span class="badge rounded-pill" style="width:12px; height:12px; background-color:#A04830;"></span>
+            <span class="fw-semibold text-secondary">ไม่พร้อมใช้งาน (Not Ready)</span>
+          </div>
+          <div class="d-flex align-items-center gap-1.5">
+            <span class="badge rounded-pill" style="width:12px; height:12px; background-color:#B49664;"></span>
+            <span class="fw-semibold text-secondary">% ความพร้อมใช้งาน</span>
+          </div>
         </div>
       </div>
     </div>
@@ -454,8 +525,8 @@
           <p class="text-white-50 small mb-0">ระบบบริหารจัดการและตรวจเช็คถังดับเพลิงออนไลน์</p>
         </div>
         <div class="col-12 col-md-4 text-center mb-3 mb-md-0">
-          <a href="check.html" class="btn btn-outline-light btn-sm rounded-pill px-4">
-            <i class="bi bi-clipboard2-check me-1"></i>ไปที่หน้าตรวจเช็คถัง
+          <a href="index.html" class="btn btn-outline-light btn-sm rounded-pill px-4">
+            <i class="bi bi-house-door-fill me-1"></i>กลับสู่หน้าแรก
           </a>
         </div>
         <div class="col-12 col-md-4 text-center text-md-end">
@@ -478,16 +549,24 @@
   <!-- DataTables JS -->
   <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+  <!-- Chart.js for Annual & Monthly Visual Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <!-- SheetJS for Excel Import/Export -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <!-- Application Logic -->
-  <script src="js/initial_data.js?v=20260930_v2"></script>
-  <script src="js/storage.js?v=20260930_v2"></script>
-  <script src="js/auth.js?v=20260930_v2"></script>
+  <script src="js/initial_data.js?v=20261001_v1"></script>
+  <script src="js/storage.js?v=20261001_v1"></script>
+  <script src="js/auth.js?v=20261001_v1"></script>
 
   <script>
     let dataTableInstance = null;
+    let isPastMonthMode = false;
+    let currentSelectedMonthKey = 'current';
+    let activeCardFilter = null;
+    let chartInstance = null;
+    let currentChartMode = 'bar';
+    let yearlyDataCache = null;
 
     function getTankSortKey(val) {
       if (!val) return '';
@@ -499,36 +578,43 @@
       return s;
     }
 
-    async function renderDashboard() {
+    async function renderDashboard(customTanks = null) {
       if (typeof renderNavbarAuth === 'function') renderNavbarAuth();
-      const tanks = await fetchAllTanks();
+      let tanks = [];
+      if (customTanks && Array.isArray(customTanks)) {
+        tanks = customTanks;
+        _memoryTanks = customTanks;
+      } else {
+        tanks = await fetchAllTanks();
+      }
       const currentUser = getCurrentUser();
 
-      // แสดงปุ่มสำหรับ Admin (PermitDo >= 2): เพิ่มถัง, อนุมัติสมาชิก, ส่งออก Excel, นำเข้า Excel, คืนค่าเริ่มต้น
-      if (currentUser && currentUser.PermitDo >= 2) {
-        $('#btnAddTank').removeClass('d-none');
-        $('#btnApprovals').removeClass('d-none');
-        $('#btnExportExcel').removeClass('d-none');
-        $('#btnImportExcel').removeClass('d-none');
-        let pendingCount = 0;
-        try {
-          const res = await fetch('/api/approvals');
-          if (res.ok) {
-            const data = await res.json();
-            if (data && data.pending) pendingCount = data.pending.length;
-          }
-        } catch (e) {}
-        if (pendingCount > 0) {
-          $('#btnApprovalsBadge').text(pendingCount).removeClass('d-none');
-        } else {
-          $('#btnApprovalsBadge').addClass('d-none');
-        }
+      // จัดการปุ่มดำเนินการตามสิทธิ์และโหมดรอบเดือน (ปัจจุบัน vs ประวัติย้อนหลัง)
+      if (isPastMonthMode) {
+        $('#btnAddTank, #btnApprovals, #btnExportExcel, #btnImportExcel, #btnResetDb, #btnGoCheck').addClass('d-none');
       } else {
-        $('#btnAddTank').addClass('d-none');
-        $('#btnApprovals').addClass('d-none');
-        $('#btnExportExcel').addClass('d-none');
-        $('#btnImportExcel').addClass('d-none');
-        $('#btnResetDb').addClass('d-none');
+        $('#btnGoCheck').removeClass('d-none');
+        if (currentUser && currentUser.PermitDo >= 2) {
+          $('#btnAddTank').removeClass('d-none');
+          $('#btnApprovals').removeClass('d-none');
+          $('#btnExportExcel').removeClass('d-none');
+          $('#btnImportExcel').removeClass('d-none');
+          let pendingCount = 0;
+          try {
+            const res = await fetch('/api/approvals');
+            if (res.ok) {
+              const data = await res.json();
+              if (data && data.pending) pendingCount = data.pending.length;
+            }
+          } catch (e) {}
+          if (pendingCount > 0) {
+            $('#btnApprovalsBadge').text(pendingCount).removeClass('d-none');
+          } else {
+            $('#btnApprovalsBadge').addClass('d-none');
+          }
+        } else {
+          $('#btnAddTank, #btnApprovals, #btnExportExcel, #btnImportExcel, #btnResetDb').addClass('d-none');
+        }
       }
 
       // คำนวณสรุปการ์ด 4 ใบ ตามกฎ 30 วัน
@@ -622,25 +708,33 @@
           `;
         }
 
-        // ปุ่มจัดการตามสิทธิ์
-        let actionButtons = `
-          <a href="check.html?tank_id=${encodeURIComponent(tank.FireTank)}" 
-             class="btn btn-success btn-sm py-0 px-2 me-1" title="ตรวจเช็คสภาพถัง">
-            <i class="bi bi-clipboard2-check-fill"></i>
-          </a>
-        `;
-
-        if (currentUser && currentUser.PermitDo >= 2) {
-          actionButtons += `
-            <a href="edit.html?tank_id=${encodeURIComponent(tank.FireTank)}" 
-               class="btn btn-warning btn-sm py-0 px-2 me-1" title="แก้ไขข้อมูล">
-              <i class="bi bi-pencil-fill"></i>
-            </a>
-            <button onclick="handleDeleteTank('${tank.FireTank}')" 
-                    class="btn btn-danger btn-sm py-0 px-2" title="ลบถัง">
-              <i class="bi bi-trash-fill"></i>
-            </button>
+        // ปุ่มจัดการตามสิทธิ์และโหมด
+        let actionButtons = '';
+        if (isPastMonthMode) {
+          actionButtons = `
+            <span class="badge bg-secondary-subtle text-secondary border px-2 py-1 small" title="รอบเดือนนี้ถูกปิดรอบและจัดเก็บถาวรแล้ว (โหมดดูอย่างเดียว ไม่สามารถแก้ไขได้)">
+              <i class="bi bi-lock-fill me-1"></i>ปิดรอบแล้ว
+            </span>
           `;
+        } else {
+          actionButtons = `
+            <a href="check.html?tank_id=${encodeURIComponent(tank.FireTank)}" 
+               class="btn btn-success btn-sm py-0 px-2 me-1" title="ตรวจเช็คสภาพถัง">
+              <i class="bi bi-clipboard2-check-fill"></i>
+            </a>
+          `;
+          if (currentUser && currentUser.PermitDo >= 2) {
+            actionButtons += `
+              <a href="edit.html?tank_id=${encodeURIComponent(tank.FireTank)}" 
+                 class="btn btn-warning btn-sm py-0 px-2 me-1" title="แก้ไขข้อมูล">
+                <i class="bi bi-pencil-fill"></i>
+              </a>
+              <button onclick="handleDeleteTank('${tank.FireTank}')" 
+                      class="btn btn-danger btn-sm py-0 px-2" title="ลบถัง">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            `;
+          }
         }
 
         // data-order สำหรับเรียงลำดับตัวเลขธรรมชาติใน DataTables
@@ -662,8 +756,8 @@
             <td class="small">${tank.Responsible
               ? `<span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle"><i class="bi bi-person-fill me-1"></i>${tank.Responsible}</span>`
               : '<span class="text-muted">—</span>'}</td>
-            <td class="text-center small">${tank.Inuse || '—'}</td>
-            <td class="text-center small">${tank.Lastcheck || '—'}</td>
+            <td class="text-center small">${formatDateOnly(tank.Inuse)}</td>
+            <td class="text-center small">${formatDateOnly(tank.Lastcheck)}</td>
             <td class="text-center">
               ${checkBadgeHtml}
             </td>
@@ -750,6 +844,8 @@
       }
 
       $('#filterType, #filterArea, #filterCheck, #filterReady, #searchInput').off('input change').on('input change', function () {
+        activeCardFilter = null;
+        $('.card-summary').removeClass('card-summary-active');
         if (dataTableInstance) dataTableInstance.draw();
         renderMobileCards();
         updateFilterBadge();
@@ -765,6 +861,8 @@
 
       $('#btnClearFilter').off('click').on('click', function () {
         $('#filterType, #filterArea, #filterCheck, #filterReady, #searchInput').val('');
+        activeCardFilter = null;
+        $('.card-summary').removeClass('card-summary-active');
         if (dataTableInstance) dataTableInstance.draw();
         renderMobileCards();
         updateFilterBadge();
@@ -941,7 +1039,7 @@
                   <div class="col-6">
                     <div class="tank-info-chip">
                       <span class="text-muted d-block" style="font-size:0.7rem;">ตรวจล่าสุด</span>
-                      <strong class="text-dark">${tank.Lastcheck || '—'}</strong>
+                      <strong class="text-dark">${formatDateOnly(tank.Lastcheck)}</strong>
                     </div>
                   </div>
                 </div>
@@ -951,10 +1049,16 @@
                     ${tank.Inspector ? `<span class="badge bg-info-subtle text-info-emphasis"><i class="bi bi-person-check me-1"></i>${tank.Inspector}</span>` : '<span class="text-muted small">ยังไม่มีผู้ตรวจ</span>'}
                   </div>
                   <div class="d-flex align-items-center gap-1.5" onclick="event.stopPropagation();">
-                    <a href="check.html?tank_id=${encodeURIComponent(tank.FireTank)}" class="btn btn-success btn-sm px-3 fw-semibold action-btn-touch">
-                      <i class="bi bi-clipboard2-check-fill me-1"></i>ตรวจ
-                    </a>
-                    ${adminActions}
+                    ${isPastMonthMode ? `
+                      <span class="badge bg-secondary-subtle text-secondary border px-2.5 py-1.5 small" title="รอบเดือนนี้ถูกปิดรอบและจัดเก็บถาวรแล้ว (โหมดดูอย่างเดียว)">
+                        <i class="bi bi-lock-fill me-1"></i>ปิดรอบแล้ว
+                      </span>
+                    ` : `
+                      <a href="check.html?tank_id=${encodeURIComponent(tank.FireTank)}" class="btn btn-success btn-sm px-3 fw-semibold action-btn-touch">
+                        <i class="bi bi-clipboard2-check-fill me-1"></i>ตรวจ
+                      </a>
+                      ${adminActions}
+                    `}
                   </div>
                 </div>
               </div>
@@ -997,6 +1101,8 @@
 
     $(document).ready(function () {
       renderDashboard();
+      populateMonthSelector();
+      loadYearlyChart();
       
       // Update Live Clock
       function updateClock() {
@@ -1010,6 +1116,265 @@
       // Update Current Year in Footer
       $('#currentYear').text(new Date().getFullYear());
     });
+
+    // ─── การคลิกการ์ด 4 ใบเพื่อกรองข้อมูลทันที ───
+    function filterByCard(type) {
+      if (activeCardFilter === type && type !== 'all') {
+        // แตะซ้ำเพื่อยกเลิกการกรอง
+        activeCardFilter = null;
+        $('.card-summary').removeClass('card-summary-active');
+        $('#filterCheck').val('');
+        $('#filterReady').val('');
+      } else {
+        $('.card-summary').removeClass('card-summary-active');
+        activeCardFilter = type;
+        if (type === 'all') {
+          $('#filterCheck').val('');
+          $('#filterReady').val('');
+          $('#cardSummaryTotal').addClass('card-summary-active');
+        } else if (type === 'checked') {
+          $('#filterCheck').val('เช็คแล้ว');
+          $('#filterReady').val('');
+          $('#cardSummaryChecked').addClass('card-summary-active');
+        } else if (type === 'unchecked') {
+          $('#filterCheck').val('ยังไม่เช็ค');
+          $('#filterReady').val('');
+          $('#cardSummaryUnchecked').addClass('card-summary-active');
+        } else if (type === 'not_ready') {
+          $('#filterCheck').val('');
+          $('#filterReady').val('Not Ready');
+          $('#cardSummaryNotReady').addClass('card-summary-active');
+        }
+      }
+
+      if (dataTableInstance) dataTableInstance.draw();
+      renderMobileCards();
+      updateFilterBadge();
+
+      // แสดงไฟบอกสถานะมีตัวกรองทำงาน
+      const hasFilter = $('#filterType').val() || $('#filterArea').val() || $('#filterCheck').val() || $('#filterReady').val() || $('#searchInput').val();
+      if (hasFilter) {
+        $('#activeFilterDot').removeClass('d-none');
+      } else {
+        $('#activeFilterDot').addClass('d-none');
+      }
+
+      // เลื่อนหน้าจอลงไปยังตารางหรือการ์ดแบบนุ่มนวลเมื่อใช้มือถือ
+      const targetElem = document.getElementById('tableViewContainer');
+      if (targetElem && window.innerWidth < 992) {
+        targetElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // ─── จัดการรอบเดือนและการเรียกดูข้อมูลย้อนหลัง ───
+    async function populateMonthSelector() {
+      const select = $('#monthSelect');
+      select.empty();
+      try {
+        const data = await fetchMonthlyList();
+        if (data && data.current) {
+          select.append(`<option value="current" selected>🟢 ${data.current.month_label}</option>`);
+        } else {
+          const now = new Date();
+          select.append(`<option value="current" selected>🟢 รอบปัจจุบัน (${now.getFullYear()})</option>`);
+        }
+
+        if (data && data.history && data.history.length > 0) {
+          const optGroup = $('<optgroup label="── ประวัติรอบเดือนที่ผ่านมา (ปิดรอบแล้ว) ──"></optgroup>');
+          data.history.forEach(h => {
+            optGroup.append(`<option value="${h.month_key}">🔒 ${h.month_label} (${h.total_tanks} ถัง)</option>`);
+          });
+          select.append(optGroup);
+        }
+      } catch (e) {
+        console.error('populateMonthSelector error:', e);
+        select.html('<option value="current">🟢 รอบปัจจุบัน</option>');
+      }
+    }
+
+    async function onMonthChange() {
+      const selectedKey = $('#monthSelect').val();
+      currentSelectedMonthKey = selectedKey;
+
+      if (selectedKey === 'current') {
+        isPastMonthMode = false;
+        $('#pastMonthNotice').addClass('d-none');
+        await renderDashboard();
+      } else {
+        isPastMonthMode = true;
+        const res = await fetchMonthSnapshot(selectedKey);
+        if (res && res.success && res.snapshot) {
+          const label = res.snapshot.month_label || selectedKey;
+          $('#pastMonthNoticeTitle').html(`กำลังดูข้อมูลย้อนหลังรอบเดือน <strong>${label}</strong>`);
+          $('#pastMonthNotice').removeClass('d-none');
+          await renderDashboard(res.tanks || []);
+        } else {
+          alert('⚠️ ไม่พบข้อมูลของรอบเดือนที่เลือก');
+          returnToCurrentMonth();
+        }
+      }
+    }
+
+    function returnToCurrentMonth() {
+      $('#monthSelect').val('current');
+      onMonthChange();
+    }
+
+    // ─── แผนภูมิวิเคราะห์ประจำปีและรายเดือน (Chart.js) ───
+    async function loadYearlyChart(year) {
+      try {
+        const curYear = new Date().getFullYear();
+        const y = year || curYear;
+        const data = await fetchYearlyStats(y);
+        if (data && data.months) {
+          yearlyDataCache = data;
+          $('#chartYearLabel').text(data.thai_year || (y + 543));
+          renderInspectionChart();
+        }
+      } catch (e) {
+        console.error('loadYearlyChart error:', e);
+      }
+    }
+
+    function switchChartMode(mode) {
+      currentChartMode = mode;
+      if (mode === 'bar') {
+        $('#btnChartBar').addClass('active');
+        $('#btnChartPercent').removeClass('active');
+        $('#chartModeBadge').text('จำนวนถัง (พร้อม vs ไม่พร้อม)');
+      } else {
+        $('#btnChartPercent').addClass('active');
+        $('#btnChartBar').removeClass('active');
+        $('#chartModeBadge').text('สัดส่วนรายเดือน (%)');
+      }
+      renderInspectionChart();
+    }
+
+    function renderInspectionChart() {
+      if (!yearlyDataCache || !yearlyDataCache.months) return;
+      const ctx = document.getElementById('inspectionChart');
+      if (!ctx) return;
+
+      const labels = yearlyDataCache.months.map(m => m.label);
+
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      if (currentChartMode === 'bar') {
+        const readyData = yearlyDataCache.months.map(m => m.ready);
+        const notReadyData = yearlyDataCache.months.map(m => m.not_ready);
+
+        chartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'พร้อมใช้งาน (ถัง)',
+                data: readyData,
+                backgroundColor: '#3F7A4C',
+                borderRadius: 4,
+                maxBarThickness: 28
+              },
+              {
+                label: 'ไม่พร้อมใช้งาน (ถัง)',
+                data: notReadyData,
+                backgroundColor: '#A04830',
+                borderRadius: 4,
+                maxBarThickness: 28
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: 'index',
+              intersect: false
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return ` ${context.dataset.label}: ${context.raw} ถัง`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: { grid: { display: false } },
+              y: {
+                beginAtZero: true,
+                ticks: { precision: 0 },
+                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+              }
+            }
+          }
+        });
+      } else {
+        // Percent Mode (%)
+        const readyPct = yearlyDataCache.months.map(m => m.percent_ready);
+        const notReadyPct = yearlyDataCache.months.map(m => m.percent_not_ready);
+
+        chartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'พร้อมใช้งาน (%)',
+                data: readyPct,
+                backgroundColor: 'rgba(63, 122, 76, 0.85)',
+                borderColor: '#3F7A4C',
+                borderWidth: 1,
+                borderRadius: 4,
+                maxBarThickness: 28
+              },
+              {
+                label: 'ไม่พร้อมใช้งาน (%)',
+                data: notReadyPct,
+                backgroundColor: 'rgba(160, 72, 48, 0.85)',
+                borderColor: '#A04830',
+                borderWidth: 1,
+                borderRadius: 4,
+                maxBarThickness: 28
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: 'index',
+              intersect: false
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return ` ${context.dataset.label}: ${context.raw}%`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: { grid: { display: false } },
+              y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                  callback: function(val) { return val + '%'; }
+                },
+                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+              }
+            }
+          }
+        });
+      }
+    }
 
     // ─── Modal: แสดงรายละเอียดถัง ───
     function openTankDetailModal(fireTankId) {
@@ -1027,15 +1392,16 @@
       $('#mdWeight').text(tank['Weight (lb)'] || '—');
       $('#mdArea').text(tank.Area || '—');
       $('#mdResponsible').text(tank.Responsible || '—');
-      $('#mdInuse').text(tank.Inuse || '—');
+      $('#mdInuse').text(formatDateOnly(tank.Inuse));
       $('#mdExptank').text(tank.Exptank || '—');
       $('#mdInspector').text(tank.Inspector || '—');
 
       // วันตรวจล่าสุด + badge 30 วัน
+      const formattedLastcheck = formatDateOnly(tank.Lastcheck);
       if (isExpired) {
-        $('#mdLastcheck').html(`${tank.Lastcheck || '—'} <span class="badge bg-warning text-white ms-1" style="font-size:0.7rem;"><i class="bi bi-clock-history me-1"></i>ครบ 30 วันแล้ว</span>`);
+        $('#mdLastcheck').html(`${formattedLastcheck} <span class="badge bg-warning text-white ms-1" style="font-size:0.7rem;"><i class="bi bi-clock-history me-1"></i>ครบ 30 วันแล้ว</span>`);
       } else {
-        $('#mdLastcheck').text(tank.Lastcheck || '—');
+        $('#mdLastcheck').text(formattedLastcheck);
       }
 
       // Badge สถานะการตรวจ
@@ -1077,15 +1443,18 @@
         $('#mdPicArea').attr('src', noImg);
       }
 
-      // ปุ่มตรวจ
-      $('#mdBtnCheck').attr('href', `check.html?tank_id=${encodeURIComponent(tank.FireTank)}`);
-
-      // ปุ่มแก้ไข (เฉพาะ P2+)
-      const user = getCurrentUser();
-      if (user && user.PermitDo >= 2) {
-        $('#mdBtnEdit').attr('href', `edit.html?tank_id=${encodeURIComponent(tank.FireTank)}`).removeClass('d-none');
-      } else {
+      // ปุ่มตรวจและแก้ไข
+      if (isPastMonthMode) {
+        $('#mdBtnCheck').addClass('d-none');
         $('#mdBtnEdit').addClass('d-none');
+      } else {
+        $('#mdBtnCheck').removeClass('d-none').attr('href', `check.html?tank_id=${encodeURIComponent(tank.FireTank)}`);
+        const user = getCurrentUser();
+        if (user && user.PermitDo >= 2) {
+          $('#mdBtnEdit').attr('href', `edit.html?tank_id=${encodeURIComponent(tank.FireTank)}`).removeClass('d-none');
+        } else {
+          $('#mdBtnEdit').addClass('d-none');
+        }
       }
 
       const modal = new bootstrap.Modal(document.getElementById('tankDetailModal'));
