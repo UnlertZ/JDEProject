@@ -473,7 +473,7 @@ export default {
               const checked = tankRows.filter(t => t.Tankcheck === 'เช็คแล้ว').length;
               const notChecked = total - checked;
               const ready = tankRows.filter(t => t.ReadyorNot === 'Ready' && t.TankStatus).length;
-              const notReady = total - ready;
+              const notReady = tankRows.filter(t => t.ReadyorNot === 'Not Ready' || !t.TankStatus).length;
               const snapJson = JSON.stringify(tankRows);
               const archDate = `${prevYear}-${String(prevMonth).padStart(2, '0')}-30 23:59:59`;
 
@@ -530,7 +530,7 @@ export default {
         // 6.3 /api/history/yearly — ข้อมูล 12 เดือนสำหรับกราฟแท่งและกราฟเปอร์เซ็นต์
         if (pathname === '/api/history/yearly') {
           const yearParam = parseInt(url.searchParams.get('year') || curYear, 10);
-          const qYear = await env.DB.prepare('SELECT month_key, total_tanks, ready_tanks, not_ready_tanks, checked_tanks FROM monthly_snapshots WHERE month_key LIKE ?').bind(`${yearParam}-%`).all().catch(() => ({ results: [] }));
+          const qYear = await env.DB.prepare('SELECT month_key, total_tanks, ready_tanks, not_ready_tanks, checked_tanks, not_checked_tanks FROM monthly_snapshots WHERE month_key LIKE ?').bind(`${yearParam}-%`).all().catch(() => ({ results: [] }));
           const snapMap = {};
           (qYear.results || []).forEach(r => {
             snapMap[r.month_key] = r;
@@ -538,16 +538,19 @@ export default {
 
           let currentTankStats = null;
           if (yearParam === curYear) {
-            const liveTanksQ = await env.DB.prepare('SELECT ready_or_not, tank_status, tankcheck, lastcheck FROM tanks').all().catch(() => ({ results: [] }));
-            const liveTanks = liveTanksQ.results || [];
+            const liveTanksQ = await env.DB.prepare('SELECT * FROM tanks').all().catch(() => ({ results: [] }));
+            const liveTanks = (liveTanksQ.results || []).map(formatTankResponse);
             const tot = liveTanks.length;
-            const rdy = liveTanks.filter(t => t.ready_or_not === 'Ready' && Boolean(t.tank_status)).length;
-            const chk = liveTanks.filter(t => t.tankcheck === 'เช็คแล้ว').length;
+            const rdy = liveTanks.filter(t => t.ReadyorNot === 'Ready' && t.TankStatus).length;
+            const notRdy = liveTanks.filter(t => t.ReadyorNot === 'Not Ready' || !t.TankStatus).length;
+            const chk = liveTanks.filter(t => t.Tankcheck === 'เช็คแล้ว').length;
+            const notChk = tot - chk;
             currentTankStats = {
               total_tanks: tot,
               ready_tanks: rdy,
-              not_ready_tanks: tot - rdy,
-              checked_tanks: chk
+              not_ready_tanks: notRdy,
+              checked_tanks: chk,
+              not_checked_tanks: notChk
             };
           }
 
@@ -564,9 +567,12 @@ export default {
             const ready = stat ? stat.ready_tanks : 0;
             const notReady = stat ? stat.not_ready_tanks : 0;
             const checked = stat ? stat.checked_tanks : 0;
+            const notChecked = stat ? (stat.not_checked_tanks !== undefined ? stat.not_checked_tanks : (total - checked)) : 0;
+
             const pctReady = total > 0 ? Math.round((ready / total) * 100) : 0;
             const pctNotReady = total > 0 ? Math.round((notReady / total) * 100) : 0;
             const pctChecked = total > 0 ? Math.round((checked / total) * 100) : 0;
+            const pctNotChecked = total > 0 ? Math.round((notChecked / total) * 100) : 0;
 
             monthsData.push({
               month: m,
@@ -577,9 +583,11 @@ export default {
               ready: ready,
               not_ready: notReady,
               checked: checked,
+              not_checked: notChecked,
               percent_ready: pctReady,
               percent_not_ready: pctNotReady,
               percent_checked: pctChecked,
+              percent_not_checked: pctNotChecked,
               has_data: Boolean(stat)
             });
           }
