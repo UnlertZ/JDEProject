@@ -117,6 +117,9 @@
             <i class="bi bi-upload me-1"></i>นำเข้า
             <input type="file" id="excelFileInput" accept=".xlsx, .xls" class="d-none" onchange="handleExcelImport(event)">
           </label>
+          <button id="btnQuickSeedMonth" onclick="openQuickSeedModal()" class="btn btn-outline-primary shadow-sm action-btn-touch rounded-pill d-none" title="เพิ่มข้อมูลย้อนหลังเข้า Database แบบรวดเร็ว (สิทธิ์ P3)">
+            <i class="bi bi-calendar-plus-fill me-1"></i>เพิ่มข้อมูลย้อนหลัง
+          </button>
           <button id="btnResetDb" onclick="resetDatabase()" class="btn btn-outline-danger shadow-sm action-btn-touch rounded-pill d-none" title="คืนค่าเริ่มต้น">
             <i class="bi bi-arrow-counterclockwise"></i>
           </button>
@@ -361,6 +364,7 @@
                   <option value="">ความพร้อม</option>
                   <option value="Ready">พร้อมใช้งาน</option>
                   <option value="Not Ready">ไม่พร้อมใช้งาน</option>
+                  <option value="Pending">รอการตรวจ</option>
                 </select>
               </div>
             </div>
@@ -512,6 +516,115 @@
     </div>
   </div>
 
+  <!-- Modal: เพิ่มข้อมูลประวัติย้อนหลังเข้า Database (สิทธิ์ P3) -->
+  <div class="modal fade" id="quickSeedModal" tabindex="-1" aria-labelledby="quickSeedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
+        <div class="modal-header text-white border-0 py-3" style="background: linear-gradient(135deg, #1b2838 0%, #0d6efd 100%) !important;">
+          <h5 class="modal-title fw-bold fs-6 d-flex align-items-center gap-2" id="quickSeedModalLabel">
+            <i class="bi bi-database-fill-add text-warning"></i>
+            <span>เพิ่มข้อมูลประวัติย้อนหลัง (Super Admin P3)</span>
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="text-secondary small mb-3">
+            เลือกเดือน/ปี (MM/YYYY) ที่ต้องการเติม ระบบจะสร้าง Snapshot ข้อมูลถังดับเพลิงทั้งหมดที่มีใน Database ให้ทันทีอย่างสะดวกรวดเร็ว
+          </p>
+
+          <form id="quickSeedForm" onsubmit="handleQuickSeedSubmit(event)">
+            <div class="row g-2 mb-3">
+              <div class="col-7">
+                <label for="quickSeedMonth" class="form-label fw-semibold small text-dark mb-1">
+                  <i class="bi bi-calendar-month text-danger me-1"></i>เดือนที่ต้องการเติม <span class="text-danger">*</span>
+                </label>
+                <select id="quickSeedMonth" class="form-select form-select-sm" required>
+                  <option value="01">01 - มกราคม</option>
+                  <option value="02">02 - กุมภาพันธ์</option>
+                  <option value="03">03 - มีนาคม</option>
+                  <option value="04">04 - เมษายน</option>
+                  <option value="05">05 - พฤษภาคม</option>
+                  <option value="06">06 - มิถุนายน</option>
+                  <option value="07">07 - กรกฎาคม</option>
+                  <option value="08">08 - สิงหาคม</option>
+                  <option value="09">09 - กันยายน</option>
+                  <option value="10">10 - ตุลาคม</option>
+                  <option value="11">11 - พฤศจิกายน</option>
+                  <option value="12">12 - ธันวาคม</option>
+                </select>
+              </div>
+              <div class="col-5">
+                <label for="quickSeedYear" class="form-label fw-semibold small text-dark mb-1">
+                  <i class="bi bi-calendar-event text-danger me-1"></i>ปี (ค.ศ.) <span class="text-danger">*</span>
+                </label>
+                <select id="quickSeedYear" class="form-select form-select-sm" required>
+                  <option value="2026" selected>2026 (2569)</option>
+                  <option value="2025">2025 (2568)</option>
+                  <option value="2024">2024 (2567)</option>
+                  <option value="2027">2027 (2570)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small text-dark mb-1">
+                <i class="bi bi-shield-check text-success me-1"></i>รูปแบบข้อมูลการตรวจเช็ค <span class="text-danger">*</span>
+              </label>
+              <div class="p-3 rounded-3 border bg-light">
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="radio" name="seedMode" id="seedMode100" value="100_percent" checked onchange="toggleSeedCustomFields()">
+                  <label class="form-check-label fw-semibold small text-success" for="seedMode100">
+                    <i class="bi bi-check-all me-1"></i>ตรวจครบ 100% และพร้อมใช้งาน 100% (แนะนำ)
+                  </label>
+                  <div class="small text-muted ps-4" style="font-size:0.75rem;">
+                    ถังทั้งหมดในระบบจะมีสถานะ "เช็คแล้ว" และ "พร้อมใช้งาน" ทุกใบในเดือนนั้น
+                  </div>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="seedMode" id="seedModeCustom" value="custom" onchange="toggleSeedCustomFields()">
+                  <label class="form-check-label fw-semibold small text-dark" for="seedModeCustom">
+                    <i class="bi bi-sliders me-1"></i>กำหนดสัดส่วนจำนวนถังเอง
+                  </label>
+                </div>
+                <div id="seedCustomFields" class="row g-2 mt-2 ps-4 d-none">
+                  <div class="col-6">
+                    <label class="small text-muted mb-0">พร้อมใช้งาน (ถัง)</label>
+                    <input type="number" id="seedReadyCount" class="form-control form-control-sm" min="0" value="116">
+                  </div>
+                  <div class="col-6">
+                    <label class="small text-muted mb-0">ไม่พร้อมใช้งาน (ถัง)</label>
+                    <input type="number" id="seedNotReadyCount" class="form-control form-control-sm" min="0" value="0">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="quickSeedInspector" class="form-label fw-semibold small text-dark mb-1">
+                <i class="bi bi-person-badge text-primary me-1"></i>ชื่อผู้ตรวจเช็ค
+              </label>
+              <input type="text" id="quickSeedInspector" class="form-control form-control-sm" value="SHE" placeholder="เช่น SHE, จป.วิชาชีพ">
+            </div>
+
+            <div class="alert alert-info py-2 px-3 small rounded-3 mb-3 d-flex align-items-center gap-2">
+              <i class="bi bi-info-circle-fill text-primary fs-5 flex-shrink-0"></i>
+              <div style="font-size:0.78rem;">ข้อมูลจะถูกบันทึกเป็น Snapshot ประจำเดือนใน Cloudflare Database ทันที สามารถเรียกดูได้จากเมนูเลือกรอบเดือนและกราฟ</div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+              <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">
+                <i class="bi bi-x-circle me-1"></i>ยกเลิก
+              </button>
+              <button type="submit" id="btnSubmitQuickSeed" class="btn btn-primary btn-sm rounded-pill px-4 fw-semibold shadow-xs">
+                <i class="bi bi-save2 me-1"></i>บันทึกลง Database
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="bg-dark text-white py-4 mt-5 shadow-lg border-top border-danger border-3">
     <div class="container-fluid px-4">
@@ -592,7 +705,7 @@
 
       // จัดการปุ่มดำเนินการตามสิทธิ์และโหมดรอบเดือน (ปัจจุบัน vs ประวัติย้อนหลัง)
       if (isPastMonthMode) {
-        $('#btnAddTank, #btnApprovals, #btnExportExcel, #btnDownloadImagesZip, #btnImportExcel, #btnResetDb, #btnGoCheck').addClass('d-none');
+        $('#btnAddTank, #btnApprovals, #btnExportExcel, #btnDownloadImagesZip, #btnImportExcel, #btnResetDb, #btnQuickSeedMonth, #btnGoCheck').addClass('d-none');
       } else {
         $('#btnGoCheck').removeClass('d-none');
         if (currentUser && currentUser.PermitDo >= 2) {
@@ -601,6 +714,13 @@
           $('#btnExportExcel').removeClass('d-none');
           $('#btnDownloadImagesZip').removeClass('d-none');
           $('#btnImportExcel').removeClass('d-none');
+          if (currentUser.PermitDo >= 3) {
+            $('#btnResetDb').removeClass('d-none');
+            $('#btnQuickSeedMonth').removeClass('d-none');
+          } else {
+            $('#btnResetDb').addClass('d-none');
+            $('#btnQuickSeedMonth').addClass('d-none');
+          }
           let pendingCount = 0;
           try {
             const res = await fetch('/api/approvals');
@@ -615,7 +735,7 @@
             $('#btnApprovalsBadge').addClass('d-none');
           }
         } else {
-          $('#btnAddTank, #btnApprovals, #btnExportExcel, #btnDownloadImagesZip, #btnImportExcel, #btnResetDb').addClass('d-none');
+          $('#btnAddTank, #btnApprovals, #btnExportExcel, #btnDownloadImagesZip, #btnImportExcel, #btnResetDb, #btnQuickSeedMonth').addClass('d-none');
         }
       }
 
@@ -625,7 +745,9 @@
         ? tanks.filter(t => t.Tankcheck === 'เช็คแล้ว').length
         : tanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(t.Lastcheck)).length;
       const notChecked = total - checked;
-      const notReady = tanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && (t.ReadyorNot === 'Not Ready' || !t.TankStatus)).length;
+      const notReady = isPastMonthMode
+        ? tanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && (t.ReadyorNot === 'Not Ready' || !t.TankStatus)).length
+        : tanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(t.Lastcheck) && (t.ReadyorNot === 'Not Ready' || !t.TankStatus)).length;
 
       $('#cardTotal').text(total);
       $('#cardChecked').text(checked);
@@ -679,6 +801,7 @@
           ? (tank.Tankcheck === 'เช็คแล้ว') 
           : (tank.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(tank.Lastcheck));
         const isReady = isChecked && tank.ReadyorNot === 'Ready' && tank.TankStatus;
+        const isNotReady = isChecked && (tank.ReadyorNot === 'Not Ready' || !tank.TankStatus);
 
         // ป้ายสถานะการตรวจ
         let checkBadgeHtml = '';
@@ -688,10 +811,10 @@
           checkBadgeHtml = '<span class="badge rounded-pill bg-warning text-white" title="ยังไม่ได้ตรวจรอบเดือนนี้ (เช็คใหม่ทุกต้นเดือน)"><i class="bi bi-clock me-1"></i>ยังไม่ได้ตรวจ</span>';
         }
 
-        // ป้ายความพร้อมใช้งาน (Requirement 2: เมื่อยังไม่ตรวจต้องขึ้นว่ายังไม่พร้อมใช้งาน)
+        // ป้ายความพร้อมใช้งาน (เมื่อยังไม่ได้ตรวจ ให้แสดงว่า "รอตรวจ")
         let readyBadgeHtml = '';
         if (!isChecked) {
-          readyBadgeHtml = '<span class="badge rounded-pill bg-danger" title="ยังไม่ได้ตรวจรอบเดือนนี้ จึงยังไม่พร้อมใช้งาน"><i class="bi bi-x-circle me-1"></i>ยังไม่พร้อมใช้งาน</span>';
+          readyBadgeHtml = '<span class="badge rounded-pill bg-warning-subtle text-dark border border-warning-subtle" title="ยังไม่ได้ตรวจรอบเดือนนี้ รอการเข้าตรวจ"><i class="bi bi-clock me-1"></i>รอตรวจ</span>';
         } else if (isReady) {
           readyBadgeHtml = '<span class="badge rounded-pill bg-success" title="ผ่านการตรวจรอบเดือนนี้ สภาพสมบูรณ์พร้อมใช้"><i class="bi bi-check-circle me-1"></i>พร้อม</span>';
         } else {
@@ -751,12 +874,13 @@
 
         // data-order สำหรับเรียงลำดับตัวเลขธรรมชาติใน DataTables
         const sortKey = getTankSortKey(tank.FireTank);
+        const readyDataVal = !isChecked ? 'Pending' : (isReady ? 'Ready' : 'Not Ready');
 
         const tr = `
           <tr data-type="${tank.Types || ''}" 
               data-area="${tank.Area || ''}" 
               data-check="${isChecked ? 'เช็คแล้ว' : 'ยังไม่เช็ค'}" 
-              data-ready="${!isChecked ? 'Not Ready' : (isReady ? 'Ready' : 'Not Ready')}"
+              data-ready="${readyDataVal}"
               data-tank-id="${tank.FireTank}"
               style="cursor:pointer;"
               title="คลิกเพื่อดูรายละเอียดถัง ${tank.FireTank}">
@@ -960,7 +1084,7 @@
           : (tank.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(tank.Lastcheck));
         const checkStatus = isChecked ? 'เช็คแล้ว' : 'ยังไม่เช็ค';
         const isReady = isChecked && tank.ReadyorNot === 'Ready' && tank.TankStatus;
-        const readyStatus = !isChecked ? 'Not Ready' : (isReady ? 'Ready' : 'Not Ready');
+        const readyStatus = !isChecked ? 'Pending' : (isReady ? 'Ready' : 'Not Ready');
 
         if (selType && tank.Types !== selType) return false;
         if (selArea && tank.Area !== selArea) return false;
@@ -996,11 +1120,11 @@
 
         let readyBadge = '';
         if (!isChecked) {
-          readyBadge = '<span class="badge rounded-pill bg-danger" title="ยังไม่ได้ตรวจรอบเดือนนี้ จึงยังไม่พร้อมใช้งาน"><i class="bi bi-x-circle me-1"></i>ยังไม่พร้อมใช้งาน</span>';
+          readyBadge = '<span class="badge rounded-pill bg-warning-subtle text-dark border border-warning-subtle" title="ยังไม่ได้ตรวจรอบเดือนนี้ รอการเข้าตรวจ"><i class="bi bi-clock me-1"></i>รอตรวจ</span>';
         } else if (isReady) {
-          readyBadge = '<span class="badge rounded-pill bg-success"><i class="bi bi-check-circle me-1"></i>พร้อม</span>';
+          readyBadge = '<span class="badge rounded-pill bg-success" title="ผ่านการตรวจรอบเดือนนี้ สภาพสมบูรณ์พร้อมใช้"><i class="bi bi-check-circle me-1"></i>พร้อม</span>';
         } else {
-          readyBadge = '<span class="badge rounded-pill bg-danger"><i class="bi bi-x-circle me-1"></i>ไม่พร้อม</span>';
+          readyBadge = '<span class="badge rounded-pill bg-danger" title="พบข้อบกพร่อง ไม่พร้อมใช้งาน"><i class="bi bi-x-circle me-1"></i>ไม่พร้อม</span>';
         }
 
         let picHtml = '';
@@ -1478,16 +1602,16 @@
         if (selectedPieMonthKey === 'current') {
           const allTanks = getAllTanks();
           totalVal = allTanks.length;
-          notReadyVal = allTanks.filter(t => t.ReadyorNot === 'Not Ready' || !t.TankStatus).length;
-          notCheckedVal = allTanks.filter(t => (t.Tankcheck !== 'เช็คแล้ว' || !isCheckedInCurrentMonth(t.Lastcheck)) && t.ReadyorNot !== 'Not Ready' && t.TankStatus).length;
-          checkedVal = Math.max(0, totalVal - notReadyVal - notCheckedVal);
+          checkedVal = allTanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(t.Lastcheck) && t.ReadyorNot === 'Ready' && t.TankStatus).length;
+          notReadyVal = allTanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(t.Lastcheck) && (t.ReadyorNot === 'Not Ready' || !t.TankStatus)).length;
+          notCheckedVal = allTanks.filter(t => t.Tankcheck !== 'เช็คแล้ว' || !isCheckedInCurrentMonth(t.Lastcheck)).length;
         } else {
           const mData = yearlyDataCache.months.find(m => m.month_key === selectedPieMonthKey);
           if (mData) {
             totalVal = mData.total;
+            checkedVal = mData.ready;
             notReadyVal = mData.not_ready;
             notCheckedVal = mData.not_checked;
-            checkedVal = Math.max(0, totalVal - notReadyVal - notCheckedVal);
           }
         }
 
@@ -1621,9 +1745,9 @@
         $('#mdTankcheck').html('<span class="badge rounded-pill bg-warning text-white"><i class="bi bi-clock me-1"></i>ยังไม่ได้ตรวจรอบเดือนนี้</span>');
       }
 
-      // Badge พร้อม/ไม่พร้อม (Requirement 2: เมื่อยังไม่ตรวจต้องขึ้นว่ายังไม่พร้อมใช้งาน)
+      // Badge พร้อม/ไม่พร้อม
       if (!isChecked) {
-        $('#mdReadyorNot').html('<span class="badge rounded-pill bg-danger"><i class="bi bi-x-circle me-1"></i>ยังไม่พร้อมใช้งาน</span>');
+        $('#mdReadyorNot').html('<span class="badge rounded-pill bg-warning-subtle text-dark border border-warning-subtle"><i class="bi bi-clock me-1"></i>รอตรวจรอบเดือนนี้</span>');
       } else if (isReady) {
         $('#mdReadyorNot').html('<span class="badge rounded-pill bg-success"><i class="bi bi-check-circle me-1"></i>พร้อมใช้งาน</span>');
       } else {
@@ -1669,6 +1793,82 @@
 
       const modal = new bootstrap.Modal(document.getElementById('tankDetailModal'));
       modal.show();
+    }
+
+    // ─── ฟังก์ชันสำหรับ Super Admin (P3): เพิ่มข้อมูลย้อนหลังเข้า Database ───
+    function openQuickSeedModal() {
+      const user = getCurrentUser();
+      if (!user || user.PermitDo < 3) {
+        alert('⚠️ เฉพาะผู้ดูแลระบบระดับ Super Admin (P3) เท่านั้นที่สามารถเพิ่มข้อมูลย้อนหลังได้');
+        return;
+      }
+      const total = getAllTanks().length || 116;
+      $('#seedReadyCount').val(total);
+      $('#seedNotReadyCount').val(0);
+      $('#seedMode100').prop('checked', true);
+      toggleSeedCustomFields();
+      const modal = new bootstrap.Modal(document.getElementById('quickSeedModal'));
+      modal.show();
+    }
+
+    function toggleSeedCustomFields() {
+      const mode = $('input[name="seedMode"]:checked').val();
+      if (mode === 'custom') {
+        $('#seedCustomFields').removeClass('d-none');
+      } else {
+        $('#seedCustomFields').addClass('d-none');
+      }
+    }
+
+    async function handleQuickSeedSubmit(e) {
+      e.preventDefault();
+      const user = getCurrentUser();
+      if (!user || user.PermitDo < 3) {
+        alert('⚠️ เฉพาะผู้ดูแลระบบระดับ Super Admin (P3) เท่านั้น');
+        return;
+      }
+
+      const mm = $('#quickSeedMonth').val();
+      const yyyy = $('#quickSeedYear').val();
+      const monthKey = `${yyyy}-${mm}`;
+      const mode = $('input[name="seedMode"]:checked').val();
+      const inspector = $('#quickSeedInspector').val() || 'SHE';
+      const readyCount = parseInt($('#seedReadyCount').val() || '0', 10);
+      const notReadyCount = parseInt($('#seedNotReadyCount').val() || '0', 10);
+
+      const btn = $('#btnSubmitQuickSeed');
+      btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>กำลังบันทึก...');
+
+      try {
+        const res = await fetch('/api/history/seed-month', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            monthKey,
+            mode,
+            inspector,
+            readyCount,
+            notReadyCount,
+            requestorPermitDo: user.PermitDo
+          })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          alert(`✅ ${data.message}`);
+          const modalInstance = bootstrap.Modal.getInstance(document.getElementById('quickSeedModal'));
+          if (modalInstance) modalInstance.hide();
+          await populateMonthSelector();
+          await loadYearlyChart(parseInt(yyyy, 10));
+          $('#monthSelect').val(monthKey);
+          onMonthChange();
+        } else {
+          alert(`❌ ไม่สามารถบันทึกได้: ${data.message || 'Error'}`);
+        }
+      } catch (err) {
+        alert(`❌ เกิดข้อผิดพลาด: ${err.message}`);
+      } finally {
+        btn.prop('disabled', false).html('<i class="bi bi-save2 me-1"></i>บันทึกลง Database');
+      }
     }
   </script>
 </body>

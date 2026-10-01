@@ -210,11 +210,6 @@ function applyMonthlyCycleRule(tank) {
       tank.IsExpiredMonth = true;
     }
   }
-  // Requirement 2: เมื่อยังไม่ตรวจต้องขึ้นว่ายังไม่พร้อมใช้งาน
-  if (tank.Tankcheck !== 'เช็คแล้ว' || !isCheckedInCurrentMonth(tank.Lastcheck)) {
-    tank.ReadyorNot = 'Not Ready';
-    tank.TankStatus = false;
-  }
   return tank;
 }
 

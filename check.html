@@ -343,14 +343,14 @@
 
       const readyBadge = $('#infoReady');
       if (!isChecked) {
-        readyBadge.text('ยังไม่พร้อมใช้งาน');
-        readyBadge.removeClass('bg-success bg-secondary').addClass('bg-danger');
+        readyBadge.text('รอตรวจรอบเดือนนี้');
+        readyBadge.removeClass('bg-success bg-danger bg-secondary').addClass('bg-warning text-dark');
       } else if (tank.ReadyorNot === 'Ready') {
         readyBadge.text('พร้อมใช้งาน');
-        readyBadge.removeClass('bg-danger bg-secondary').addClass('bg-success');
+        readyBadge.removeClass('bg-danger bg-warning text-dark bg-secondary').addClass('bg-success text-white');
       } else {
         readyBadge.text('ไม่พร้อมใช้งาน');
-        readyBadge.removeClass('bg-success bg-secondary').addClass('bg-danger');
+        readyBadge.removeClass('bg-success bg-warning text-dark bg-secondary').addClass('bg-danger text-white');
       }
 
       let picSrc = 'https://placehold.co/80x80?text=No+Pic';
