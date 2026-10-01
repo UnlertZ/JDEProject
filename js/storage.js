@@ -210,6 +210,11 @@ function applyMonthlyCycleRule(tank) {
       tank.IsExpiredMonth = true;
     }
   }
+  // Requirement 2: เมื่อยังไม่ตรวจต้องขึ้นว่ายังไม่พร้อมใช้งาน
+  if (tank.Tankcheck !== 'เช็คแล้ว' || !isCheckedInCurrentMonth(tank.Lastcheck)) {
+    tank.ReadyorNot = 'Not Ready';
+    tank.TankStatus = false;
+  }
   return tank;
 }
 
@@ -434,7 +439,10 @@ async function resetDatabase() {
   }
 }
 
-// ─── Export to Excel (.xlsx) ดึงสดจาก Live D1 ───
+const THAI_MONTHS_NAMES = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+const THAI_MONTHS_SHORT_NAMES = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+
+// ─── Export to Excel (.xlsx) ดึงข้อมูลทั้งปีแบบสมบูรณ์ (Requirement 4) ───
 async function exportToExcel() {
   const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
   if (!user || user.PermitDo < 2) {
@@ -447,37 +455,392 @@ async function exportToExcel() {
     return;
   }
 
-  const tanks = await fetchAllTanks();
-  if (tanks.length === 0) {
-    alert('⚠️ ไม่มีข้อมูลถังในฐานข้อมูล หรือไม่สามารถเชื่อมต่อ Cloudflare D1 ได้');
+  const $btn = typeof $ !== 'undefined' ? $('#btnExportExcel') : null;
+  const origHtml = $btn ? $btn.html() : '';
+  if ($btn) {
+    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>กำลังดึงข้อมูลทั้งปี...');
+  }
+
+  try {
+    const curYear = new Date().getFullYear();
+    const curMonth = new Date().getMonth() + 1;
+    const curMonthKey = `${curYear}-${String(curMonth).padStart(2, '0')}`;
+
+    // 1. ดึงสถิติ 12 เดือนประจำปี
+    const yearlyStats = await fetchYearlyStats(curYear);
+    const thaiYear = yearlyStats?.thai_year || (curYear + 543);
+
+    // 2. ดึงรายการรอบเดือนที่มีในระบบ
+    const monthList = await fetchMonthlyList();
+    const historyMonths = (monthList?.history || []).filter(h => h.month_key && h.month_key.startsWith(`${curYear}-`));
+
+    // 3. ดึงข้อมูลถังสดในรอบปัจจุบัน
+    const liveTanks = await fetchAllTanks();
+
+    // 4. ดึงข้อมูล Snapshot ของแต่ละเดือนในรอบปี
+    const monthlySnapshotMap = {};
+    for (const hist of historyMonths) {
+      if ($btn) $btn.html(`<span class="spinner-border spinner-border-sm me-1"></span>ดึงข้อมูล ${hist.month_label}...`);
+      const snapRes = await fetchMonthSnapshot(hist.month_key);
+      if (snapRes && snapRes.success && Array.isArray(snapRes.tanks)) {
+        monthlySnapshotMap[hist.month_key] = {
+          label: hist.month_label,
+          tanks: snapRes.tanks,
+          snapshot: snapRes.snapshot
+        };
+      }
+    }
+
+    const wb = XLSX.utils.book_new();
+
+    // ─── Sheet 1: สรุปภาพรวมสถิติรายปี (Yearly Summary) ───
+    const summaryRows = [];
+    const monthsData = yearlyStats?.months || [];
+    let sumTotal = 0, sumChecked = 0, sumNotChecked = 0, sumReady = 0, sumNotReady = 0;
+
+    monthsData.forEach(m => {
+      const isPast = m.month < curMonth;
+      const isCurrent = m.month === curMonth;
+      const statusText = isCurrent ? 'รอบปัจจุบัน' : (isPast ? 'ปิดรอบแล้ว' : 'ยังไม่ถึงรอบ');
+
+      summaryRows.push({
+        'เดือน': m.full_label || `${m.label} ${thaiYear}`,
+        'จำนวนถังทั้งหมด': m.total || 0,
+        'ตรวจเช็คแล้ว (ถัง)': m.checked || 0,
+        'ยังไม่ได้ตรวจ (ถัง)': m.not_checked || 0,
+        'พร้อมใช้งาน (ถัง)': m.ready || 0,
+        'ไม่พร้อมใช้งาน (ถัง)': m.not_ready || 0,
+        '% การตรวจเช็ค': `${m.percent_checked || 0}%`,
+        '% ความพร้อมใช้งาน': `${m.percent_ready || 0}%`,
+        'สถานะรอบเดือน': statusText
+      });
+
+      if (m.has_data || isPast || isCurrent) {
+        sumTotal += (m.total || 0);
+        sumChecked += (m.checked || 0);
+        sumNotChecked += (m.not_checked || 0);
+        sumReady += (m.ready || 0);
+        sumNotReady += (m.not_ready || 0);
+      }
+    });
+
+    // แถวสรุปรวมทั้งปี
+    summaryRows.push({
+      'เดือน': `รวมทั้งปี ${thaiYear}`,
+      'จำนวนถังทั้งหมด': sumTotal,
+      'ตรวจเช็คแล้ว (ถัง)': sumChecked,
+      'ยังไม่ได้ตรวจ (ถัง)': sumNotChecked,
+      'พร้อมใช้งาน (ถัง)': sumReady,
+      'ไม่พร้อมใช้งาน (ถัง)': sumNotReady,
+      '% การตรวจเช็ค': sumTotal > 0 ? `${Math.round((sumChecked / sumTotal) * 100)}%` : '0%',
+      '% ความพร้อมใช้งาน': sumTotal > 0 ? `${Math.round((sumReady / sumTotal) * 100)}%` : '0%',
+      'สถานะรอบเดือน': 'ภาพรวมประจำปี'
+    });
+
+    const wsSummary = XLSX.utils.json_to_sheet(summaryRows);
+    wsSummary['!cols'] = [
+      { wch: 22 }, { wch: 16 }, { wch: 18 }, { wch: 18 },
+      { wch: 18 }, { wch: 18 }, { wch: 16 }, { wch: 18 }, { wch: 16 }
+    ];
+    XLSX.utils.book_append_sheet(wb, wsSummary, 'สรุปภาพรวมรายปี');
+
+    // ─── Sheet 2: ฐานข้อมูลการตรวจทั้งปี (Master All-Year Sheet) ───
+    const masterRows = [];
+    let rowSeq = 1;
+
+    for (let m = 1; m <= 12; m++) {
+      const mStr = String(m).padStart(2, '0');
+      const mKey = `${curYear}-${mStr}`;
+      const thaiMonthName = THAI_MONTHS_NAMES[m - 1];
+      const monthLabel = `${thaiMonthName} ${thaiYear}`;
+
+      let monthTanks = [];
+      let isCurrentMonth = false;
+
+      if (mKey === curMonthKey) {
+        monthTanks = liveTanks;
+        isCurrentMonth = true;
+      } else if (monthlySnapshotMap[mKey]) {
+        monthTanks = monthlySnapshotMap[mKey].tanks;
+      }
+
+      if (monthTanks && monthTanks.length > 0) {
+        monthTanks.forEach(t => {
+          const isChecked = isCurrentMonth
+            ? (t.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(t.Lastcheck))
+            : (t.Tankcheck === 'เช็คแล้ว');
+
+          let readinessText = 'ยังไม่พร้อมใช้งาน';
+          if (!isChecked) {
+            readinessText = 'ยังไม่พร้อมใช้งาน';
+          } else if (t.ReadyorNot === 'Ready' && t.TankStatus) {
+            readinessText = 'พร้อมใช้งาน';
+          } else {
+            readinessText = 'ไม่พร้อมใช้งาน';
+          }
+
+          masterRows.push({
+            'ลำดับ': rowSeq++,
+            'รอบเดือน': monthLabel,
+            'รหัสถัง': t.FireTank || '',
+            'ประเภท': t.Types || '',
+            'น้ำหนัก (lb)': t['Weight (lb)'] ?? '',
+            'พื้นที่ติดตั้ง': t.Area || '',
+            'ผู้รับผิดชอบ': t.Responsible || '',
+            'วันที่เริ่มใช้': formatDateOnly(t.Inuse),
+            'วันที่ตรวจล่าสุด': formatDateOnly(t.Lastcheck),
+            'สถานะตรวจ': isChecked ? 'เช็คแล้ว' : 'ยังไม่ได้ตรวจ',
+            'ความพร้อม': readinessText,
+            'อายุถัง': t.Exptank || '',
+            'ผู้ตรวจเช็ค': t.Inspector || '',
+            'หมายเหตุ': t.Remark || ''
+          });
+        });
+      }
+    }
+
+    if (masterRows.length > 0) {
+      const wsMaster = XLSX.utils.json_to_sheet(masterRows);
+      wsMaster['!cols'] = [
+        { wch: 8 }, { wch: 18 }, { wch: 12 }, { wch: 26 }, { wch: 14 },
+        { wch: 22 }, { wch: 18 }, { wch: 14 }, { wch: 16 }, { wch: 14 },
+        { wch: 18 }, { wch: 10 }, { wch: 16 }, { wch: 26 }
+      ];
+      XLSX.utils.book_append_sheet(wb, wsMaster, 'ข้อมูลการตรวจทั้งปี');
+    }
+
+    // ─── Sheet 3..N: แท็บแยกแต่ละเดือนที่มีข้อมูล ───
+    for (let m = 1; m <= 12; m++) {
+      const mStr = String(m).padStart(2, '0');
+      const mKey = `${curYear}-${mStr}`;
+      const shortName = `${THAI_MONTHS_SHORT_NAMES[m - 1]} ${String(thaiYear).slice(-2)}`;
+
+      let mMonthTanks = [];
+      let isCurrentMonth = false;
+
+      if (mKey === curMonthKey) {
+        mMonthTanks = liveTanks;
+        isCurrentMonth = true;
+      } else if (monthlySnapshotMap[mKey]) {
+        mMonthTanks = monthlySnapshotMap[mKey].tanks;
+      }
+
+      if (mMonthTanks && mMonthTanks.length > 0) {
+        const sheetRows = mMonthTanks.map((t, idx) => {
+          const isChecked = isCurrentMonth
+            ? (t.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(t.Lastcheck))
+            : (t.Tankcheck === 'เช็คแล้ว');
+
+          let readinessText = 'ยังไม่พร้อมใช้งาน';
+          if (!isChecked) {
+            readinessText = 'ยังไม่พร้อมใช้งาน';
+          } else if (t.ReadyorNot === 'Ready' && t.TankStatus) {
+            readinessText = 'พร้อมใช้งาน';
+          } else {
+            readinessText = 'ไม่พร้อมใช้งาน';
+          }
+
+          return {
+            'ลำดับ': idx + 1,
+            'รหัสถัง': t.FireTank || '',
+            'ประเภท': t.Types || '',
+            'น้ำหนัก (lb)': t['Weight (lb)'] ?? '',
+            'พื้นที่ติดตั้ง': t.Area || '',
+            'ผู้รับผิดชอบ': t.Responsible || '',
+            'วันที่เริ่มใช้': formatDateOnly(t.Inuse),
+            'วันที่ตรวจล่าสุด': formatDateOnly(t.Lastcheck),
+            'สถานะตรวจ': isChecked ? 'เช็คแล้ว' : 'ยังไม่ได้ตรวจ',
+            'ความพร้อม': readinessText,
+            'อายุถัง': t.Exptank || '',
+            'ผู้ตรวจเช็ค': t.Inspector || '',
+            'หมายเหตุ': t.Remark || ''
+          };
+        });
+
+        const wsMonth = XLSX.utils.json_to_sheet(sheetRows);
+        wsMonth['!cols'] = [
+          { wch: 8 }, { wch: 12 }, { wch: 26 }, { wch: 14 }, { wch: 22 },
+          { wch: 18 }, { wch: 14 }, { wch: 16 }, { wch: 14 }, { wch: 18 },
+          { wch: 10 }, { wch: 16 }, { wch: 26 }
+        ];
+        const tabTitle = isCurrentMonth ? `${shortName} (ปัจจุบัน)` : shortName;
+        XLSX.utils.book_append_sheet(wb, wsMonth, tabTitle.slice(0, 31));
+      }
+    }
+
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10);
+    const filename = `FireTank_รายงานประจำปี_${thaiYear}_${dateStr}.xlsx`;
+    XLSX.writeFile(wb, filename);
+
+    alert(`✅ ส่งออกไฟล์ Excel ข้อมูลประจำปี ${thaiYear} สำเร็จเรียบร้อยแล้ว\n(รวมสรุปภาพรวมรายปี, ข้อมูลทุกรอบเดือน, และแท็บแยกรายเดือน)`);
+  } catch (err) {
+    console.error('exportToExcel error:', err);
+    alert(`เกิดข้อผิดพลาดในการส่งออก Excel: ${err.message}`);
+  } finally {
+    if ($btn) {
+      $btn.prop('disabled', false).html(origHtml);
+    }
+  }
+}
+
+// ─── Download All Tank Images as ZIP (สิทธิ์ Admin P2+) (Requirement 3) ───
+async function downloadAllTankImagesZip() {
+  const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+  if (!user || user.PermitDo < 2) {
+    alert('⚠️ คุณไม่มีสิทธิ์ดาวน์โหลดรูปภาพ (อนุญาตเฉพาะระดับ Admin P2 ขึ้นไป)');
     return;
   }
 
-  const excelRows = tanks.map(t => ({
-    'FireTank': t.FireTank,
-    'Types': t.Types,
-    'Weight (lb)': t['Weight (lb)'],
-    'Area': t.Area,
-    'Inuse': t.Inuse,
-    'Lastcheck': t.Lastcheck,
-    'Tankcheck': t.Tankcheck,
-    'ReadyorNot': t.ReadyorNot,
-    'TankStatus': t.TankStatus,
-    'Exptank': t.Exptank,
-    'PicTank': t.PicTank && t.PicTank.startsWith('data:') ? '[รูปถ่ายใหม่]' : t.PicTank,
-    'PicArea': t.PicArea && t.PicArea.startsWith('data:') ? '[รูปถ่ายใหม่]' : t.PicArea,
-    'Inspector': t.Inspector || '',
-    'Responsible': t.Responsible || '',
-    'Remark': t.Remark || ''
-  }));
+  if (typeof JSZip === 'undefined') {
+    alert('กำลังโหลดไลบรารี ZIP กรุณารอครู่หนึ่งแล้วลองใหม่');
+    return;
+  }
 
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.json_to_sheet(excelRows);
-  XLSX.utils.book_append_sheet(wb, ws, 'FirePump');
+  const $btn = typeof $ !== 'undefined' ? $('#btnDownloadImagesZip') : null;
+  const origHtml = $btn ? $btn.html() : '';
+  if ($btn) {
+    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>กำลังโหลดรายการถัง...');
+  }
 
-  const now = new Date();
-  const filename = `FirePump_D1_Export_${now.toISOString().slice(0, 10)}.xlsx`;
-  XLSX.writeFile(wb, filename);
+  try {
+    const tanks = await fetchAllTanks();
+    if (!tanks || tanks.length === 0) {
+      alert('⚠️ ไม่มีข้อมูลถังในฐานข้อมูล');
+      if ($btn) $btn.prop('disabled', false).html(origHtml);
+      return;
+    }
+
+    const zip = new JSZip();
+    const tankFolder = zip.folder('รูปถังดับเพลิง_tanks');
+    const areaFolder = zip.folder('รูปสถานที่_areas');
+
+    let tankImgCount = 0;
+    let areaImgCount = 0;
+
+    for (let i = 0; i < tanks.length; i++) {
+      const tank = tanks[i];
+      const fireTankId = (tank.FireTank || `TANK_${i + 1}`).trim();
+
+      if ($btn && i % 3 === 0) {
+        $btn.html(`<span class="spinner-border spinner-border-sm me-1"></span>ประมวลผล (${i + 1}/${tanks.length})...`);
+      }
+
+      // 1. PicTank
+      if (tank.PicTank && typeof tank.PicTank === 'string' && tank.PicTank.trim() && tank.PicTank !== '-' && tank.PicTank !== '—') {
+        const picVal = tank.PicTank.trim();
+        try {
+          if (picVal.startsWith('data:')) {
+            const isJpg = picVal.includes('data:image/jpeg') || picVal.includes('data:image/jpg');
+            const ext = isJpg ? 'jpg' : 'png';
+            const base64Data = picVal.split(',')[1];
+            if (base64Data) {
+              tankFolder.file(`${fireTankId}.${ext}`, base64Data, { base64: true });
+              tankImgCount++;
+            }
+          } else {
+            const possibleUrls = [
+              picVal,
+              picVal.startsWith('static/') ? picVal : 'static/' + picVal,
+              picVal.startsWith('/') ? picVal : '/' + picVal
+            ];
+
+            for (const u of possibleUrls) {
+              try {
+                const res = await fetch(u);
+                if (res.ok) {
+                  const blob = await res.blob();
+                  const isJpg = u.toLowerCase().endsWith('.jpg') || u.toLowerCase().endsWith('.jpeg');
+                  const ext = isJpg ? 'jpg' : 'png';
+                  tankFolder.file(`${fireTankId}.${ext}`, blob);
+                  tankImgCount++;
+                  break;
+                }
+              } catch (e) {}
+            }
+          }
+        } catch (e) {
+          console.warn(`Error packaging PicTank for ${fireTankId}:`, e);
+        }
+      }
+
+      // 2. PicArea
+      if (tank.PicArea && typeof tank.PicArea === 'string' && tank.PicArea.trim() && tank.PicArea !== '-' && tank.PicArea !== '—') {
+        const areaVal = tank.PicArea.trim();
+        try {
+          if (areaVal.startsWith('data:')) {
+            const isJpg = areaVal.includes('data:image/jpeg') || areaVal.includes('data:image/jpg');
+            const ext = isJpg ? 'jpg' : 'png';
+            const base64Data = areaVal.split(',')[1];
+            if (base64Data) {
+              areaFolder.file(`${fireTankId}_area.${ext}`, base64Data, { base64: true });
+              areaImgCount++;
+            }
+          } else {
+            const possibleUrls = [
+              areaVal,
+              areaVal.startsWith('static/') ? areaVal : 'static/' + areaVal,
+              areaVal.startsWith('/') ? areaVal : '/' + areaVal
+            ];
+
+            for (const u of possibleUrls) {
+              try {
+                const res = await fetch(u);
+                if (res.ok) {
+                  const blob = await res.blob();
+                  const isJpg = u.toLowerCase().endsWith('.jpg') || u.toLowerCase().endsWith('.jpeg');
+                  const ext = isJpg ? 'jpg' : 'png';
+                  areaFolder.file(`${fireTankId}_area.${ext}`, blob);
+                  areaImgCount++;
+                  break;
+                }
+              } catch (e) {}
+            }
+          }
+        } catch (e) {
+          console.warn(`Error packaging PicArea for ${fireTankId}:`, e);
+        }
+      }
+    }
+
+    const totalImages = tankImgCount + areaImgCount;
+    if (totalImages === 0) {
+      alert('⚠️ ไม่พบไฟล์รูปภาพถังดับเพลิงในฐานข้อมูล');
+      if ($btn) $btn.prop('disabled', false).html(origHtml);
+      return;
+    }
+
+    if ($btn) {
+      $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>กำลังสร้างไฟล์ ZIP...');
+    }
+
+    const zipBlob = await zip.generateAsync({
+      type: 'blob',
+      compression: 'DEFLATE',
+      compressionOptions: { level: 6 }
+    });
+
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10);
+    const filename = `FireTank_Images_All_${dateStr}.zip`;
+
+    const dlLink = document.createElement('a');
+    dlLink.href = URL.createObjectURL(zipBlob);
+    dlLink.download = filename;
+    document.body.appendChild(dlLink);
+    dlLink.click();
+    document.body.removeChild(dlLink);
+    setTimeout(() => URL.revokeObjectURL(dlLink.href), 10000);
+
+    alert(`✅ บีบอัดและดาวน์โหลดรูปภาพเรียบร้อยแล้ว!\n• รูปถังดับเพลิง: ${tankImgCount} รูป\n• รูปสถานที่: ${areaImgCount} รูป\n• รวม: ${totalImages} รูป\n(สามารถเปิดด้วย WinRAR หรือโปรแกรมบีบอัดไฟล์ทุกโปรแกรม)`);
+  } catch (err) {
+    console.error('downloadAllTankImagesZip error:', err);
+    alert(`เกิดข้อผิดพลาดในการดาวน์โหลดรูปภาพ: ${err.message}`);
+  } finally {
+    if ($btn) {
+      $btn.prop('disabled', false).html(origHtml);
+    }
+  }
 }
 
 // ─── Import from Excel (.xlsx) ส่งตรงเข้า D1 ───

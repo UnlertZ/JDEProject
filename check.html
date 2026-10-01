@@ -342,10 +342,14 @@
       $('#weightInput').val(tank['Weight (lb)'] || '');
 
       const readyBadge = $('#infoReady');
-      readyBadge.text(tank.ReadyorNot || '-');
-      if (tank.ReadyorNot === 'Ready') {
+      if (!isChecked) {
+        readyBadge.text('ยังไม่พร้อมใช้งาน');
+        readyBadge.removeClass('bg-success bg-secondary').addClass('bg-danger');
+      } else if (tank.ReadyorNot === 'Ready') {
+        readyBadge.text('พร้อมใช้งาน');
         readyBadge.removeClass('bg-danger bg-secondary').addClass('bg-success');
       } else {
+        readyBadge.text('ไม่พร้อมใช้งาน');
         readyBadge.removeClass('bg-success bg-secondary').addClass('bg-danger');
       }
 

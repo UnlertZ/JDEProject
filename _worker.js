@@ -99,11 +99,17 @@ function formatTankResponse(row) {
     }
   }
 
-  const readyOrNot = get('ready_or_not') || get('ReadyorNot') || 'Not Ready';
+  let readyOrNot = get('ready_or_not') || get('ReadyorNot') || 'Not Ready';
   const tankStatusVal = get('tank_status') ?? get('TankStatus');
-  const tankStatus = (tankStatusVal !== '' && tankStatusVal !== undefined)
+  let tankStatus = (tankStatusVal !== '' && tankStatusVal !== undefined)
     ? Boolean(tankStatusVal)
     : (readyOrNot === 'Ready');
+
+  // Requirement 2: เมื่อยังไม่ตรวจต้องขึ้นว่ายังไม่พร้อมใช้งาน
+  if (tankCheck !== 'เช็คแล้ว') {
+    readyOrNot = 'Not Ready';
+    tankStatus = false;
+  }
 
   let weightVal = get('weight') || get('Weight (lb)') || get('Weight');
   if (weightVal !== '' && weightVal !== null && !isNaN(weightVal)) {
@@ -585,10 +591,10 @@ export default {
             const liveTanksQ = await env.DB.prepare('SELECT * FROM tanks').all().catch(() => ({ results: [] }));
             const liveTanks = (liveTanksQ.results || []).map(formatTankResponse);
             const tot = liveTanks.length;
-            const rdy = liveTanks.filter(t => t.ReadyorNot === 'Ready' && t.TankStatus).length;
-            const notRdy = liveTanks.filter(t => t.ReadyorNot === 'Not Ready' || !t.TankStatus).length;
             const chk = liveTanks.filter(t => t.Tankcheck === 'เช็คแล้ว').length;
             const notChk = tot - chk;
+            const rdy = liveTanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && t.ReadyorNot === 'Ready' && t.TankStatus).length;
+            const notRdy = liveTanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && (t.ReadyorNot === 'Not Ready' || !t.TankStatus)).length;
             currentTankStats = {
               total_tanks: tot,
               ready_tanks: rdy,
