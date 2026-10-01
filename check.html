@@ -395,7 +395,7 @@
     async function previewImage(event) {
       const file = event.target.files[0];
       if (file) {
-        currentUploadedBase64 = await compressImage(file, 1200, 0.75);
+        currentUploadedBase64 = await compressImage(file, 720, 0.6);
         $('#imagePreview').attr('src', currentUploadedBase64);
         $('#imagePreviewContainer').removeClass('d-none');
         $('#imageError').addClass('d-none');

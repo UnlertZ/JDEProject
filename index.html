@@ -71,7 +71,7 @@
             <span class="badge rounded-pill bg-danger px-3 py-1.5 text-white shadow-sm" style="font-size:0.8rem;">
               <i class="bi bi-shield-fill-check me-1"></i>JDE Peet's Safety System
             </span>
-            <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2 py-1.5" style="font-size:0.75rem;">
+            <span id="d1LiveBadge" class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2 py-1.5" style="font-size:0.75rem;">
               <i class="bi bi-circle-fill text-success me-1 pulse-animation" style="font-size:0.5rem;"></i>Cloudflare D1 Live
             </span>
           </div>
@@ -670,9 +670,9 @@
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 
   <!-- Application Logic -->
-  <script src="js/initial_data.js?v=20261001_v2"></script>
-  <script src="js/storage.js?v=20261001_v2"></script>
-  <script src="js/auth.js?v=20261001_v2"></script>
+  <script src="js/initial_data.js?v=20261001_v3"></script>
+  <script src="js/storage.js?v=20261001_v3"></script>
+  <script src="js/auth.js?v=20261001_v3"></script>
 
   <script>
     let dataTableInstance = null;
@@ -700,7 +700,16 @@
         tanks = customTanks;
         _memoryTanks = customTanks;
       } else {
-        tanks = await fetchAllTanks();
+        // Fast-path: ใช้แคชใน memory หรือ localStorage ทันที (โหลดเสร็จใน 0.01 วินาที ไม่ต้องรอ Network)
+        if (!_memoryTanks || _memoryTanks.length === 0) {
+          const cached = getLocalTanksCache();
+          if (cached && cached.length > 0) {
+            _memoryTanks = cached.map(applyThirtyDaysRule);
+            _memoryTanks.sort((a, b) => (a.FireTank || '').localeCompare(b.FireTank || '', undefined, { numeric: true, sensitivity: 'base' }));
+          }
+        }
+        tanks = _memoryTanks && _memoryTanks.length > 0 ? _memoryTanks : await fetchAllTanks();
+        
         // บันทึกรูปภาพอ้างอิงจากถังปัจจุบันไว้ใช้แสดงผลในโหมดประวัติย้อนหลัง
         window._liveTanksReferenceMap = {};
         tanks.forEach(t => {
@@ -732,19 +741,14 @@
             $('#btnResetDb').addClass('d-none');
             $('#btnQuickSeedMonth').addClass('d-none');
           }
-          let pendingCount = 0;
-          try {
-            const res = await fetch('/api/approvals');
-            if (res.ok) {
-              const data = await res.json();
-              if (data && data.pending) pendingCount = data.pending.length;
+          // โหลด pending approvals ในเบื้องหลัง ไม่บล็อกการเรนเดอร์หน้าจอ
+          fetch('/api/approvals').then(res => res.json()).then(data => {
+            if (data && data.pending && data.pending.length > 0) {
+              $('#btnApprovalsBadge').text(data.pending.length).removeClass('d-none');
+            } else {
+              $('#btnApprovalsBadge').addClass('d-none');
             }
-          } catch (e) {}
-          if (pendingCount > 0) {
-            $('#btnApprovalsBadge').text(pendingCount).removeClass('d-none');
-          } else {
-            $('#btnApprovalsBadge').addClass('d-none');
-          }
+          }).catch(() => {});
         } else {
           $('#btnAddTank, #btnApprovals, #btnExportExcel, #btnDownloadImagesZip, #btnImportExcel, #btnResetDb, #btnQuickSeedMonth').addClass('d-none');
         }
@@ -1257,10 +1261,18 @@
     }
 
     $(document).ready(async function () {
-      // 1. โหลดข้อมูลแดชบอร์ดหลักก่อน
+      // 1. เรนเดอร์แดชบอร์ดทันทีจากแคชในเครื่อง (เปิดปุ๊บแสดงผลทันที 0.01 วินาที ไม่ต้องรอ Network)
       await renderDashboard();
 
-      // 2. ทยอยโหลดรอบเดือนและกราฟตามลำดับ เพื่อป้องกันการแย่งคิวใน D1 พร้อมกัน
+      // 2. ซิงค์ข้อมูลล่าสุดจาก Cloudflare D1 ในเบื้องหลัง (Background Live Sync)
+      fetchAllTanks(false).then(liveTanks => {
+        if (liveTanks && liveTanks.length > 0 && !isPastMonthMode) {
+          renderDashboard(liveTanks);
+          $('#d1LiveBadge').html('<i class="bi bi-circle-fill text-success me-1 pulse-animation" style="font-size:0.5rem;"></i>Cloudflare D1 Live');
+        }
+      }).catch(console.error);
+
+      // 3. ทยอยโหลดรอบเดือนและกราฟตามลำดับ เพื่อป้องกันการแย่งคิวใน D1
       setTimeout(() => {
         populateMonthSelector();
         loadYearlyChart();

@@ -215,8 +215,8 @@ function applyMonthlyCycleRule(tank) {
 
 const applyThirtyDaysRule = applyMonthlyCycleRule;
 
-// Helper: บีบอัดรูปภาพก่อนส่งเข้า Cloudflare D1
-function compressImage(file, maxWidth = 1200, quality = 0.75) {
+// Helper: บีบอัดรูปภาพให้กะทัดรัด (720px, 0.6) ก่อนส่งเข้า Cloudflare D1 เพื่อความรวดเร็ว
+function compressImage(file, maxWidth = 720, quality = 0.6) {
   return new Promise((resolve, reject) => {
     if (!file) return resolve(null);
     const reader = new FileReader();
@@ -249,12 +249,17 @@ const TANKS_CACHE_KEY = 'jde_tanks_cache_v2';
 function getLocalTanksCache() {
   try {
     const raw = localStorage.getItem(TANKS_CACHE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : null;
-  } catch (e) {
-    return null;
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {}
+
+  // Fallback เร็วเป็นพิเศษ: ดึงจาก INITIAL_TANKS ในเครื่องทันที (0.01 วินาที) แม้เปิดเว็บครั้งแรก
+  if (typeof INITIAL_TANKS !== 'undefined' && Array.isArray(INITIAL_TANKS) && INITIAL_TANKS.length > 0) {
+    return INITIAL_TANKS;
   }
+  return null;
 }
 
 function setLocalTanksCache(data) {

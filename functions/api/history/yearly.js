@@ -78,7 +78,7 @@ export async function onRequestGet(context) {
 
     let currentTankStats = null;
     if (yearParam === curYear) {
-      const liveTanksQ = await env.DB.prepare('SELECT * FROM tanks').all().catch(() => ({ results: [] }));
+      const liveTanksQ = await env.DB.prepare('SELECT fire_tank, lastcheck, tankcheck, ready_or_not, tank_status FROM tanks').all().catch(() => ({ results: [] }));
       const liveTanks = (liveTanksQ.results || []).map(formatTankResponse);
       const tot = liveTanks.length;
       const chk = liveTanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(t.Lastcheck)).length;
