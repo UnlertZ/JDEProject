@@ -613,9 +613,9 @@
         }
       }
 
-      // คำนวณสรุปการ์ด 4 ใบ ตามกฎ 30 วัน
+      // คำนวณสรุปการ์ด 4 ใบ ตามรอบเดือน (เช็คทุกต้นเดือนใหม่)
       const total = tanks.length;
-      const checked = tanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && !isCheckExpired(t.Lastcheck, 30)).length;
+      const checked = tanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(t.Lastcheck)).length;
       const notChecked = total - checked;
       const notReady = tanks.filter(t => t.ReadyorNot === 'Not Ready' || !t.TankStatus).length;
 
@@ -666,20 +666,16 @@
       tbody.empty();
 
       tanks.forEach((tank, idx) => {
-        // กฎ 30 วัน: คำนวณวันที่ผ่านไป
-        const daysSince = getDaysSinceCheck(tank.Lastcheck);
-        const isExpired = daysSince !== null && daysSince >= 30;
-        const isChecked = tank.Tankcheck === 'เช็คแล้ว' && !isExpired;
+        // กฎรอบเดือน: ตรวจสอบการตรวจในรอบเดือนปัจจุบัน (เช็คทุกต้นเดือนใหม่)
+        const isChecked = tank.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(tank.Lastcheck);
         const isReady = tank.ReadyorNot === 'Ready' && tank.TankStatus;
 
         // ป้ายสถานะการตรวจ
         let checkBadgeHtml = '';
         if (isChecked) {
           checkBadgeHtml = '<span class="badge rounded-pill bg-success"><i class="bi bi-check-lg me-1"></i>เช็คแล้ว</span>';
-        } else if (isExpired) {
-          checkBadgeHtml = `<span class="badge rounded-pill bg-warning text-white" title="ตรวจล่าสุด ${daysSince} วันที่แล้ว (ครบกำหนดรอบ 30 วัน)"><i class="bi bi-clock-history me-1"></i>ยังไม่ได้ตรวจ</span>`;
         } else {
-          checkBadgeHtml = '<span class="badge rounded-pill bg-warning text-white"><i class="bi bi-clock me-1"></i>ยังไม่ได้ตรวจ</span>';
+          checkBadgeHtml = '<span class="badge rounded-pill bg-warning text-white" title="ยังไม่ได้ตรวจรอบเดือนนี้ (เช็คใหม่ทุกต้นเดือน)"><i class="bi bi-clock me-1"></i>ยังไม่ตรวจ</span>';
         }
 
         // Thumbnail รูปภาพถัง
@@ -941,9 +937,7 @@
       const allTanks = getAllTanks();
 
       const filtered = allTanks.filter(tank => {
-        const daysSince = getDaysSinceCheck(tank.Lastcheck);
-        const isExpired = daysSince !== null && daysSince >= 30;
-        const isChecked = tank.Tankcheck === 'เช็คแล้ว' && !isExpired;
+        const isChecked = tank.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(tank.Lastcheck);
         const checkStatus = isChecked ? 'เช็คแล้ว' : 'ยังไม่เช็ค';
 
         if (selType && tank.Types !== selType) return false;
@@ -966,18 +960,14 @@
       }
 
       filtered.forEach((tank, idx) => {
-        const daysSince = getDaysSinceCheck(tank.Lastcheck);
-        const isExpired = daysSince !== null && daysSince >= 30;
-        const isChecked = tank.Tankcheck === 'เช็คแล้ว' && !isExpired;
+        const isChecked = tank.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(tank.Lastcheck);
         const isReady = tank.ReadyorNot === 'Ready' && tank.TankStatus;
 
         let checkBadge = '';
         if (isChecked) {
           checkBadge = '<span class="badge rounded-pill bg-success"><i class="bi bi-check-lg me-1"></i>เช็คแล้ว</span>';
-        } else if (isExpired) {
-          checkBadge = '<span class="badge rounded-pill bg-warning text-white" title="ครบกำหนดรอบ 30 วัน"><i class="bi bi-clock-history me-1"></i>เกิน 30 วัน</span>';
         } else {
-          checkBadge = '<span class="badge rounded-pill bg-warning text-white"><i class="bi bi-clock me-1"></i>ยังไม่ตรวจ</span>';
+          checkBadge = '<span class="badge rounded-pill bg-warning text-white" title="ยังไม่ได้ตรวจรอบเดือนนี้"><i class="bi bi-clock me-1"></i>ยังไม่ตรวจ</span>';
         }
 
         let readyBadge = isReady 
@@ -1387,32 +1377,33 @@
         });
 
         // คำอธิบายแต่ละสีด้านล่าง (Requirement 3: พร้อมใช้งาน, ไม่พร้อมใช้งาน, ยังไม่ได้ตรวจ)
+        // คำอธิบายแต่ละสีด้านล่าง (สร้าง 4 เหลี่ยมเล็กๆ สีตรงกับกราฟ ดูง่าย ชัดเจน)
         legendArea.html(`
           <div class="row g-2 w-100 justify-content-center text-start">
             <div class="col-12 col-md-4">
-              <div class="d-flex align-items-start gap-2 p-2 rounded-3 bg-light border">
-                <span class="badge rounded-pill mt-1" style="width:14px; height:14px; background-color:#3F7A4C; flex-shrink:0;"></span>
+              <div class="d-flex align-items-center gap-2.5 p-2.5 rounded-3 bg-light border shadow-xs h-100">
+                <div style="width: 18px; height: 18px; min-width: 18px; background-color: #3F7A4C; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);" class="flex-shrink-0"></div>
                 <div>
-                  <strong class="text-dark d-block">พร้อมใช้งาน (สีเขียว)</strong>
-                  <span class="text-secondary small">ผ่านการตรวจเช็คในรอบ 30 วัน สภาพสมบูรณ์พร้อมใช้</span>
+                  <strong class="text-dark d-block">พร้อมใช้งาน</strong>
+                  <span class="text-secondary small">ผ่านการตรวจเช็คในรอบเดือนนี้ สภาพสมบูรณ์พร้อมใช้</span>
                 </div>
               </div>
             </div>
             <div class="col-12 col-md-4">
-              <div class="d-flex align-items-start gap-2 p-2 rounded-3 bg-light border">
-                <span class="badge rounded-pill mt-1" style="width:14px; height:14px; background-color:#A04830; flex-shrink:0;"></span>
+              <div class="d-flex align-items-center gap-2.5 p-2.5 rounded-3 bg-light border shadow-xs h-100">
+                <div style="width: 18px; height: 18px; min-width: 18px; background-color: #A04830; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);" class="flex-shrink-0"></div>
                 <div>
-                  <strong class="text-dark d-block">ไม่พร้อมใช้งาน (สีแดง)</strong>
+                  <strong class="text-dark d-block">ไม่พร้อมใช้งาน</strong>
                   <span class="text-secondary small">พบข้อบกพร่อง ชำรุด หรือเกจ์ตก ต้องส่งซ่อมเปลี่ยนทันที</span>
                 </div>
               </div>
             </div>
             <div class="col-12 col-md-4">
-              <div class="d-flex align-items-start gap-2 p-2 rounded-3 bg-light border">
-                <span class="badge rounded-pill mt-1" style="width:14px; height:14px; background-color:#D97706; flex-shrink:0;"></span>
+              <div class="d-flex align-items-center gap-2.5 p-2.5 rounded-3 bg-light border shadow-xs h-100">
+                <div style="width: 18px; height: 18px; min-width: 18px; background-color: #D97706; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);" class="flex-shrink-0"></div>
                 <div>
-                  <strong class="text-dark d-block">ยังไม่ได้ตรวจ (สีส้มทอง)</strong>
-                  <span class="text-secondary small">รอเจ้าหน้าที่เข้าตรวจประจำรอบเดือน หรือเกินกำหนด 30 วัน</span>
+                  <strong class="text-dark d-block">ยังไม่ได้ตรวจ</strong>
+                  <span class="text-secondary small">รอเจ้าหน้าที่เข้าตรวจประจำรอบเดือนใหม่นี้</span>
                 </div>
               </div>
             </div>
@@ -1430,7 +1421,7 @@
           const allTanks = getAllTanks();
           totalVal = allTanks.length;
           notReadyVal = allTanks.filter(t => t.ReadyorNot === 'Not Ready' || !t.TankStatus).length;
-          notCheckedVal = allTanks.filter(t => (t.Tankcheck !== 'เช็คแล้ว' || isCheckExpired(t.Lastcheck, 30)) && t.ReadyorNot !== 'Not Ready' && t.TankStatus).length;
+          notCheckedVal = allTanks.filter(t => (t.Tankcheck !== 'เช็คแล้ว' || !isCheckedInCurrentMonth(t.Lastcheck)) && t.ReadyorNot !== 'Not Ready' && t.TankStatus).length;
           checkedVal = Math.max(0, totalVal - notReadyVal - notCheckedVal);
         } else {
           const mData = yearlyDataCache.months.find(m => m.month_key === selectedPieMonthKey);
@@ -1485,13 +1476,14 @@
           }
         });
 
-        // คำอธิบาย 3 การ์ดเปอร์เซ็นต์ด้านล่างแผนภูมิวงกลม
+        // คำอธิบาย 3 การ์ดเปอร์เซ็นต์ด้านล่างแผนภูมิวงกลม พร้อม 4 เหลี่ยมเล็กๆ สีตรงกับกราฟ
         legendArea.html(`
           <div class="row g-2 w-100 justify-content-center">
             <div class="col-12 col-md-4">
               <div class="p-2.5 px-3 rounded-3 border bg-success-subtle border-success-subtle text-center h-100 shadow-xs">
-                <div class="d-flex align-items-center justify-content-center gap-1.5 text-success fw-bold small mb-1">
-                  <i class="bi bi-check-circle-fill"></i> 1. ถังที่ตรวจเช็คแล้ว
+                <div class="d-flex align-items-center justify-content-center gap-2 text-success fw-bold small mb-1">
+                  <div style="width: 14px; height: 14px; min-width: 14px; background-color: #3F7A4C; border-radius: 3px;" class="flex-shrink-0"></div>
+                  <span>1. ถังที่ตรวจเช็คแล้ว</span>
                 </div>
                 <div class="fs-4 fw-bold text-success">${checkedVal} <span class="fs-6 fw-normal text-muted">ถัง</span> <span class="badge bg-success text-white ms-1">${pctChecked}%</span></div>
                 <div class="small text-secondary mt-1" style="font-size:0.75rem;">สภาพพร้อมใช้งาน ผ่านการตรวจรอบเดือนนี้</div>
@@ -1499,17 +1491,19 @@
             </div>
             <div class="col-12 col-md-4">
               <div class="p-2.5 px-3 rounded-3 border bg-warning-subtle border-warning-subtle text-center h-100 shadow-xs">
-                <div class="d-flex align-items-center justify-content-center gap-1.5 text-warning-emphasis fw-bold small mb-1">
-                  <i class="bi bi-clock-history"></i> 2. ถังที่ยังไม่ตรวจเช็ค
+                <div class="d-flex align-items-center justify-content-center gap-2 text-warning-emphasis fw-bold small mb-1">
+                  <div style="width: 14px; height: 14px; min-width: 14px; background-color: #D97706; border-radius: 3px;" class="flex-shrink-0"></div>
+                  <span>2. ถังที่ยังไม่ตรวจเช็ค</span>
                 </div>
                 <div class="fs-4 fw-bold text-warning-emphasis">${notCheckedVal} <span class="fs-6 fw-normal text-muted">ถัง</span> <span class="badge bg-warning text-dark ms-1">${pctNotChecked}%</span></div>
-                <div class="small text-secondary mt-1" style="font-size:0.75rem;">รอเจ้าหน้าที่เข้าตรวจ หรือเกินรอบ 30 วัน</div>
+                <div class="small text-secondary mt-1" style="font-size:0.75rem;">รอเจ้าหน้าที่เข้าตรวจรอบเดือนใหม่นี้</div>
               </div>
             </div>
             <div class="col-12 col-md-4">
               <div class="p-2.5 px-3 rounded-3 border bg-danger-subtle border-danger-subtle text-center h-100 shadow-xs">
-                <div class="d-flex align-items-center justify-content-center gap-1.5 text-danger fw-bold small mb-1">
-                  <i class="bi bi-exclamation-octagon-fill"></i> 3. ถังที่ไม่พร้อมใช้งาน
+                <div class="d-flex align-items-center justify-content-center gap-2 text-danger fw-bold small mb-1">
+                  <div style="width: 14px; height: 14px; min-width: 14px; background-color: #A04830; border-radius: 3px;" class="flex-shrink-0"></div>
+                  <span>3. ถังที่ไม่พร้อมใช้งาน</span>
                 </div>
                 <div class="fs-4 fw-bold text-danger">${notReadyVal} <span class="fs-6 fw-normal text-muted">ถัง</span> <span class="badge bg-danger text-white ms-1">${pctNotReady}%</span></div>
                 <div class="small text-secondary mt-1" style="font-size:0.75rem;">พบจุดบกพร่อง / เกจ์ตก / รอซ่อมเปลี่ยน</div>
@@ -1525,9 +1519,7 @@
       const tank = getTankById(fireTankId);
       if (!tank) return;
 
-      const daysSince = getDaysSinceCheck(tank.Lastcheck);
-      const isExpired = daysSince !== null && daysSince >= 30;
-      const isChecked = tank.Tankcheck === 'เช็คแล้ว' && !isExpired;
+      const isChecked = tank.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(tank.Lastcheck);
       const isReady   = tank.ReadyorNot === 'Ready';
 
       // ข้อมูลหลัก
@@ -1540,21 +1532,15 @@
       $('#mdExptank').text(tank.Exptank || '—');
       $('#mdInspector').text(tank.Inspector || '—');
 
-      // วันตรวจล่าสุด + badge 30 วัน
+      // วันตรวจล่าสุด + badge รอบเดือน
       const formattedLastcheck = formatDateOnly(tank.Lastcheck);
-      if (isExpired) {
-        $('#mdLastcheck').html(`${formattedLastcheck} <span class="badge bg-warning text-white ms-1" style="font-size:0.7rem;"><i class="bi bi-clock-history me-1"></i>ครบ 30 วันแล้ว</span>`);
-      } else {
-        $('#mdLastcheck').text(formattedLastcheck);
-      }
-
-      // Badge สถานะการตรวจ
       if (isChecked) {
+        $('#mdLastcheck').html(`${formattedLastcheck} <span class="badge bg-success text-white ms-1" style="font-size:0.7rem;"><i class="bi bi-check-circle me-1"></i>ตรวจรอบเดือนนี้แล้ว</span>`);
         $('#mdTankcheck').html('<span class="badge rounded-pill bg-success"><i class="bi bi-check-lg me-1"></i>เช็คแล้ว</span>');
-      } else if (isExpired) {
-        $('#mdTankcheck').html('<span class="badge rounded-pill bg-warning text-white"><i class="bi bi-clock-history me-1"></i>ยังไม่ได้ตรวจ</span>');
       } else {
-        $('#mdTankcheck').html('<span class="badge rounded-pill bg-warning text-white"><i class="bi bi-clock me-1"></i>ยังไม่ได้ตรวจ</span>');
+        const badgeLabel = tank.Lastcheck ? 'รอบเดือนก่อน' : 'ยังไม่เคยตรวจ';
+        $('#mdLastcheck').html(`${formattedLastcheck} <span class="badge bg-warning text-dark ms-1" style="font-size:0.7rem;"><i class="bi bi-clock-history me-1"></i>${badgeLabel}</span>`);
+        $('#mdTankcheck').html('<span class="badge rounded-pill bg-warning text-white"><i class="bi bi-clock me-1"></i>ยังไม่ได้ตรวจรอบเดือนนี้</span>');
       }
 
       // Badge พร้อม/ไม่พร้อม

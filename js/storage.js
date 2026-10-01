@@ -165,26 +165,55 @@ function getDaysSinceCheck(lastcheckVal) {
   return Math.floor(diffMs / (1000 * 60 * 60 * 24));
 }
 
-// Helper: ตรวจสอบว่าผลการตรวจเกิน 30 วันหรือไม่
-function isCheckExpired(lastcheckVal, daysThreshold = 30) {
-  const days = getDaysSinceCheck(lastcheckVal);
-  if (days === null) return false;
-  return days >= daysThreshold;
+// Helper: ตรวจสอบว่าได้รับการตรวจในรอบเดือนปัจจุบันหรือไม่ (เช็คทุกต้นเดือนใหม่)
+function isCheckedInCurrentMonth(lastcheckVal, targetDate = new Date()) {
+  if (!lastcheckVal) return false;
+  const s = String(lastcheckVal).trim();
+  if (!s || s === '-' || s === '—') return false;
+
+  let checkYear = null;
+  let checkMonth = null;
+
+  if (/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/.test(s)) {
+    const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+    if (m) {
+      checkMonth = parseInt(m[2], 10);
+      checkYear = parseInt(m[3], 10);
+    }
+  } else if (/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/.test(s)) {
+    const m = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+    if (m) {
+      checkYear = parseInt(m[1], 10);
+      checkMonth = parseInt(m[2], 10);
+    }
+  }
+
+  if (!checkYear || !checkMonth) return false;
+
+  const curYear = targetDate.getFullYear();
+  const curMonth = targetDate.getMonth() + 1;
+
+  return (checkYear === curYear && checkMonth === curMonth);
 }
 
-// Helper: บังคับใช้กฎ 30 วัน
-function applyThirtyDaysRule(tank) {
+// Helper: ตรวจสอบว่าผลการตรวจหมดรอบเดือนหรือไม่ (เช็คทุกต้นเดือนใหม่)
+function isCheckExpired(lastcheckVal) {
+  return !isCheckedInCurrentMonth(lastcheckVal);
+}
+
+// Helper: บังคับใช้กฎรอบเดือนใหม่ (รีเซ็ตทุกต้นเดือน)
+function applyMonthlyCycleRule(tank) {
   if (!tank) return tank;
   if (tank.Tankcheck === 'เช็คแล้ว') {
-    const days = getDaysSinceCheck(tank.Lastcheck);
-    if (days !== null && days >= 30) {
+    if (!isCheckedInCurrentMonth(tank.Lastcheck)) {
       tank.Tankcheck = 'ยังไม่เช็ค';
-      tank.IsExpired30Days = true;
-      tank.DaysSinceCheck = days;
+      tank.IsExpiredMonth = true;
     }
   }
   return tank;
 }
+
+const applyThirtyDaysRule = applyMonthlyCycleRule;
 
 // Helper: บีบอัดรูปภาพก่อนส่งเข้า Cloudflare D1
 function compressImage(file, maxWidth = 1200, quality = 0.75) {

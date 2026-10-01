@@ -330,13 +330,13 @@
       $('#infoWeight').text(tank['Weight (lb)'] || '-');
       $('#infoInuse').text(formatDateOnly(tank.Inuse));
       $('#infoExptank').text(tank.Exptank || '-');
-      const daysSince = getDaysSinceCheck(tank.Lastcheck);
-      const isExpired = daysSince !== null && daysSince >= 30;
+      const isChecked = isCheckedInCurrentMonth(tank.Lastcheck);
       const formattedLast = formatDateOnly(tank.Lastcheck);
-      if (isExpired) {
-        $('#infoLastcheck').html(`${formattedLast} <span class="badge bg-warning text-white ms-1" style="font-size:0.7rem;"><i class="bi bi-clock-history me-1"></i>ครบ 30 วันแล้ว</span>`);
+      if (isChecked) {
+        $('#infoLastcheck').html(`${formattedLast} <span class="badge bg-success text-white ms-1" style="font-size:0.7rem;"><i class="bi bi-check-circle me-1"></i>ตรวจรอบเดือนนี้แล้ว</span>`);
       } else {
-        $('#infoLastcheck').text(formattedLast);
+        const badgeLabel = tank.Lastcheck ? 'รอบเดือนก่อน' : 'ยังไม่เคยตรวจ';
+        $('#infoLastcheck').html(`${formattedLast} <span class="badge bg-warning text-dark ms-1" style="font-size:0.7rem;"><i class="bi bi-clock-history me-1"></i>${badgeLabel}</span>`);
       }
       $('#infoInspector').text(tank.Inspector || '-');
       $('#weightInput').val(tank['Weight (lb)'] || '');

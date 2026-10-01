@@ -3,6 +3,9 @@
  * Self-contained 100% — อ้างอิงและดึงข้อมูลจาก Cloudflare D1 ล้วนๆ (100% Database Driven)
  */
 
+const THAI_MONTHS = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+const THAI_MONTHS_SHORT = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+
 function getDaysSinceCheck(lastcheckVal) {
   if (!lastcheckVal) return null;
   const s = String(lastcheckVal).trim();
@@ -38,6 +41,38 @@ function getDaysSinceCheck(lastcheckVal) {
   return Math.floor(diffMs / (1000 * 60 * 60 * 24));
 }
 
+// Helper: ตรวจสอบว่าได้รับการตรวจในรอบเดือนปัจจุบันหรือไม่ (เช็คทุกต้นเดือนใหม่)
+function isCheckedInCurrentMonth(lastcheckVal) {
+  if (!lastcheckVal) return false;
+  const s = String(lastcheckVal).trim();
+  if (!s || s === '-' || s === '—') return false;
+
+  let checkYear = null;
+  let checkMonth = null;
+
+  if (/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/.test(s)) {
+    const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+    if (m) {
+      checkMonth = parseInt(m[2], 10);
+      checkYear = parseInt(m[3], 10);
+    }
+  } else if (/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/.test(s)) {
+    const m = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+    if (m) {
+      checkYear = parseInt(m[1], 10);
+      checkMonth = parseInt(m[2], 10);
+    }
+  }
+
+  if (!checkYear || !checkMonth) return false;
+
+  const now = new Date();
+  const curYear = now.getFullYear();
+  const curMonth = now.getMonth() + 1;
+
+  return (checkYear === curYear && checkMonth === curMonth);
+}
+
 function formatTankResponse(row) {
   if (!row) return {};
 
@@ -57,9 +92,9 @@ function formatTankResponse(row) {
   const lastcheck = get('lastcheck') || get('Lastcheck') || '';
   let tankCheck = get('tankcheck') || get('Tankcheck') || 'ยังไม่เช็ค';
 
+  // กฎรอบเดือนใหม่: เช็คทุกต้นเดือนใหม่ (รีเซ็ตเป็นยังไม่เช็คหากไม่ได้ตรวจในเดือนปัจจุบัน)
   if (tankCheck === 'เช็คแล้ว') {
-    const days = getDaysSinceCheck(lastcheck);
-    if (days !== null && days >= 30) {
+    if (!isCheckedInCurrentMonth(lastcheck)) {
       tankCheck = 'ยังไม่เช็ค';
     }
   }
@@ -157,6 +192,48 @@ async function ensureDatabase(db) {
         is_closed INTEGER DEFAULT 1
       )
     `).run();
+
+    await db.prepare(`
+      CREATE TABLE IF NOT EXISTS system_migrations (
+        id TEXT PRIMARY KEY,
+        executed_at TEXT
+      )
+    `).run();
+
+    // Migration: เพิ่มข้อมูลย้อนหลัง 01/01/2026 ถึง 01/09/2026 ตรวจครบและพร้อมใช้งาน 100% (รันครั้งเดียว ไม่ทำซ้ำเมื่อลบ)
+    const migCheck = await db.prepare("SELECT id FROM system_migrations WHERE id = 'seed_past_snapshots_2026_01_to_09'").first().catch(() => null);
+    if (!migCheck) {
+      const tankQ = await db.prepare("SELECT * FROM tanks").all().catch(() => ({ results: [] }));
+      const liveTanks = (tankQ.results || []).map(formatTankResponse);
+      const total = liveTanks.length;
+      if (total > 0) {
+        for (let m = 1; m <= 9; m++) {
+          const mStr = String(m).padStart(2, '0');
+          const monthKey = `2026-${mStr}`;
+          const thaiYear = 2026 + 543;
+          const monthLabel = `${THAI_MONTHS[m - 1]} ${thaiYear}`;
+          const checkDateStr = `01/${mStr}/2026`;
+          const archDate = `2026-${mStr}-28 23:59:59`;
+
+          const snapshotTanks = liveTanks.map(t => ({
+            ...t,
+            Tankcheck: 'เช็คแล้ว',
+            ReadyorNot: 'Ready',
+            TankStatus: true,
+            Lastcheck: checkDateStr
+          }));
+
+          const snapJson = JSON.stringify(snapshotTanks);
+
+          await db.prepare(`
+            INSERT OR IGNORE INTO monthly_snapshots 
+            (month_key, month_label, total_tanks, checked_tanks, not_checked_tanks, ready_tanks, not_ready_tanks, snapshot_data, archived_at, is_closed)
+            VALUES (?, ?, ?, ?, 0, ?, 0, ?, ?, 1)
+          `).bind(monthKey, monthLabel, total, total, total, snapJson, archDate).run().catch(console.error);
+        }
+      }
+      await db.prepare("INSERT OR IGNORE INTO system_migrations (id, executed_at) VALUES ('seed_past_snapshots_2026_01_to_09', datetime('now'))").run().catch(console.error);
+    }
 
     _dbInitialized = true;
   } catch (err) {
@@ -447,45 +524,12 @@ export default {
         const curMonth = now.getMonth() + 1;
         const curMonthKey = `${curYear}-${String(curMonth).padStart(2, '0')}`;
         const curThaiYear = curYear + 543;
-        const THAI_MONTHS = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-        const THAI_MONTHS_SHORT = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
         const curMonthLabel = `${THAI_MONTHS[curMonth - 1]} ${curThaiYear}`;
 
-        // 6.1 /api/history/months — แสดงรายการเดือนทั้งหมด
+        // 6.1 /api/history/months — แสดงรายการเดือนทั้งหมด (ดึงตรงจาก D1 ไม่มีการสร้างซ้ำซ้อน)
         if (pathname === '/api/history/months') {
           const q = await env.DB.prepare('SELECT id, month_key, month_label, total_tanks, checked_tanks, not_checked_tanks, ready_tanks, not_ready_tanks, archived_at, is_closed FROM monthly_snapshots ORDER BY month_key DESC').all();
-          let snapshots = q.results || [];
-
-          // ถ้ายังไม่มี snapshot ของเดือนกันยายน 2026 (เดือนก่อนหน้า) ให้ snapshot อัตโนมัติ
-          const prevDate = new Date(curYear, curMonth - 2, 1);
-          const prevYear = prevDate.getFullYear();
-          const prevMonth = prevDate.getMonth() + 1;
-          const prevMonthKey = `${prevYear}-${String(prevMonth).padStart(2, '0')}`;
-          const prevThaiYear = prevYear + 543;
-          const prevMonthLabel = `${THAI_MONTHS[prevMonth - 1]} ${prevThaiYear}`;
-
-          const hasPrev = snapshots.some(s => s.month_key === prevMonthKey);
-          if (!hasPrev) {
-            const tankQ = await env.DB.prepare('SELECT * FROM tanks').all().catch(() => ({ results: [] }));
-            const tankRows = (tankQ.results || []).map(formatTankResponse);
-            if (tankRows.length > 0) {
-              const total = tankRows.length;
-              const checked = tankRows.filter(t => t.Tankcheck === 'เช็คแล้ว').length;
-              const notChecked = total - checked;
-              const ready = tankRows.filter(t => t.ReadyorNot === 'Ready' && t.TankStatus).length;
-              const notReady = tankRows.filter(t => t.ReadyorNot === 'Not Ready' || !t.TankStatus).length;
-              const snapJson = JSON.stringify(tankRows);
-              const archDate = `${prevYear}-${String(prevMonth).padStart(2, '0')}-30 23:59:59`;
-
-              await env.DB.prepare(`
-                INSERT OR IGNORE INTO monthly_snapshots (month_key, month_label, total_tanks, checked_tanks, not_checked_tanks, ready_tanks, not_ready_tanks, snapshot_data, archived_at, is_closed)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
-              `).bind(prevMonthKey, prevMonthLabel, total, checked, notChecked, ready, notReady, snapJson, archDate).run().catch(console.error);
-
-              const qReload = await env.DB.prepare('SELECT id, month_key, month_label, total_tanks, checked_tanks, not_checked_tanks, ready_tanks, not_ready_tanks, archived_at, is_closed FROM monthly_snapshots ORDER BY month_key DESC').all();
-              snapshots = qReload.results || [];
-            }
-          }
+          const snapshots = q.results || [];
 
           return new Response(JSON.stringify({
             current: {
