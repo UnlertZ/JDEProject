@@ -539,6 +539,7 @@
                   <i class="bi bi-calendar-month text-danger me-1"></i>เดือนที่ต้องการเติม <span class="text-danger">*</span>
                 </label>
                 <select id="quickSeedMonth" class="form-select form-select-sm" required>
+                  <option value="all_01_09" style="font-weight: 600; color: #0d6efd;">⚡ เติมรวดเดียว (ม.ค. - ก.ย. ทั้ง 9 เดือน)</option>
                   <option value="01">01 - มกราคม</option>
                   <option value="02">02 - กุมภาพันธ์</option>
                   <option value="03">03 - มีนาคม</option>
@@ -700,6 +701,16 @@
         _memoryTanks = customTanks;
       } else {
         tanks = await fetchAllTanks();
+        // บันทึกรูปภาพอ้างอิงจากถังปัจจุบันไว้ใช้แสดงผลในโหมดประวัติย้อนหลัง
+        window._liveTanksReferenceMap = {};
+        tanks.forEach(t => {
+          if (t.FireTank) {
+            window._liveTanksReferenceMap[t.FireTank] = {
+              PicTank: t.PicTank,
+              PicArea: t.PicArea
+            };
+          }
+        });
       }
       const currentUser = getCurrentUser();
 
@@ -823,8 +834,9 @@
 
         // Thumbnail รูปภาพถัง
         let picHtml = '<span class="text-muted small">—</span>';
-        if (tank.PicTank) {
-          const picSrc = tank.PicTank.startsWith('data:') ? tank.PicTank : (tank.PicTank.startsWith('static/') ? tank.PicTank : 'static/' + tank.PicTank);
+        const displayPicTank = tank.PicTank || (window._liveTanksReferenceMap && window._liveTanksReferenceMap[tank.FireTank]?.PicTank);
+        if (displayPicTank) {
+          const picSrc = displayPicTank.startsWith('data:') ? displayPicTank : (displayPicTank.startsWith('static/') ? displayPicTank : 'static/' + displayPicTank);
           picHtml = `
             <a href="${picSrc}" target="_blank" data-bs-toggle="tooltip" title="คลิกดูรูปถังเต็ม">
               <img src="${picSrc}" class="img-thumb-preview" alt="ถัง">
@@ -834,8 +846,9 @@
 
         // Thumbnail รูปสถานที่
         let picAreaHtml = '<span class="text-muted small">—</span>';
-        if (tank.PicArea) {
-          const picAreaSrc = tank.PicArea.startsWith('data:') ? tank.PicArea : (tank.PicArea.startsWith('static/') ? tank.PicArea : 'static/' + tank.PicArea);
+        const displayPicArea = tank.PicArea || (window._liveTanksReferenceMap && window._liveTanksReferenceMap[tank.FireTank]?.PicArea);
+        if (displayPicArea) {
+          const picAreaSrc = displayPicArea.startsWith('data:') ? displayPicArea : (displayPicArea.startsWith('static/') ? displayPicArea : 'static/' + displayPicArea);
           picAreaHtml = `
             <a href="${picAreaSrc}" target="_blank" data-bs-toggle="tooltip" title="คลิกดูรูปสถานที่เต็ม">
               <img src="${picAreaSrc}" class="img-thumb-preview" alt="สถานที่">
@@ -1128,8 +1141,9 @@
         }
 
         let picHtml = '';
-        if (tank.PicTank) {
-          const picSrc = tank.PicTank.startsWith('data:') ? tank.PicTank : (tank.PicTank.startsWith('static/') ? tank.PicTank : 'static/' + tank.PicTank);
+        const displayMobilePic = tank.PicTank || (window._liveTanksReferenceMap && window._liveTanksReferenceMap[tank.FireTank]?.PicTank);
+        if (displayMobilePic) {
+          const picSrc = displayMobilePic.startsWith('data:') ? displayMobilePic : (displayMobilePic.startsWith('static/') ? displayMobilePic : 'static/' + displayMobilePic);
           picHtml = `<img src="${picSrc}" class="img-thumb-preview me-2.5" alt="ถัง">`;
         }
 
@@ -1764,14 +1778,17 @@
 
       // รูปภาพ
       const noImg = 'https://placehold.co/120x120?text=No+Pic';
-      if (tank.PicTank) {
-        const src = tank.PicTank.startsWith('data:') ? tank.PicTank : (tank.PicTank.startsWith('static/') ? tank.PicTank : 'static/' + tank.PicTank);
+      const detailPicTank = tank.PicTank || (window._liveTanksReferenceMap && window._liveTanksReferenceMap[tank.FireTank]?.PicTank);
+      const detailPicArea = tank.PicArea || (window._liveTanksReferenceMap && window._liveTanksReferenceMap[tank.FireTank]?.PicArea);
+
+      if (detailPicTank) {
+        const src = detailPicTank.startsWith('data:') ? detailPicTank : (detailPicTank.startsWith('static/') ? detailPicTank : 'static/' + detailPicTank);
         $('#mdPicTank').attr('src', src);
       } else {
         $('#mdPicTank').attr('src', noImg);
       }
-      if (tank.PicArea) {
-        const src = tank.PicArea.startsWith('data:') ? tank.PicArea : (tank.PicArea.startsWith('static/') ? tank.PicArea : 'static/' + tank.PicArea);
+      if (detailPicArea) {
+        const src = detailPicArea.startsWith('data:') ? detailPicArea : (detailPicArea.startsWith('static/') ? detailPicArea : 'static/' + detailPicArea);
         $('#mdPicArea').attr('src', src);
       } else {
         $('#mdPicArea').attr('src', noImg);
@@ -1830,7 +1847,7 @@
 
       const mm = $('#quickSeedMonth').val();
       const yyyy = $('#quickSeedYear').val();
-      const monthKey = `${yyyy}-${mm}`;
+      const monthKey = mm === 'all_01_09' ? 'all_01_09' : `${yyyy}-${mm}`;
       const mode = $('input[name="seedMode"]:checked').val();
       const inspector = $('#quickSeedInspector').val() || 'SHE';
       const readyCount = parseInt($('#seedReadyCount').val() || '0', 10);
@@ -1842,6 +1859,7 @@
       try {
         const payload = {
           monthKey,
+          year: yyyy,
           mode,
           inspector,
           readyCount,
@@ -1870,7 +1888,8 @@
           if (modalInstance) modalInstance.hide();
           await populateMonthSelector();
           await loadYearlyChart(parseInt(yyyy, 10));
-          $('#monthSelect').val(monthKey);
+          const targetKey = data.month_key || (monthKey === 'all_01_09' ? `${yyyy}-09` : monthKey);
+          $('#monthSelect').val(targetKey);
           onMonthChange();
         } else {
           alert(`❌ ไม่สามารถบันทึกได้: ${data.message || data.error || 'Server error'}`);

@@ -30,6 +30,33 @@ function formatTankResponse(row) {
   };
 }
 
+function formatTankForSnapshot(t, overrides = {}) {
+  // ตัด base64 data URLs เพื่อป้องกันข้อผิดพลาด D1 SQLite SQLITE_TOOBIG (string or blob too big)
+  let picTank = t.PicTank || '';
+  let picArea = t.PicArea || '';
+  if (typeof picTank === 'string' && picTank.startsWith('data:')) picTank = '';
+  if (typeof picArea === 'string' && picArea.startsWith('data:')) picArea = '';
+
+  return {
+    Id: t.Id !== undefined ? t.Id : '',
+    FireTank: String(t.FireTank || '').trim(),
+    Types: String(t.Types || ''),
+    'Weight (lb)': t['Weight (lb)'] !== undefined ? t['Weight (lb)'] : null,
+    Area: String(t.Area || ''),
+    Responsible: String(t.Responsible || ''),
+    Inuse: t.Inuse ? String(t.Inuse) : '',
+    Lastcheck: overrides.Lastcheck !== undefined ? overrides.Lastcheck : (t.Lastcheck ? String(t.Lastcheck) : ''),
+    Tankcheck: overrides.Tankcheck !== undefined ? overrides.Tankcheck : (t.Tankcheck || 'ยังไม่เช็ค'),
+    ReadyorNot: overrides.ReadyorNot !== undefined ? overrides.ReadyorNot : (t.ReadyorNot || 'Ready'),
+    TankStatus: overrides.TankStatus !== undefined ? overrides.TankStatus : Boolean(t.TankStatus),
+    Exptank: String(t.Exptank || ''),
+    Inspector: overrides.Inspector !== undefined ? overrides.Inspector : String(t.Inspector || ''),
+    Remark: overrides.Remark !== undefined ? overrides.Remark : String(t.Remark || ''),
+    PicTank: picTank,
+    PicArea: picArea
+  };
+}
+
 async function ensureHistoryTables(db) {
   await db.prepare(`
     CREATE TABLE IF NOT EXISTS monthly_snapshots (
@@ -46,6 +73,47 @@ async function ensureHistoryTables(db) {
       is_closed INTEGER DEFAULT 1
     )
   `).run().catch(console.error);
+
+  await db.prepare(`
+    CREATE TABLE IF NOT EXISTS system_migrations (
+      id TEXT PRIMARY KEY,
+      executed_at TEXT
+    )
+  `).run().catch(console.error);
+
+  const migCheck = await db.prepare("SELECT id FROM system_migrations WHERE id = 'seed_past_snapshots_2026_v2'").first().catch(() => null);
+  if (!migCheck) {
+    const tankQ = await db.prepare("SELECT * FROM tanks").all().catch(() => ({ results: [] }));
+    const liveTanks = (tankQ.results || []).map(formatTankResponse);
+    const total = liveTanks.length;
+    if (total > 0) {
+      for (let m = 1; m <= 9; m++) {
+        const mStr = String(m).padStart(2, '0');
+        const monthKey = `2026-${mStr}`;
+        const thaiYear = 2026 + 543;
+        const monthLabel = `${THAI_MONTHS[m - 1]} ${thaiYear}`;
+        const checkDateStr = `01/${mStr}/2026`;
+        const archDate = `2026-${mStr}-28 23:59:59`;
+
+        const snapshotTanks = liveTanks.map(t => formatTankForSnapshot(t, {
+          Tankcheck: 'เช็คแล้ว',
+          ReadyorNot: 'Ready',
+          TankStatus: true,
+          Lastcheck: checkDateStr,
+          Inspector: 'SHE'
+        }));
+
+        const snapJson = JSON.stringify(snapshotTanks);
+
+        await db.prepare(`
+          INSERT OR IGNORE INTO monthly_snapshots 
+          (month_key, month_label, total_tanks, checked_tanks, not_checked_tanks, ready_tanks, not_ready_tanks, snapshot_data, archived_at, is_closed)
+          VALUES (?, ?, ?, ?, 0, ?, 0, ?, ?, 1)
+        `).bind(monthKey, monthLabel, total, total, total, snapJson, archDate).run().catch(console.error);
+      }
+    }
+    await db.prepare("INSERT OR IGNORE INTO system_migrations (id, executed_at) VALUES ('seed_past_snapshots_2026_v2', datetime('now'))").run().catch(console.error);
+  }
 }
 
 export async function onRequestPost(context) {
@@ -70,6 +138,65 @@ export async function onRequestPost(context) {
     }
 
     const monthKey = String(body.monthKey || body.month || '').trim();
+    const inspector = String(body.inspector || 'SHE').trim();
+
+    const tankQ = await env.DB.prepare('SELECT * FROM tanks').all().catch(() => ({ results: [] }));
+    const liveTanks = (tankQ.results || []).map(formatTankResponse);
+    const total = liveTanks.length;
+    if (total === 0) {
+      return new Response(JSON.stringify({ success: false, message: 'ไม่พบรายการถังในระบบ ไม่สามารถสร้าง Snapshot ได้' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json; charset=utf-8' }
+      });
+    }
+
+    // รองรับการเติมรวดเดียว 9 เดือน (ม.ค. - ก.ย.)
+    if (monthKey.includes('all_01_09')) {
+      const y = parseInt(body.year || monthKey.split('-')[0] || 2026, 10);
+      const yStr = String(y);
+      const thaiYear = y + 543;
+
+      for (let m = 1; m <= 9; m++) {
+        const mStr = String(m).padStart(2, '0');
+        const curMKey = `${yStr}-${mStr}`;
+        const curLabel = `${THAI_MONTHS[m - 1]} ${thaiYear}`;
+        const curCheckDateStr = `01/${mStr}/${yStr}`;
+        const curArchDate = `${curMKey}-28 23:59:59`;
+
+        const snapTanks = liveTanks.map(t => formatTankForSnapshot(t, {
+          Tankcheck: 'เช็คแล้ว',
+          ReadyorNot: 'Ready',
+          TankStatus: true,
+          Lastcheck: curCheckDateStr,
+          Inspector: inspector
+        }));
+        const sJson = JSON.stringify(snapTanks);
+
+        await env.DB.prepare(`
+          INSERT INTO monthly_snapshots 
+          (month_key, month_label, total_tanks, checked_tanks, not_checked_tanks, ready_tanks, not_ready_tanks, snapshot_data, archived_at, is_closed)
+          VALUES (?, ?, ?, ?, 0, ?, 0, ?, ?, 1)
+          ON CONFLICT(month_key) DO UPDATE SET
+            month_label = excluded.month_label,
+            total_tanks = excluded.total_tanks,
+            checked_tanks = excluded.checked_tanks,
+            not_checked_tanks = excluded.not_checked_tanks,
+            ready_tanks = excluded.ready_tanks,
+            not_ready_tanks = excluded.not_ready_tanks,
+            snapshot_data = excluded.snapshot_data,
+            archived_at = excluded.archived_at,
+            is_closed = excluded.is_closed
+        `).bind(curMKey, curLabel, total, total, total, sJson, curArchDate).run();
+      }
+
+      return new Response(JSON.stringify({
+        success: true,
+        message: `เพิ่มข้อมูลย้อนหลังครบ 9 เดือน (ม.ค. - ก.ย. ${thaiYear}) สำเร็จเรียบร้อย (${total} ถัง/เดือน)`,
+        month_key: `${yStr}-09`,
+        month_label: `กันยายน ${thaiYear}`
+      }), { headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+    }
+
     if (!/^\d{4}-\d{2}$/.test(monthKey)) {
       return new Response(JSON.stringify({ success: false, message: 'รูปแบบเดือนไม่ถูกต้อง (ต้องเป็น YYYY-MM เช่น 2026-05)' }), {
         status: 400,
@@ -89,19 +216,8 @@ export async function onRequestPost(context) {
 
     const thaiYear = y + 543;
     const monthLabel = `${THAI_MONTHS[m - 1]} ${thaiYear}`;
-    const inspector = String(body.inspector || 'SHE').trim();
     const checkDateStr = `01/${mStr}/${yStr}`;
     const archDate = `${monthKey}-28 23:59:59`;
-
-    const tankQ = await env.DB.prepare('SELECT * FROM tanks').all().catch(() => ({ results: [] }));
-    const liveTanks = (tankQ.results || []).map(formatTankResponse);
-    const total = liveTanks.length;
-    if (total === 0) {
-      return new Response(JSON.stringify({ success: false, message: 'ไม่พบรายการถังในระบบ ไม่สามารถสร้าง Snapshot ได้' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json; charset=utf-8' }
-      });
-    }
 
     const mode = body.mode || '100_percent';
     let checked = total;
@@ -115,8 +231,7 @@ export async function onRequestPost(context) {
       ready = total;
       notChecked = 0;
       notReady = 0;
-      snapshotTanks = liveTanks.map(t => ({
-        ...t,
+      snapshotTanks = liveTanks.map(t => formatTankForSnapshot(t, {
         Tankcheck: 'เช็คแล้ว',
         ReadyorNot: 'Ready',
         TankStatus: true,
@@ -134,12 +249,12 @@ export async function onRequestPost(context) {
       snapshotTanks = liveTanks.map(t => {
         if (assignedReady < ready) {
           assignedReady++;
-          return { ...t, Tankcheck: 'เช็คแล้ว', ReadyorNot: 'Ready', TankStatus: true, Lastcheck: checkDateStr, Inspector: inspector };
+          return formatTankForSnapshot(t, { Tankcheck: 'เช็คแล้ว', ReadyorNot: 'Ready', TankStatus: true, Lastcheck: checkDateStr, Inspector: inspector });
         } else if (assignedNotReady < notReady) {
           assignedNotReady++;
-          return { ...t, Tankcheck: 'เช็คแล้ว', ReadyorNot: 'Not Ready', TankStatus: false, Lastcheck: checkDateStr, Inspector: inspector, Remark: 'พบจุดบกพร่อง' };
+          return formatTankForSnapshot(t, { Tankcheck: 'เช็คแล้ว', ReadyorNot: 'Not Ready', TankStatus: false, Lastcheck: checkDateStr, Inspector: inspector, Remark: 'พบจุดบกพร่อง' });
         } else {
-          return { ...t, Tankcheck: 'ยังไม่เช็ค', ReadyorNot: 'Ready', TankStatus: true, Lastcheck: '', Inspector: '' };
+          return formatTankForSnapshot(t, { Tankcheck: 'ยังไม่เช็ค', ReadyorNot: 'Ready', TankStatus: true, Lastcheck: '', Inspector: '' });
         }
       });
     }
