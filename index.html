@@ -407,8 +407,6 @@
                 <th class="text-center">ความพร้อม</th>
                 <th class="text-center">อายุถัง</th>
                 <th class="text-center">ผู้ตรวจ</th>
-                <th class="text-center">รูปถัง</th>
-                <th class="text-center">รูปสถานที่</th>
                 <th class="text-center" id="thAction">จัดการ</th>
               </tr>
             </thead>
@@ -440,14 +438,22 @@
         <div class="modal-body p-4">
           <div class="row g-3">
             <!-- รูปถัง + รูปสถานที่ -->
-            <div class="col-12 d-flex gap-3 justify-content-center mb-2">
-              <div class="text-center">
-                <div class="small text-muted mb-1"><i class="bi bi-image me-1"></i>รูปถัง</div>
-                <img id="mdPicTank" src="https://placehold.co/120x120?text=No+Pic" class="rounded border" style="width:120px;height:120px;object-fit:cover;">
-              </div>
-              <div class="text-center">
-                <div class="small text-muted mb-1"><i class="bi bi-geo-alt me-1"></i>รูปสถานที่</div>
-                <img id="mdPicArea" src="https://placehold.co/120x120?text=No+Pic" class="rounded border" style="width:120px;height:120px;object-fit:cover;">
+            <div class="col-12 mb-2">
+              <div class="d-flex flex-wrap gap-3 justify-content-center">
+                <div class="text-center p-2 rounded-3 bg-light border shadow-2xs" style="min-width: 140px;">
+                  <div class="small text-muted mb-1 fw-semibold"><i class="bi bi-image me-1 text-danger"></i>รูปถังดับเพลิง</div>
+                  <a id="mdPicTankLink" href="#" target="_blank" title="คลิกดูภาพขนาดใหญ่">
+                    <img id="mdPicTank" src="https://placehold.co/140x140?text=No+Pic" class="rounded-3 border shadow-xs" style="width:140px;height:140px;object-fit:cover;cursor:pointer;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                  </a>
+                  <div class="text-muted mt-1" style="font-size:0.7rem;"><i class="bi bi-zoom-in me-1"></i>คลิกเพื่อดูรูปเต็ม</div>
+                </div>
+                <div class="text-center p-2 rounded-3 bg-light border shadow-2xs" style="min-width: 140px;">
+                  <div class="small text-muted mb-1 fw-semibold"><i class="bi bi-geo-alt me-1 text-danger"></i>รูปสถานที่ติดตั้ง</div>
+                  <a id="mdPicAreaLink" href="#" target="_blank" title="คลิกดูภาพขนาดใหญ่">
+                    <img id="mdPicArea" src="https://placehold.co/140x140?text=No+Pic" class="rounded-3 border shadow-xs" style="width:140px;height:140px;object-fit:cover;cursor:pointer;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                  </a>
+                  <div class="text-muted mt-1" style="font-size:0.7rem;"><i class="bi bi-zoom-in me-1"></i>คลิกเพื่อดูรูปเต็ม</div>
+                </div>
               </div>
             </div>
             <!-- ข้อมูลถัง -->
@@ -670,9 +676,9 @@
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 
   <!-- Application Logic -->
-  <script src="js/initial_data.js?v=20261001_v3"></script>
-  <script src="js/storage.js?v=20261001_v3"></script>
-  <script src="js/auth.js?v=20261001_v3"></script>
+  <script src="js/initial_data.js?v=20261001_v4"></script>
+  <script src="js/storage.js?v=20261001_v4"></script>
+  <script src="js/auth.js?v=20261001_v4"></script>
 
   <script>
     let dataTableInstance = null;
@@ -836,40 +842,21 @@
           readyBadgeHtml = '<span class="badge rounded-pill bg-danger" title="พบข้อบกพร่อง ไม่พร้อมใช้งาน"><i class="bi bi-x-circle me-1"></i>ไม่พร้อม</span>';
         }
 
-        // Thumbnail รูปภาพถัง
-        let picHtml = '<span class="text-muted small">—</span>';
-        const displayPicTank = tank.PicTank || (window._liveTanksReferenceMap && window._liveTanksReferenceMap[tank.FireTank]?.PicTank);
-        if (displayPicTank) {
-          const picSrc = displayPicTank.startsWith('data:') ? displayPicTank : (displayPicTank.startsWith('static/') ? displayPicTank : 'static/' + displayPicTank);
-          picHtml = `
-            <a href="${picSrc}" target="_blank" data-bs-toggle="tooltip" title="คลิกดูรูปถังเต็ม">
-              <img src="${picSrc}" class="img-thumb-preview" alt="ถัง">
-            </a>
-          `;
-        }
-
-        // Thumbnail รูปสถานที่
-        let picAreaHtml = '<span class="text-muted small">—</span>';
-        const displayPicArea = tank.PicArea || (window._liveTanksReferenceMap && window._liveTanksReferenceMap[tank.FireTank]?.PicArea);
-        if (displayPicArea) {
-          const picAreaSrc = displayPicArea.startsWith('data:') ? displayPicArea : (displayPicArea.startsWith('static/') ? displayPicArea : 'static/' + displayPicArea);
-          picAreaHtml = `
-            <a href="${picAreaSrc}" target="_blank" data-bs-toggle="tooltip" title="คลิกดูรูปสถานที่เต็ม">
-              <img src="${picAreaSrc}" class="img-thumb-preview" alt="สถานที่">
-            </a>
-          `;
-        }
-
         // ปุ่มจัดการตามสิทธิ์และโหมด
-        let actionButtons = '';
+        let actionButtons = `
+          <button type="button" onclick="openTankDetailModal('${tank.FireTank}')" 
+                  class="btn btn-info btn-sm py-0 px-2 me-1 text-white shadow-xs" title="ดูรายละเอียดถัง (รวมรูปภาพ)">
+            <i class="bi bi-eye-fill"></i>
+          </button>
+        `;
         if (isPastMonthMode) {
-          actionButtons = `
+          actionButtons += `
             <span class="badge bg-secondary-subtle text-secondary border px-2 py-1 small" title="รอบเดือนนี้ถูกปิดรอบและจัดเก็บถาวรแล้ว (โหมดดูอย่างเดียว ไม่สามารถแก้ไขได้)">
               <i class="bi bi-lock-fill me-1"></i>ปิดรอบแล้ว
             </span>
           `;
         } else {
-          actionButtons = `
+          actionButtons += `
             <a href="check.html?tank_id=${encodeURIComponent(tank.FireTank)}" 
                class="btn btn-success btn-sm py-0 px-2 me-1" title="ตรวจเช็คสภาพถัง">
               <i class="bi bi-clipboard2-check-fill"></i>
@@ -923,8 +910,6 @@
                 ? `<span class="badge bg-info-subtle text-info-emphasis border border-info-subtle"><i class="bi bi-person-check me-1"></i>${tank.Inspector}</span>` 
                 : '<span class="text-muted">—</span>'}
             </td>
-            <td class="text-center">${picHtml}</td>
-            <td class="text-center">${picAreaHtml}</td>
             <td class="text-center text-nowrap">${actionButtons}</td>
           </tr>
         `;
@@ -954,7 +939,7 @@
           }
         },
         columnDefs: [
-          { orderable: false, targets: [0, -1, -2, -3] }
+          { orderable: false, targets: [0, -1] }
         ]
       });
 
@@ -1144,13 +1129,6 @@
           readyBadge = '<span class="badge rounded-pill bg-danger" title="พบข้อบกพร่อง ไม่พร้อมใช้งาน"><i class="bi bi-x-circle me-1"></i>ไม่พร้อม</span>';
         }
 
-        let picHtml = '';
-        const displayMobilePic = tank.PicTank || (window._liveTanksReferenceMap && window._liveTanksReferenceMap[tank.FireTank]?.PicTank);
-        if (displayMobilePic) {
-          const picSrc = displayMobilePic.startsWith('data:') ? displayMobilePic : (displayMobilePic.startsWith('static/') ? displayMobilePic : 'static/' + displayMobilePic);
-          picHtml = `<img src="${picSrc}" class="img-thumb-preview me-2.5" alt="ถัง">`;
-        }
-
         let adminActions = '';
         if (currentUser && currentUser.PermitDo >= 2) {
           adminActions = `
@@ -1178,7 +1156,9 @@
               </div>
               <div class="tank-mobile-card-body">
                 <div class="d-flex align-items-center mb-2.5">
-                  ${picHtml}
+                  <div class="d-flex align-items-center justify-content-center rounded-3 bg-danger-subtle text-danger me-2.5 flex-shrink-0 shadow-2xs" style="width: 42px; height: 42px;">
+                    <i class="bi bi-fire fs-5"></i>
+                  </div>
                   <div class="overflow-hidden">
                     <div class="fw-bold text-dark fs-6 mb-0.5 text-truncate">
                       <i class="bi bi-geo-alt-fill text-danger me-1"></i>${tank.Area || '—'}
@@ -1210,6 +1190,9 @@
                     ${tank.Inspector ? `<span class="badge bg-info-subtle text-info-emphasis"><i class="bi bi-person-check me-1"></i>${tank.Inspector}</span>` : '<span class="text-muted small">ยังไม่มีผู้ตรวจ</span>'}
                   </div>
                   <div class="d-flex align-items-center gap-1.5" onclick="event.stopPropagation();">
+                    <button type="button" onclick="openTankDetailModal('${tank.FireTank}')" class="btn btn-outline-info btn-sm px-2.5 fw-semibold action-btn-touch" title="ดูข้อมูลถัง">
+                      <i class="bi bi-eye-fill me-1"></i>ดูข้อมูล
+                    </button>
                     ${isPastMonthMode ? `
                       <span class="badge bg-secondary-subtle text-secondary border px-2.5 py-1.5 small" title="รอบเดือนนี้ถูกปิดรอบและจัดเก็บถาวรแล้ว (โหมดดูอย่างเดียว)">
                         <i class="bi bi-lock-fill me-1"></i>ปิดรอบแล้ว
@@ -1794,21 +1777,26 @@
       }
 
       // รูปภาพ
-      const noImg = 'https://placehold.co/120x120?text=No+Pic';
+      // รูปภาพ (แสดงเมื่อกดดูข้อมูลถัง)
+      const noImg = 'https://placehold.co/140x140?text=No+Pic';
       const detailPicTank = tank.PicTank || (window._liveTanksReferenceMap && window._liveTanksReferenceMap[tank.FireTank]?.PicTank);
       const detailPicArea = tank.PicArea || (window._liveTanksReferenceMap && window._liveTanksReferenceMap[tank.FireTank]?.PicArea);
 
       if (detailPicTank) {
         const src = detailPicTank.startsWith('data:') ? detailPicTank : (detailPicTank.startsWith('static/') ? detailPicTank : 'static/' + detailPicTank);
         $('#mdPicTank').attr('src', src);
+        $('#mdPicTankLink').attr('href', src).removeClass('pe-none');
       } else {
         $('#mdPicTank').attr('src', noImg);
+        $('#mdPicTankLink').attr('href', '#').addClass('pe-none');
       }
       if (detailPicArea) {
         const src = detailPicArea.startsWith('data:') ? detailPicArea : (detailPicArea.startsWith('static/') ? detailPicArea : 'static/' + detailPicArea);
         $('#mdPicArea').attr('src', src);
+        $('#mdPicAreaLink').attr('href', src).removeClass('pe-none');
       } else {
         $('#mdPicArea').attr('src', noImg);
+        $('#mdPicAreaLink').attr('href', '#').addClass('pe-none');
       }
 
       // ปุ่มตรวจและแก้ไข
