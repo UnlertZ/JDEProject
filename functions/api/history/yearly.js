@@ -136,7 +136,12 @@ export async function onRequestGet(context) {
       year: yearParam,
       thai_year: yearParam + 543,
       months: monthsData
-    }), { headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+    }), {
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'public, max-age=15, stale-while-revalidate=60'
+      }
+    });
 
   } catch (err) {
     return new Response(JSON.stringify({ success: false, message: err.message }), {

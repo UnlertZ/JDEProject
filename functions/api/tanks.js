@@ -108,7 +108,10 @@ export async function onRequestGet(context) {
     formatted.sort((a, b) => (a.FireTank || '').localeCompare(b.FireTank || '', undefined, { numeric: true, sensitivity: 'base' }));
 
     return new Response(JSON.stringify(formatted), {
-      headers: { 'Content-Type': 'application/json' }
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'public, max-age=10, stale-while-revalidate=30'
+      }
     });
   } catch (err) {
     return new Response(JSON.stringify({ error: err.message }), {

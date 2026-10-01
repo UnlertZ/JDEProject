@@ -125,8 +125,6 @@ export async function onRequestGet(context) {
       });
     }
 
-    await ensureHistoryTables(env.DB);
-
     const now = new Date();
     const curYear = now.getFullYear();
     const curMonth = now.getMonth() + 1;
@@ -134,8 +132,17 @@ export async function onRequestGet(context) {
     const curThaiYear = curYear + 543;
     const curMonthLabel = `${THAI_MONTHS[curMonth - 1]} ${curThaiYear}`;
 
-    const q = await env.DB.prepare('SELECT id, month_key, month_label, total_tanks, checked_tanks, not_checked_tanks, ready_tanks, not_ready_tanks, archived_at, is_closed FROM monthly_snapshots ORDER BY month_key DESC').all();
-    const snapshots = q.results || [];
+    let snapshots = [];
+    try {
+      const q = await env.DB.prepare('SELECT id, month_key, month_label, total_tanks, checked_tanks, not_checked_tanks, ready_tanks, not_ready_tanks, archived_at, is_closed FROM monthly_snapshots ORDER BY month_key DESC').all();
+      snapshots = q.results || [];
+    } catch (dbErr) {
+      if (String(dbErr.message).includes('no such table')) {
+        await ensureHistoryTables(env.DB);
+        const retryQ = await env.DB.prepare('SELECT id, month_key, month_label, total_tanks, checked_tanks, not_checked_tanks, ready_tanks, not_ready_tanks, archived_at, is_closed FROM monthly_snapshots ORDER BY month_key DESC').all().catch(() => ({ results: [] }));
+        snapshots = retryQ.results || [];
+      }
+    }
 
     return new Response(JSON.stringify({
       current: {
@@ -144,7 +151,12 @@ export async function onRequestGet(context) {
         is_current: true
       },
       history: snapshots
-    }), { headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+    }), {
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'public, max-age=15, stale-while-revalidate=60'
+      }
+    });
 
   } catch (err) {
     return new Response(JSON.stringify({ success: false, message: err.message }), {

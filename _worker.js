@@ -289,8 +289,12 @@ export default {
         }), { status: 500, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
       }
 
-      if (env.DB && pathname.startsWith('/api/')) {
+      // Explicit init/seed endpoint only (never run DDL write locks on normal read requests)
+      if (env.DB && (pathname === '/api/seed' || pathname === '/api/init')) {
         await ensureDatabase(env.DB);
+        return new Response(JSON.stringify({ success: true, message: 'Database initialized successfully' }), {
+          headers: { 'Content-Type': 'application/json; charset=utf-8' }
+        });
       }
 
       // 1. /api/auth
@@ -418,25 +422,34 @@ export default {
             const query = await env.DB.prepare('SELECT * FROM tanks').all();
             rows = query.results || [];
           } catch (dbErr) {
-            // หากตารางชื่ออื่นใน D1 ตรวจสอบตารางที่มีอยู่
-            const tblQuery = await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%'").all().catch(() => ({ results: [] }));
-            const tableList = (tblQuery.results || []).map(r => r.name);
-            const foundTable = tableList.find(t => t.toLowerCase().includes('tank') || t.toLowerCase().includes('pump'));
-            if (foundTable) {
-              const q2 = await env.DB.prepare(`SELECT * FROM "${foundTable}"`).all();
-              rows = q2.results || [];
+            if (String(dbErr.message).includes('no such table')) {
+              await ensureDatabase(env.DB);
+              const retryQ = await env.DB.prepare('SELECT * FROM tanks').all().catch(() => ({ results: [] }));
+              rows = retryQ.results || [];
             } else {
-              return new Response(JSON.stringify({
-                error: `Database query failed: ${dbErr.message}`,
-                availableTables: tableList
-              }), { status: 500, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+              // หากตารางชื่ออื่นใน D1 ตรวจสอบตารางที่มีอยู่
+              const tblQuery = await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%'").all().catch(() => ({ results: [] }));
+              const tableList = (tblQuery.results || []).map(r => r.name);
+              const foundTable = tableList.find(t => t.toLowerCase().includes('tank') || t.toLowerCase().includes('pump'));
+              if (foundTable) {
+                const q2 = await env.DB.prepare(`SELECT * FROM "${foundTable}"`).all();
+                rows = q2.results || [];
+              } else {
+                return new Response(JSON.stringify({
+                  error: `Database query failed: ${dbErr.message}`,
+                  availableTables: tableList
+                }), { status: 500, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+              }
             }
           }
 
           const formatted = rows.map(formatTankResponse);
           formatted.sort((a, b) => (a.FireTank || '').localeCompare(b.FireTank || '', undefined, { numeric: true, sensitivity: 'base' }));
           return new Response(JSON.stringify(formatted), {
-            headers: { 'Content-Type': 'application/json; charset=utf-8' }
+            headers: {
+              'Content-Type': 'application/json; charset=utf-8',
+              'Cache-Control': 'public, max-age=10, stale-while-revalidate=30'
+            }
           });
         }
 
@@ -561,7 +574,7 @@ export default {
 
         // 6.1 /api/history/months — แสดงรายการเดือนทั้งหมด (ดึงตรงจาก D1 ไม่มีการสร้างซ้ำซ้อน)
         if (pathname === '/api/history/months') {
-          const q = await env.DB.prepare('SELECT id, month_key, month_label, total_tanks, checked_tanks, not_checked_tanks, ready_tanks, not_ready_tanks, archived_at, is_closed FROM monthly_snapshots ORDER BY month_key DESC').all();
+          const q = await env.DB.prepare('SELECT id, month_key, month_label, total_tanks, checked_tanks, not_checked_tanks, ready_tanks, not_ready_tanks, archived_at, is_closed FROM monthly_snapshots ORDER BY month_key DESC').all().catch(() => ({ results: [] }));
           const snapshots = q.results || [];
 
           return new Response(JSON.stringify({
@@ -571,7 +584,12 @@ export default {
               is_current: true
             },
             history: snapshots
-          }), { headers: { 'Content-Type': 'application/json' } });
+          }), {
+            headers: {
+              'Content-Type': 'application/json; charset=utf-8',
+              'Cache-Control': 'public, max-age=15, stale-while-revalidate=60'
+            }
+          });
         }
 
         // 6.2 /api/history/snapshot — ดึงข้อมูลถังในรอบเดือนที่เลือก
@@ -673,7 +691,12 @@ export default {
             year: yearParam,
             thai_year: yearParam + 543,
             months: monthsData
-          }), { headers: { 'Content-Type': 'application/json' } });
+          }), {
+            headers: {
+              'Content-Type': 'application/json; charset=utf-8',
+              'Cache-Control': 'public, max-age=15, stale-while-revalidate=60'
+            }
+          });
         }
 
         // 6.4 /api/history/seed-month — สำหรับ Super Admin (P3) เพิ่มข้อมูลประวัติย้อนหลังรายเดือนอย่างรวดเร็ว

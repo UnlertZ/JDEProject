@@ -670,9 +670,9 @@
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 
   <!-- Application Logic -->
-  <script src="js/initial_data.js?v=20261001_v1"></script>
-  <script src="js/storage.js?v=20261001_v1"></script>
-  <script src="js/auth.js?v=20261001_v1"></script>
+  <script src="js/initial_data.js?v=20261001_v2"></script>
+  <script src="js/storage.js?v=20261001_v2"></script>
+  <script src="js/auth.js?v=20261001_v2"></script>
 
   <script>
     let dataTableInstance = null;
@@ -1256,10 +1256,15 @@
       }
     }
 
-    $(document).ready(function () {
-      renderDashboard();
-      populateMonthSelector();
-      loadYearlyChart();
+    $(document).ready(async function () {
+      // 1. โหลดข้อมูลแดชบอร์ดหลักก่อน
+      await renderDashboard();
+
+      // 2. ทยอยโหลดรอบเดือนและกราฟตามลำดับ เพื่อป้องกันการแย่งคิวใน D1 พร้อมกัน
+      setTimeout(() => {
+        populateMonthSelector();
+        loadYearlyChart();
+      }, 150);
       
       // Update Live Clock
       function updateClock() {

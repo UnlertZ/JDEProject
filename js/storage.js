@@ -244,23 +244,59 @@ function compressImage(file, maxWidth = 1200, quality = 0.75) {
   });
 }
 
+const TANKS_CACHE_KEY = 'jde_tanks_cache_v2';
+
+function getLocalTanksCache() {
+  try {
+    const raw = localStorage.getItem(TANKS_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function setLocalTanksCache(data) {
+  try {
+    if (Array.isArray(data) && data.length > 0) {
+      localStorage.setItem(TANKS_CACHE_KEY, JSON.stringify(data));
+    }
+  } catch (e) {}
+}
+
+function hideD1ConnectionAlerts() {
+  const alertElem = document.getElementById('d1ConnAlert');
+  if (alertElem) alertElem.remove();
+  const warnElem = document.getElementById('d1ConnWarning');
+  if (warnElem) warnElem.remove();
+}
+
 // แสดงแถบแจ้งเตือนเมื่อเชื่อมต่อ Cloudflare D1 ล้มเหลว
 function showD1ConnectionError(msg) {
+  hideD1ConnectionAlerts();
   const alertHtml = `
-    <div class="alert alert-danger alert-dismissible fade show shadow-sm my-3 border-danger" role="alert">
-      <div class="d-flex align-items-center">
-        <i class="bi bi-cloud-slash-fill fs-2 me-3 text-danger"></i>
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm my-3 border-danger" role="alert" id="d1ConnAlert">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div class="d-flex align-items-center">
+          <i class="bi bi-cloud-slash-fill fs-2 me-3 text-danger"></i>
+          <div>
+            <h6 class="alert-heading fw-bold mb-1">⚠️ ไม่สามารถเชื่อมต่อกับฐานข้อมูล Cloudflare D1 แบบ Real-time ได้</h6>
+            <div class="small">${msg}</div>
+            <div class="small mt-1 text-muted">ระบบกำลังพยายามเชื่อมต่อใหม่ หรือกดปุ่มลองใหม่เพื่อโหลดข้อมูลอีกครั้ง</div>
+          </div>
+        </div>
         <div>
-          <h6 class="alert-heading fw-bold mb-1">⚠️ ไม่สามารถเชื่อมต่อกับฐานข้อมูล Cloudflare D1 แบบ Real-time ได้</h6>
-          <div class="small">${msg}</div>
-          <div class="small mt-1 text-muted">กรุณาตรวจสอบว่าได้ตั้งค่า Binding ตัวแปรชื่อ <code>DB</code> ใน Cloudflare Pages แล้วหรือยัง</div>
+          <button type="button" class="btn btn-danger btn-sm rounded-pill px-3 shadow-xs" onclick="fetchAllTanks(true).then(() => typeof renderDashboard === 'function' && renderDashboard())">
+            <i class="bi bi-arrow-clockwise me-1"></i>ลองใหม่อีกครั้ง
+          </button>
         </div>
       </div>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   `;
   const container = document.getElementById('flashAlertArea') || document.querySelector('main');
-  if (container && !document.getElementById('d1ConnAlert')) {
+  if (container) {
     const div = document.createElement('div');
     div.id = 'd1ConnAlert';
     div.innerHTML = alertHtml;
@@ -268,31 +304,97 @@ function showD1ConnectionError(msg) {
   }
 }
 
-// ─── ดึงรายการถังทั้งหมดแบบ Real-time จาก Cloudflare D1 100% ───
-async function fetchAllTanks() {
-  try {
-    const res = await fetch('/api/tanks');
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      const msg = err.error || err.message || `HTTP ${res.status}`;
-      showD1ConnectionError(msg);
-      _memoryTanks = [];
-      return [];
-    }
-    const data = await res.json();
-    if (Array.isArray(data)) {
-      _memoryTanks = data.map(applyThirtyDaysRule);
-      _memoryTanks.sort((a, b) => (a.FireTank || '').localeCompare(b.FireTank || '', undefined, { numeric: true, sensitivity: 'base' }));
-      return _memoryTanks;
-    }
-    _memoryTanks = [];
-    return [];
-  } catch (err) {
-    console.error('Database fetch failed:', err);
-    showD1ConnectionError(`การเชื่อมต่อไปยัง Cloudflare D1 ขัดข้อง: ${err.message}`);
-    _memoryTanks = [];
-    return [];
+function showD1ConnectionWarning(msg) {
+  hideD1ConnectionAlerts();
+  const alertHtml = `
+    <div class="alert alert-warning alert-dismissible fade show shadow-sm my-2 border-warning" role="alert" id="d1ConnWarning">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div class="d-flex align-items-center">
+          <i class="bi bi-clock-history fs-3 me-2.5 text-warning"></i>
+          <div>
+            <strong class="d-block">${msg}</strong>
+            <span class="small text-muted">คุณยังสามารถดูและใช้งานข้อมูลในหน้าเว็บได้ตามปกติ ระบบจะซิงค์ใหม่อัตโนมัติเมื่อฐานข้อมูลพร้อม</span>
+          </div>
+        </div>
+        <div>
+          <button type="button" class="btn btn-outline-dark btn-sm rounded-pill px-3" onclick="fetchAllTanks(true).then(() => typeof renderDashboard === 'function' && renderDashboard())">
+            <i class="bi bi-arrow-clockwise me-1"></i>เชื่อมต่อใหม่
+          </button>
+        </div>
+      </div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  `;
+  const container = document.getElementById('flashAlertArea') || document.querySelector('main');
+  if (container) {
+    const div = document.createElement('div');
+    div.id = 'd1ConnWarning';
+    div.innerHTML = alertHtml;
+    container.prepend(div);
   }
+}
+
+// ─── ดึงรายการถังทั้งหมดแบบ Real-time จาก Cloudflare D1 100% (พร้อม Auto-retry 3 ครั้ง + Cache Fallback) ───
+async function fetchAllTanks(isBypassCache = false) {
+  const maxRetries = 3;
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const url = isBypassCache ? `/api/tanks?_t=${Date.now()}` : '/api/tanks';
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout per attempt
+
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          _memoryTanks = data.map(applyThirtyDaysRule);
+          _memoryTanks.sort((a, b) => (a.FireTank || '').localeCompare(b.FireTank || '', undefined, { numeric: true, sensitivity: 'base' }));
+          setLocalTanksCache(_memoryTanks);
+          hideD1ConnectionAlerts();
+          return _memoryTanks;
+        }
+      }
+
+      // Retry on 500, 502, 503, 504 serverless glitches
+      if ([500, 502, 503, 504].includes(res.status)) {
+        lastError = new Error(`HTTP ${res.status}`);
+        if (attempt < maxRetries) {
+          await new Promise(r => setTimeout(r, attempt * 500)); // 500ms, 1000ms
+          continue;
+        }
+      } else {
+        const err = await res.json().catch(() => ({}));
+        lastError = new Error(err.error || err.message || `HTTP ${res.status}`);
+        break;
+      }
+    } catch (err) {
+      lastError = err;
+      if (attempt < maxRetries) {
+        await new Promise(r => setTimeout(r, attempt * 500));
+        continue;
+      }
+    }
+  }
+
+  // All retries failed: fallback to localStorage cache if available
+  const cached = getLocalTanksCache();
+  if (cached && cached.length > 0) {
+    console.warn('fetchAllTanks: D1 fetch failed after retries, falling back to cached tanks:', lastError);
+    _memoryTanks = cached.map(applyThirtyDaysRule);
+    _memoryTanks.sort((a, b) => (a.FireTank || '').localeCompare(b.FireTank || '', undefined, { numeric: true, sensitivity: 'base' }));
+    showD1ConnectionWarning(`ฐานข้อมูลตอบสนองช้า (${lastError ? lastError.message : 'กำลังเชื่อมต่อ'}) — กำลังแสดงข้อมูลที่บันทึกไว้ล่าสุด`);
+    return _memoryTanks;
+  }
+
+  // No cache at all: show error alert
+  console.error('Database fetch failed after retries:', lastError);
+  showD1ConnectionError(`การเชื่อมต่อไปยัง Cloudflare D1 ขัดข้อง: ${lastError ? lastError.message : 'Unknown error'}`);
+  _memoryTanks = [];
+  return [];
 }
 
 // ฟังก์ชันดึงถังจาก In-memory สำหรับหน้าเว็บปัจจุบัน
