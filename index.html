@@ -34,7 +34,7 @@
       <div class="collapse navbar-collapse" id="mainNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active fw-semibold" href="index.html">
+            <a class="nav-link active fw-semibold" href="index.html" id="navDashboardLink" onclick="onNavDashboardClick(event)">
               <i class="bi bi-speedometer2 me-1"></i>แดชบอร์ด
             </a>
           </li>
@@ -204,7 +204,7 @@
             <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.25); border-radius: 4px;">
               <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อแสดงทั้งหมด</span>
+            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อเปิดตารางทั้งหมด</span>
           </div>
           <div class="card-glow-accent"></div>
         </div>
@@ -231,7 +231,7 @@
             <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.25); border-radius: 4px;">
               <div class="progress-bar bg-white" id="barPercentChecked" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อกรอง</span>
+            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อเปิดตารางและกรอง</span>
           </div>
           <div class="card-glow-accent"></div>
         </div>
@@ -258,7 +258,7 @@
             <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.25); border-radius: 4px;">
               <div class="progress-bar bg-white" id="barPercentNotChecked" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อกรอง</span>
+            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อเปิดตารางและกรอง</span>
           </div>
           <div class="card-glow-accent"></div>
         </div>
@@ -285,15 +285,49 @@
             <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.25); border-radius: 4px;">
               <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อกรอง</span>
+            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อเปิดตารางและกรอง</span>
           </div>
           <div class="card-glow-accent"></div>
         </div>
       </div>
     </div>
 
-    <!-- Filter Card & View Controls -->
-    <div class="card filter-card mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
+    <!-- ─── 3. Action Banner / Toggle Button to View Tank Table (Lazy Load) ─── -->
+    <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden" id="toggleTableBanner" style="background: linear-gradient(135deg, #ffffff 0%, #FAF6EE 100%); border: 1.5px dashed var(--jde-border) !important;">
+      <div class="card-body p-3 p-md-4">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 text-center text-md-start">
+          <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center justify-content-center rounded-circle bg-danger-subtle text-danger flex-shrink-0 shadow-2xs" style="width: 48px; height: 48px;">
+              <i class="bi bi-table fs-4"></i>
+            </div>
+            <div>
+              <h5 class="fw-bold text-dark mb-1 d-flex align-items-center gap-2 justify-content-center justify-content-md-start flex-wrap">
+                <span>ตารางรายการถังดับเพลิงและตัวกรอง</span>
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle small fw-normal" id="bannerTableStateBadge">
+                  <i class="bi bi-eye-slash me-1"></i>ซ่อนอยู่เพื่อความเร็ว
+                </span>
+              </h5>
+              <div class="text-muted small">
+                ซ่อนตารางไว้เพื่อโหลดหน้าเว็บเร็วขึ้น แตะที่การ์ดสรุปแดชบอร์ด 4 ใบด้านบน หรือกดปุ่มด้านข้างเพื่อเปิดดูข้อมูล
+              </div>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <button type="button" id="btnToggleTankTable" class="btn btn-danger shadow-sm rounded-pill px-4 py-2.5 fw-bold action-btn-touch d-flex align-items-center gap-2" onclick="toggleTankTableSection()">
+              <i class="bi bi-table" id="btnToggleTankTableIcon"></i>
+              <span id="btnToggleTankTableText">แสดงตารางรายการถัง</span>
+              <span id="tableLoadingSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── 4. Table & Filter Section (Hidden initially to reduce initial payload) ─── -->
+    <div id="tableSectionWrapper" class="d-none">
+
+      <!-- Filter Card & View Controls -->
+      <div class="card filter-card mb-4 shadow-sm border-0 rounded-4 overflow-hidden">
       <div class="card-header bg-white border-bottom py-3 px-3 px-md-4 d-flex flex-wrap align-items-center justify-content-between gap-2">
         <div class="d-flex align-items-center gap-2" role="button" data-bs-toggle="collapse" data-bs-target="#filterBody" aria-expanded="true" aria-controls="filterBody">
           <span class="fw-bold text-dark d-flex align-items-center">
@@ -422,6 +456,8 @@
         <!-- Populated dynamically via JS -->
       </div>
     </div>
+
+    </div> <!-- /#tableSectionWrapper -->
 
   </main>
 
@@ -688,6 +724,8 @@
     let chartInstance = null;
     let currentChartMode = 'bar';
     let yearlyDataCache = null;
+    let isTableSectionVisible = false;
+    let isTanksDataLoaded = false;
 
     function getTankSortKey(val) {
       if (!val) return '';
@@ -699,37 +737,20 @@
       return s;
     }
 
-    async function renderDashboard(customTanks = null) {
-      if (typeof renderNavbarAuth === 'function') renderNavbarAuth();
-      let tanks = [];
-      if (customTanks && Array.isArray(customTanks)) {
-        tanks = customTanks;
-        _memoryTanks = customTanks;
-      } else {
-        // Fast-path: ใช้แคชใน memory หรือ localStorage ทันที (โหลดเสร็จใน 0.01 วินาที ไม่ต้องรอ Network)
-        if (!_memoryTanks || _memoryTanks.length === 0) {
-          const cached = getLocalTanksCache();
-          if (cached && cached.length > 0) {
-            _memoryTanks = cached.map(applyThirtyDaysRule);
-            _memoryTanks.sort((a, b) => (a.FireTank || '').localeCompare(b.FireTank || '', undefined, { numeric: true, sensitivity: 'base' }));
-          }
+    function onNavDashboardClick(e) {
+      const path = window.location.pathname;
+      if (path.endsWith('index.html') || path.endsWith('/') || path === '') {
+        e.preventDefault();
+        if (!isTableSectionVisible) {
+          showTankTableSection(true);
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        tanks = _memoryTanks && _memoryTanks.length > 0 ? _memoryTanks : await fetchAllTanks();
-        
-        // บันทึกรูปภาพอ้างอิงจากถังปัจจุบันไว้ใช้แสดงผลในโหมดประวัติย้อนหลัง
-        window._liveTanksReferenceMap = {};
-        tanks.forEach(t => {
-          if (t.FireTank) {
-            window._liveTanksReferenceMap[t.FireTank] = {
-              PicTank: t.PicTank,
-              PicArea: t.PicArea
-            };
-          }
-        });
       }
-      const currentUser = getCurrentUser();
+    }
 
-      // จัดการปุ่มดำเนินการตามสิทธิ์และโหมดรอบเดือน (ปัจจุบัน vs ประวัติย้อนหลัง)
+    function updateActionButtons() {
+      const currentUser = getCurrentUser();
       if (isPastMonthMode) {
         $('#btnAddTank, #btnApprovals, #btnExportExcel, #btnDownloadImagesZip, #btnImportExcel, #btnResetDb, #btnQuickSeedMonth, #btnGoCheck').addClass('d-none');
       } else {
@@ -747,7 +768,6 @@
             $('#btnResetDb').addClass('d-none');
             $('#btnQuickSeedMonth').addClass('d-none');
           }
-          // โหลด pending approvals ในเบื้องหลัง ไม่บล็อกการเรนเดอร์หน้าจอ
           fetch('/api/approvals').then(res => res.json()).then(data => {
             if (data && data.pending && data.pending.length > 0) {
               $('#btnApprovalsBadge').text(data.pending.length).removeClass('d-none');
@@ -759,8 +779,27 @@
           $('#btnAddTank, #btnApprovals, #btnExportExcel, #btnDownloadImagesZip, #btnImportExcel, #btnResetDb, #btnQuickSeedMonth').addClass('d-none');
         }
       }
+    }
 
-      // คำนวณสรุปการ์ด 4 ใบ ตามรอบเดือน (เช็คทุกต้นเดือนใหม่)
+    function applySummaryCardNumbers(total, checked, notChecked, notReady) {
+      $('#cardTotal').text(total);
+      $('#cardChecked').text(checked);
+      $('#cardNotChecked').text(notChecked);
+      $('#cardNotReady').text(notReady);
+
+      const percentChecked = total > 0 ? Math.round((checked / total) * 100) : 0;
+      const percentNotChecked = total > 0 ? Math.round((notChecked / total) * 100) : 0;
+      $('#badgePercentChecked').html(`<i class="bi bi-pie-chart me-1"></i>${percentChecked}%`);
+      $('#badgePercentNotChecked').html(`<i class="bi bi-clock me-1"></i>${percentNotChecked}%`);
+      
+      $('#barPercentChecked').css('width', `${percentChecked}%`).attr('aria-valuenow', percentChecked);
+      $('#barPercentNotChecked').css('width', `${percentNotChecked}%`).attr('aria-valuenow', percentNotChecked);
+      
+      $('#filterCountBadge').text(`ทั้งหมด ${total} ถัง`);
+    }
+
+    function updateSummaryCardsDisplay(tanks) {
+      if (!tanks || !Array.isArray(tanks)) return;
       const total = tanks.length;
       const checked = isPastMonthMode
         ? tanks.filter(t => t.Tankcheck === 'เช็คแล้ว').length
@@ -770,22 +809,138 @@
         ? tanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && (t.ReadyorNot === 'Not Ready' || !t.TankStatus)).length
         : tanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(t.Lastcheck) && (t.ReadyorNot === 'Not Ready' || !t.TankStatus)).length;
 
-      $('#cardTotal').text(total);
-      $('#cardChecked').text(checked);
-      $('#cardNotChecked').text(notChecked);
-      $('#cardNotReady').text(notReady);
+      applySummaryCardNumbers(total, checked, notChecked, notReady);
+    }
 
-      // คำนวณเปอร์เซ็นต์สำหรับ Badge แสดงผลบนการ์ด
-      const percentChecked = total > 0 ? Math.round((checked / total) * 100) : 0;
-      const percentNotChecked = total > 0 ? Math.round((notChecked / total) * 100) : 0;
-      $('#badgePercentChecked').html(`<i class="bi bi-pie-chart me-1"></i>${percentChecked}%`);
-      $('#badgePercentNotChecked').html(`<i class="bi bi-clock me-1"></i>${percentNotChecked}%`);
-      
-      // อัปเดต Progress Bar
-      $('#barPercentChecked').css('width', `${percentChecked}%`).attr('aria-valuenow', percentChecked);
-      $('#barPercentNotChecked').css('width', `${percentNotChecked}%`).attr('aria-valuenow', percentNotChecked);
-      
-      $('#filterCountBadge').text(`ทั้งหมด ${total} ถัง`);
+    function initSummaryCardsFromCache() {
+      const cached = getLocalTanksCache();
+      if (cached && Array.isArray(cached) && cached.length > 0) {
+        const tanks = cached.map(applyThirtyDaysRule);
+        updateSummaryCardsDisplay(tanks);
+      }
+    }
+
+    async function toggleTankTableSection() {
+      if (isTableSectionVisible) {
+        hideTankTableSection();
+      } else {
+        await showTankTableSection(true);
+      }
+    }
+
+    async function showTankTableSection(shouldScroll = false) {
+      const $btn = $('#btnToggleTankTable');
+      const $icon = $('#btnToggleTankTableIcon');
+      const $text = $('#btnToggleTankTableText');
+      const $spinner = $('#tableLoadingSpinner');
+      const $badge = $('#bannerTableStateBadge');
+
+      if (!isTanksDataLoaded) {
+        $btn.prop('disabled', true);
+        $spinner.removeClass('d-none');
+        $text.text('กำลังโหลดข้อมูลตาราง...');
+
+        try {
+          let tanks = [];
+          if (isPastMonthMode && window._currentPastMonthTanks) {
+            tanks = window._currentPastMonthTanks;
+          } else {
+            if (!_memoryTanks || _memoryTanks.length === 0) {
+              const cached = getLocalTanksCache();
+              if (cached && cached.length > 0) {
+                _memoryTanks = cached.map(applyThirtyDaysRule);
+                _memoryTanks.sort((a, b) => (a.FireTank || '').localeCompare(b.FireTank || '', undefined, { numeric: true, sensitivity: 'base' }));
+              }
+            }
+            if (_memoryTanks && _memoryTanks.length > 0) {
+              $('#tableSectionWrapper').removeClass('d-none');
+              isTableSectionVisible = true;
+              await renderDashboard(_memoryTanks);
+            }
+            tanks = await fetchAllTanks(false);
+          }
+          $('#tableSectionWrapper').removeClass('d-none');
+          isTableSectionVisible = true;
+          await renderDashboard(tanks);
+          isTanksDataLoaded = true;
+          $('#d1LiveBadge').html('<i class="bi bi-circle-fill text-success me-1 pulse-animation" style="font-size:0.5rem;"></i>Cloudflare D1 Live');
+        } catch (err) {
+          console.error('Error loading tanks on demand:', err);
+          alert('เกิดข้อผิดพลาดในการโหลดข้อมูลตาราง กรุณาลองใหม่อีกครั้ง');
+        } finally {
+          $btn.prop('disabled', false);
+          $spinner.addClass('d-none');
+        }
+      } else {
+        $('#tableSectionWrapper').removeClass('d-none');
+        isTableSectionVisible = true;
+        if (dataTableInstance) {
+          setTimeout(() => dataTableInstance.columns.adjust().draw(), 50);
+        }
+      }
+
+      $btn.removeClass('btn-danger').addClass('btn-outline-secondary');
+      $icon.removeClass('bi-table bi-eye-fill').addClass('bi-eye-slash-fill');
+      $text.text('ซ่อนตารางรายการถัง');
+      $badge.removeClass('bg-secondary-subtle text-secondary').addClass('bg-success-subtle text-success')
+            .html('<i class="bi bi-check-circle me-1"></i>กำลังแสดงข้อมูล');
+
+      if (shouldScroll) {
+        const target = document.getElementById('tableSectionWrapper');
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    }
+
+    function hideTankTableSection() {
+      $('#tableSectionWrapper').addClass('d-none');
+      isTableSectionVisible = false;
+
+      const $btn = $('#btnToggleTankTable');
+      const $icon = $('#btnToggleTankTableIcon');
+      const $text = $('#btnToggleTankTableText');
+      const $badge = $('#bannerTableStateBadge');
+
+      $btn.removeClass('btn-outline-secondary').addClass('btn-danger');
+      $icon.removeClass('bi-eye-slash-fill').addClass('bi-table');
+      $text.text('แสดงตารางรายการถัง');
+      $badge.removeClass('bg-success-subtle text-success').addClass('bg-secondary-subtle text-secondary')
+            .html('<i class="bi bi-eye-slash me-1"></i>ซ่อนอยู่เพื่อความเร็ว');
+    }
+
+    async function renderDashboard(customTanks = null) {
+      if (typeof renderNavbarAuth === 'function') renderNavbarAuth();
+      updateActionButtons();
+      let tanks = [];
+      if (customTanks && Array.isArray(customTanks)) {
+        tanks = customTanks;
+        _memoryTanks = customTanks;
+        isTanksDataLoaded = true;
+      } else {
+        if (!_memoryTanks || _memoryTanks.length === 0) {
+          const cached = getLocalTanksCache();
+          if (cached && cached.length > 0) {
+            _memoryTanks = cached.map(applyThirtyDaysRule);
+            _memoryTanks.sort((a, b) => (a.FireTank || '').localeCompare(b.FireTank || '', undefined, { numeric: true, sensitivity: 'base' }));
+          }
+        }
+        tanks = _memoryTanks && _memoryTanks.length > 0 ? _memoryTanks : await fetchAllTanks();
+        isTanksDataLoaded = true;
+        
+        window._liveTanksReferenceMap = {};
+        tanks.forEach(t => {
+          if (t.FireTank) {
+            window._liveTanksReferenceMap[t.FireTank] = {
+              PicTank: t.PicTank,
+              PicArea: t.PicArea
+            };
+          }
+        });
+      }
+
+      // อัปเดตตัวเลขการ์ดสรุป 4 ใบ
+      updateSummaryCardsDisplay(tanks);
 
       // เติม Options ในตัวกรอง
       const types = [...new Set(tanks.map(t => t.Types).filter(Boolean))].sort();
@@ -1244,18 +1399,14 @@
     }
 
     $(document).ready(async function () {
-      // 1. เรนเดอร์แดชบอร์ดทันทีจากแคชในเครื่อง (เปิดปุ๊บแสดงผลทันที 0.01 วินาที ไม่ต้องรอ Network)
-      await renderDashboard();
+      // 1. ตรวจสอบสิทธิ์ผู้ใช้และอัปเดต Navbar / ปุ่ม Action
+      if (typeof renderNavbarAuth === 'function') renderNavbarAuth();
+      updateActionButtons();
 
-      // 2. ซิงค์ข้อมูลล่าสุดจาก Cloudflare D1 ในเบื้องหลัง (Background Live Sync)
-      fetchAllTanks(false).then(liveTanks => {
-        if (liveTanks && liveTanks.length > 0 && !isPastMonthMode) {
-          renderDashboard(liveTanks);
-          $('#d1LiveBadge').html('<i class="bi bi-circle-fill text-success me-1 pulse-animation" style="font-size:0.5rem;"></i>Cloudflare D1 Live');
-        }
-      }).catch(console.error);
+      // 2. แสดงตัวเลขสรุปเริ่มต้น 4 ใบจากการ์ด (จากแคชในเครื่องทันที ถ้ามี ไม่ต้องรอ Network)
+      initSummaryCardsFromCache();
 
-      // 3. ทยอยโหลดรอบเดือนและกราฟตามลำดับ เพื่อป้องกันการแย่งคิวใน D1
+      // 3. ทยอยโหลดรอบเดือนและกราฟประจำปี (เรียก API สถิติขนาดเล็ก ไม่ดึงรูปภาพ/ข้อมูลถังทั้งหมด)
       setTimeout(() => {
         populateMonthSelector();
         loadYearlyChart();
@@ -1274,8 +1425,12 @@
       $('#currentYear').text(new Date().getFullYear());
     });
 
-    // ─── การคลิกการ์ด 4 ใบเพื่อกรองข้อมูลทันที ───
-    function filterByCard(type) {
+    // ─── การคลิกการ์ด 4 ใบเพื่อกรองข้อมูลและเปิดตารางทันที ───
+    async function filterByCard(type) {
+      if (!isTableSectionVisible) {
+        await showTankTableSection(false);
+      }
+
       if (activeCardFilter === type && type !== 'all') {
         // แตะซ้ำเพื่อยกเลิกการกรอง
         activeCardFilter = null;
@@ -1316,9 +1471,9 @@
         $('#activeFilterDot').addClass('d-none');
       }
 
-      // เลื่อนหน้าจอลงไปยังตารางหรือการ์ดแบบนุ่มนวลเมื่อใช้มือถือ
-      const targetElem = document.getElementById('tableViewContainer');
-      if (targetElem && window.innerWidth < 992) {
+      // เลื่อนหน้าจอลงไปยังตารางแบบนุ่มนวล
+      const targetElem = document.getElementById('tableSectionWrapper');
+      if (targetElem) {
         targetElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
@@ -1356,7 +1511,21 @@
       if (selectedKey === 'current') {
         isPastMonthMode = false;
         $('#pastMonthNotice').addClass('d-none');
-        await renderDashboard();
+        updateActionButtons();
+        if (isTableSectionVisible) {
+          const tanks = _memoryTanks && _memoryTanks.length > 0 ? _memoryTanks : await fetchAllTanks(false);
+          await renderDashboard(tanks);
+        } else {
+          initSummaryCardsFromCache();
+          if (yearlyDataCache) {
+            const now = new Date();
+            const curMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            const curMonthData = yearlyDataCache.months?.find(m => m.month_key === curMonthKey);
+            if (curMonthData) {
+              applySummaryCardNumbers(curMonthData.total, curMonthData.checked, curMonthData.not_checked, curMonthData.not_ready);
+            }
+          }
+        }
       } else {
         isPastMonthMode = true;
         const res = await fetchMonthSnapshot(selectedKey);
@@ -1364,7 +1533,13 @@
           const label = res.snapshot.month_label || selectedKey;
           $('#pastMonthNoticeTitle').html(`กำลังดูข้อมูลย้อนหลังรอบเดือน <strong>${label}</strong>`);
           $('#pastMonthNotice').removeClass('d-none');
-          await renderDashboard(res.tanks || []);
+          updateActionButtons();
+          window._currentPastMonthTanks = res.tanks || [];
+          if (isTableSectionVisible) {
+            await renderDashboard(res.tanks || []);
+          } else {
+            updateSummaryCardsDisplay(res.tanks || []);
+          }
         } else {
           alert('⚠️ ไม่พบข้อมูลของรอบเดือนที่เลือก');
           returnToCurrentMonth();
@@ -1392,6 +1567,8 @@
     async function loadYearlyChart(year) {
       try {
         const curYear = new Date().getFullYear();
+        const curMonth = new Date().getMonth() + 1;
+        const curMonthKey = `${curYear}-${String(curMonth).padStart(2, '0')}`;
         const y = year || curYear;
         const data = await fetchYearlyStats(y);
         if (data && data.months) {
@@ -1399,6 +1576,20 @@
           $('#chartYearLabel').text(data.thai_year || (y + 543));
           populateChartMonthSelector();
           renderInspectionChart();
+          $('#d1LiveBadge').html('<i class="bi bi-circle-fill text-success me-1 pulse-animation" style="font-size:0.5rem;"></i>Cloudflare D1 Live');
+
+          // ถ้ายังไม่ได้โหลดตารางข้อมูล อัปเดตตัวเลขการ์ดสรุป 4 ใบจากข้อมูลเดือนปัจจุบันที่ได้จาก API สถิติ
+          if (!isTanksDataLoaded && !isPastMonthMode) {
+            const curMonthData = data.months.find(m => m.month_key === curMonthKey);
+            if (curMonthData) {
+              applySummaryCardNumbers(
+                curMonthData.total,
+                curMonthData.checked,
+                curMonthData.not_checked,
+                curMonthData.not_ready
+              );
+            }
+          }
         }
       } catch (e) {
         console.error('loadYearlyChart error:', e);
