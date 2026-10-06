@@ -274,11 +274,313 @@ async function ensureDatabase(db) {
   }
 }
 
+// ─── Cloudflare R2 & Base64 Helpers ───
+
+function parseBase64Image(dataUrl) {
+  if (typeof dataUrl !== 'string') return null;
+  const match = dataUrl.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
+  if (!match) return null;
+  const mimeType = match[1];
+  const base64Data = match[2];
+  try {
+    const binaryStr = atob(base64Data);
+    const len = binaryStr.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryStr.charCodeAt(i);
+    }
+    return { mimeType, buffer: bytes.buffer };
+  } catch (e) {
+    console.error('parseBase64Image decode error:', e);
+    return null;
+  }
+}
+
+function getYearMonthFromDate(dateInput) {
+  const now = new Date();
+  let y = now.getFullYear();
+  let m = now.getMonth() + 1;
+
+  if (dateInput) {
+    if (dateInput instanceof Date && !isNaN(dateInput.getTime())) {
+      y = dateInput.getFullYear();
+      m = dateInput.getMonth() + 1;
+    } else if (typeof dateInput === 'string') {
+      const s = dateInput.trim();
+      if (/^(\d{4})-(\d{2})/.test(s)) {
+        const match = s.match(/^(\d{4})-(\d{2})/);
+        y = parseInt(match[1], 10);
+        m = parseInt(match[2], 10);
+      } else if (/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/.test(s)) {
+        const match = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+        m = parseInt(match[2], 10);
+        y = parseInt(match[3], 10);
+      } else if (/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/.test(s)) {
+        const match = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+        y = parseInt(match[1], 10);
+        m = parseInt(match[2], 10);
+      }
+    }
+  }
+
+  return {
+    year: String(y),
+    month: String(m).padStart(2, '0')
+  };
+}
+
+// Upload base64 image into Cloudflare R2 bucket
+// Categorized by /{YYYY}/{MM}/{subFolder}/{FireTank}_{timestamp}.{ext}
+async function saveImageToR2(env, imageInput, subFolder, tankId, dateInput) {
+  if (!imageInput || typeof imageInput !== 'string') return imageInput || null;
+  const trimmed = imageInput.trim();
+  if (!trimmed || trimmed === '-' || trimmed === '—') return null;
+
+  // Preserve existing R2 paths, HTTP URLs, or static assets
+  if (!trimmed.startsWith('data:')) {
+    return trimmed;
+  }
+
+  if (!env.R2) {
+    console.warn('saveImageToR2: env.R2 binding not configured in Worker runtime');
+    return trimmed;
+  }
+
+  const parsed = parseBase64Image(trimmed);
+  if (!parsed) return trimmed;
+
+  const { year, month } = getYearMonthFromDate(dateInput);
+
+  let ext = 'jpg';
+  if (parsed.mimeType.includes('png')) ext = 'png';
+  else if (parsed.mimeType.includes('webp')) ext = 'webp';
+
+  const safeTank = String(tankId || 'TANK').replace(/[^a-zA-Z0-9_-]/g, '_');
+  const timestamp = Date.now();
+  const key = `${year}/${month}/${subFolder}/${safeTank}_${timestamp}.${ext}`;
+
+  await env.R2.put(key, parsed.buffer, {
+    httpMetadata: {
+      contentType: parsed.mimeType,
+      cacheControl: 'public, max-age=31536000, immutable'
+    }
+  });
+
+  return `/r2/${key}`;
+}
+
+// Retention policy: Keep current year + previous 2 years (e.g. 2026 -> keep 2024, 2025, 2026; delete <= 2023)
+function getRetentionYears() {
+  const curYear = new Date().getFullYear();
+  const minKeepYear = curYear - 2;
+  const keepYears = [];
+  for (let y = minKeepYear; y <= curYear; y++) {
+    keepYears.push(y);
+  }
+  return {
+    curYear,
+    minKeepYear,
+    keepYears,
+    deleteBeforeYear: minKeepYear
+  };
+}
+
+// Purge expired records and objects (< minKeepYear) from both D1 and R2
+async function purgeExpiredRetention(env) {
+  const { minKeepYear, curYear, keepYears, deleteBeforeYear } = getRetentionYears();
+  const result = {
+    curYear,
+    minKeepYear,
+    keepYears,
+    deleteBeforeYear,
+    deletedSnapshotsD1: 0,
+    deletedR2Objects: 0,
+    details: []
+  };
+
+  // 1. D1: Delete from monthly_snapshots where year < minKeepYear
+  if (env.DB) {
+    try {
+      const d1Res = await env.DB.prepare(`
+        DELETE FROM monthly_snapshots 
+        WHERE CAST(substr(month_key, 1, 4) AS INTEGER) < ?
+      `).bind(minKeepYear).run();
+      result.deletedSnapshotsD1 = d1Res.meta?.changes || 0;
+      result.details.push(`D1: ลบประวัติรอบเดือนเก่า (< ${minKeepYear}) ออกจำนวน ${result.deletedSnapshotsD1} รายการ`);
+    } catch (e) {
+      console.error('Error purging D1 snapshots:', e);
+      result.details.push(`D1 Error: ${e.message}`);
+    }
+  }
+
+  // 2. R2: Delete objects with year prefix < minKeepYear
+  if (env.R2) {
+    try {
+      let cursor = undefined;
+      let totalDeleted = 0;
+      do {
+        const list = await env.R2.list({ cursor, limit: 500 });
+        const toDeleteKeys = [];
+        for (const obj of list.objects) {
+          const parts = obj.key.split('/');
+          const yearNum = parseInt(parts[0], 10);
+          if (!isNaN(yearNum) && yearNum < minKeepYear) {
+            toDeleteKeys.push(obj.key);
+          }
+        }
+        if (toDeleteKeys.length > 0) {
+          await env.R2.delete(toDeleteKeys);
+          totalDeleted += toDeleteKeys.length;
+        }
+        cursor = list.truncated ? list.cursor : undefined;
+      } while (cursor);
+      result.deletedR2Objects = totalDeleted;
+      result.details.push(`R2: ลบไฟล์รูปภาพเก่า (< ${minKeepYear}) ออกจาก Bucket 'r2jde' จำนวน ${totalDeleted} ไฟล์`);
+    } catch (e) {
+      console.error('Error purging R2 objects:', e);
+      result.details.push(`R2 Error: ${e.message}`);
+    }
+  }
+
+  return result;
+}
+
+// Migrate all base64 images in D1 to R2 and execute retention purge
+async function migrateImagesToR2(env) {
+  const { minKeepYear } = getRetentionYears();
+  const summary = {
+    success: true,
+    tanksMigrated: 0,
+    snapshotsMigrated: 0,
+    totalImagesUploaded: 0,
+    deletedOldSnapshotsD1: 0,
+    deletedOldR2Objects: 0,
+    details: []
+  };
+
+  // Step 1: Run retention purge first (< minKeepYear) in both D1 & R2
+  const purgeRes = await purgeExpiredRetention(env);
+  summary.deletedOldSnapshotsD1 = purgeRes.deletedSnapshotsD1;
+  summary.deletedOldR2Objects = purgeRes.deletedR2Objects;
+  summary.details.push(...purgeRes.details);
+
+  if (!env.R2) {
+    summary.details.push('คำเตือน: ไม่พบ Binding R2 ใน Worker runtime ไม่สามารถอัปโหลดไฟล์รูปภาพได้');
+    return summary;
+  }
+
+  // Step 2: Migrate live tanks table
+  if (env.DB) {
+    const tanksQ = await env.DB.prepare('SELECT fire_tank, pic_tank, pic_area, lastcheck FROM tanks').all().catch(() => ({ results: [] }));
+    const tanks = tanksQ.results || [];
+
+    for (const t of tanks) {
+      let updatedPicTank = t.pic_tank;
+      let updatedPicArea = t.pic_area;
+      let changed = false;
+
+      if (t.pic_tank && typeof t.pic_tank === 'string' && t.pic_tank.startsWith('data:')) {
+        updatedPicTank = await saveImageToR2(env, t.pic_tank, 'tanks', t.fire_tank, t.lastcheck);
+        changed = true;
+        summary.totalImagesUploaded++;
+      }
+
+      if (t.pic_area && typeof t.pic_area === 'string' && t.pic_area.startsWith('data:')) {
+        updatedPicArea = await saveImageToR2(env, t.pic_area, 'areas', t.fire_tank, t.lastcheck);
+        changed = true;
+        summary.totalImagesUploaded++;
+      }
+
+      if (changed) {
+        await env.DB.prepare(`
+          UPDATE tanks
+          SET pic_tank = ?, pic_area = ?
+          WHERE fire_tank = ?
+        `).bind(updatedPicTank, updatedPicArea, t.fire_tank).run();
+        summary.tanksMigrated++;
+      }
+    }
+    summary.details.push(`ตารางถังปัจจุบัน (tanks): ย้ายรูปภาพ Base64 ไปยัง R2 สำเร็จ ${summary.tanksMigrated} รายการ`);
+
+    // Step 3: Migrate retained monthly_snapshots (>= minKeepYear)
+    const snapQ = await env.DB.prepare(`
+      SELECT id, month_key, snapshot_data 
+      FROM monthly_snapshots 
+      WHERE CAST(substr(month_key, 1, 4) AS INTEGER) >= ?
+    `).bind(minKeepYear).all().catch(() => ({ results: [] }));
+
+    for (const snap of snapQ.results || []) {
+      try {
+        const list = JSON.parse(snap.snapshot_data);
+        if (!Array.isArray(list)) continue;
+        let snapChanged = false;
+
+        for (const item of list) {
+          const tankId = item.FireTank || 'TANK';
+          if (item.PicTank && typeof item.PicTank === 'string' && item.PicTank.startsWith('data:')) {
+            item.PicTank = await saveImageToR2(env, item.PicTank, 'tanks', tankId, snap.month_key);
+            snapChanged = true;
+            summary.totalImagesUploaded++;
+          }
+          if (item.PicArea && typeof item.PicArea === 'string' && item.PicArea.startsWith('data:')) {
+            item.PicArea = await saveImageToR2(env, item.PicArea, 'areas', tankId, snap.month_key);
+            snapChanged = true;
+            summary.totalImagesUploaded++;
+          }
+        }
+
+        if (snapChanged) {
+          await env.DB.prepare(`
+            UPDATE monthly_snapshots 
+            SET snapshot_data = ? 
+            WHERE id = ?
+          `).bind(JSON.stringify(list), snap.id).run();
+          summary.snapshotsMigrated++;
+        }
+      } catch (e) {
+        console.error(`Error migrating snapshot id ${snap.id}:`, e);
+      }
+    }
+    summary.details.push(`ประวัติรอบเดือน (monthly_snapshots): ย้ายรูปภาพ Base64 ไปยัง R2 สำเร็จ ${summary.snapshotsMigrated} รอบเดือน`);
+  }
+
+  return summary;
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const pathname = url.pathname;
     const method = request.method.toUpperCase();
+
+    // ─── Cloudflare R2 Image Delivery Route ───
+    if (pathname.startsWith('/r2/')) {
+      if (!env.R2) {
+        return new Response('Cloudflare R2 binding "R2" is not configured', { status: 500 });
+      }
+      try {
+        const key = decodeURIComponent(pathname.replace(/^\/r2\//, ''));
+        const object = await env.R2.get(key);
+        if (!object) {
+          return new Response('Image Not Found in R2', { status: 404 });
+        }
+
+        const etag = object.httpEtag;
+        if (request.headers.get('if-none-match') === etag) {
+          return new Response(null, { status: 304 });
+        }
+
+        const headers = new Headers();
+        object.writeHttpMetadata(headers);
+        headers.set('etag', etag);
+        headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+        headers.set('Access-Control-Allow-Origin', '*');
+
+        return new Response(object.body, { headers });
+      } catch (r2Err) {
+        return new Response('Error retrieving image from R2: ' + r2Err.message, { status: 500 });
+      }
+    }
 
     // ─── API Routes ───
     try {
@@ -371,17 +673,23 @@ export default {
           const newPic = body.newPic || null;
           const remark = body.remark || '';
 
+          // บันทึกรูปภาพเข้า Cloudflare R2 หากเป็น Base64
+          let picTankUrl = newPic;
+          if (newPic && typeof newPic === 'string' && newPic.startsWith('data:')) {
+            picTankUrl = await saveImageToR2(env, newPic, 'tanks', tankId, now);
+          }
+
           await env.DB.prepare(`
             UPDATE tanks
             SET lastcheck = ?, tankcheck = 'เช็คแล้ว', ready_or_not = ?, tank_status = ?,
                 exptank = ?, inspector = ?, weight = COALESCE(?, weight),
                 pic_tank = COALESCE(?, pic_tank), remark = ?
             WHERE UPPER(fire_tank) = ?
-          `).bind(timeStr, isReady ? 'Ready' : 'Not Ready', isReady ? 1 : 0, exptank, inspectorName, weightVal, newPic, remark, tankId).run();
+          `).bind(timeStr, isReady ? 'Ready' : 'Not Ready', isReady ? 1 : 0, exptank, inspectorName, weightVal, picTankUrl, remark, tankId).run();
 
           return new Response(JSON.stringify({
             success: true,
-            data: { lastcheck: timeStr, exptank: exptank, ready_or_not: isReady ? 'Ready' : 'Not Ready' }
+            data: { lastcheck: timeStr, exptank: exptank, ready_or_not: isReady ? 'Ready' : 'Not Ready', pic_tank: picTankUrl }
           }), { headers: { 'Content-Type': 'application/json' } });
         }
       }
@@ -464,12 +772,22 @@ export default {
           const weightVal = body['Weight (lb)'] ? parseFloat(body['Weight (lb)']) : null;
           const isReady = body.ReadyorNot === 'Ready';
 
+          // อัปโหลดรูปเข้า R2 ถ้าเป็น Base64
+          let picTank = body.PicTank || null;
+          let picArea = body.PicArea || null;
+          if (picTank && typeof picTank === 'string' && picTank.startsWith('data:')) {
+            picTank = await saveImageToR2(env, picTank, 'tanks', tankId, body.Lastcheck || new Date());
+          }
+          if (picArea && typeof picArea === 'string' && picArea.startsWith('data:')) {
+            picArea = await saveImageToR2(env, picArea, 'areas', tankId, body.Lastcheck || new Date());
+          }
+
           await env.DB.prepare(`
             INSERT INTO tanks (fire_tank, types, weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-          `).bind(tankId, body.Types || '', weightVal, body.Area || '', body.Inuse || '', body.Lastcheck || '', body.Tankcheck || 'ยังไม่เช็ค', body.ReadyorNot || 'Not Ready', isReady ? 1 : 0, body.Exptank || '', body.PicTank || null, body.PicArea || null, body.Inspector || '', body.Responsible || '', body.Remark || '').run();
+          `).bind(tankId, body.Types || '', weightVal, body.Area || '', body.Inuse || '', body.Lastcheck || '', body.Tankcheck || 'ยังไม่เช็ค', body.ReadyorNot || 'Not Ready', isReady ? 1 : 0, body.Exptank || '', picTank, picArea, body.Inspector || '', body.Responsible || '', body.Remark || '').run();
 
-          return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
+          return new Response(JSON.stringify({ success: true, picTank, picArea }), { headers: { 'Content-Type': 'application/json' } });
         }
 
         if (method === 'PUT') {
@@ -480,6 +798,16 @@ export default {
           const weightVal = body['Weight (lb)'] ? parseFloat(body['Weight (lb)']) : null;
           const isReady = body.ReadyorNot === 'Ready';
 
+          // อัปโหลดรูปเข้า R2 ถ้าเป็น Base64
+          let picTank = body.PicTank || null;
+          let picArea = body.PicArea || null;
+          if (picTank && typeof picTank === 'string' && picTank.startsWith('data:')) {
+            picTank = await saveImageToR2(env, picTank, 'tanks', tankId, body.Lastcheck || new Date());
+          }
+          if (picArea && typeof picArea === 'string' && picArea.startsWith('data:')) {
+            picArea = await saveImageToR2(env, picArea, 'areas', tankId, body.Lastcheck || new Date());
+          }
+
           await env.DB.prepare(`
             UPDATE tanks
             SET types = ?, weight = ?, area = ?, inuse = ?, lastcheck = ?,
@@ -487,9 +815,9 @@ export default {
                 pic_tank = COALESCE(?, pic_tank), pic_area = COALESCE(?, pic_area),
                 inspector = ?, responsible = ?, remark = ?
             WHERE UPPER(fire_tank) = ?
-          `).bind(body.Types || '', weightVal, body.Area || '', body.Inuse || '', body.Lastcheck || '', body.Tankcheck || 'ยังไม่เช็ค', body.ReadyorNot || 'Not Ready', isReady ? 1 : 0, body.Exptank || '', body.PicTank || null, body.PicArea || null, body.Inspector || '', body.Responsible || '', body.Remark || '', tankId).run();
+          `).bind(body.Types || '', weightVal, body.Area || '', body.Inuse || '', body.Lastcheck || '', body.Tankcheck || 'ยังไม่เช็ค', body.ReadyorNot || 'Not Ready', isReady ? 1 : 0, body.Exptank || '', picTank, picArea, body.Inspector || '', body.Responsible || '', body.Remark || '', tankId).run();
 
-          return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
+          return new Response(JSON.stringify({ success: true, picTank, picArea }), { headers: { 'Content-Type': 'application/json' } });
         }
 
         if (method === 'DELETE') {
@@ -856,6 +1184,86 @@ export default {
           if (!targetKey) return new Response(JSON.stringify({ success: false, message: 'กรุณาระบุเดือน' }), { status: 400 });
           await env.DB.prepare('DELETE FROM monthly_snapshots WHERE month_key = ?').bind(targetKey).run();
           return new Response(JSON.stringify({ success: true, message: `ลบข้อมูลรอบเดือน ${targetKey} สำเร็จ` }), { headers: { 'Content-Type': 'application/json' } });
+        }
+      }
+
+      // 7. /api/r2/* — การจัดการ Cloudflare R2 Storage & Data Retention
+      if (pathname.startsWith('/api/r2/')) {
+        const { curYear, minKeepYear, keepYears, deleteBeforeYear } = getRetentionYears();
+
+        // 7.1 GET /api/r2/status
+        if (pathname === '/api/r2/status') {
+          let r2ObjectCount = 0;
+          let r2Available = Boolean(env.R2);
+          if (env.R2) {
+            try {
+              const list = await env.R2.list({ limit: 1000 });
+              r2ObjectCount = list.objects.length;
+            } catch (e) {
+              console.warn('R2 list error:', e);
+            }
+          }
+
+          let base64TanksCount = 0;
+          let r2TanksCount = 0;
+          if (env.DB) {
+            const countQ = await env.DB.prepare(`
+              SELECT 
+                SUM(CASE WHEN pic_tank LIKE 'data:%' OR pic_area LIKE 'data:%' THEN 1 ELSE 0 END) as base64_count,
+                SUM(CASE WHEN pic_tank LIKE '/r2/%' OR pic_area LIKE '/r2/%' THEN 1 ELSE 0 END) as r2_count
+              FROM tanks
+            `).first().catch(() => null);
+            if (countQ) {
+              base64TanksCount = countQ.base64_count || 0;
+              r2TanksCount = countQ.r2_count || 0;
+            }
+          }
+
+          return new Response(JSON.stringify({
+            success: true,
+            bucket: 'r2jde',
+            r2Available,
+            retention: {
+              curYear,
+              minKeepYear,
+              keepYears,
+              deleteBeforeYear,
+              rule: `เก็บข้อมูลปีปัจจุบัน (${curYear}) และย้อนหลัง 2 ปี (${keepYears.join(', ')}) ลบปีก่อนหน้า (${deleteBeforeYear - 1} และเก่ากว่า) ทั้ง D1 และ R2`
+            },
+            stats: {
+              liveTanksWithBase64: base64TanksCount,
+              liveTanksWithR2: r2TanksCount,
+              r2ObjectsSample: r2ObjectCount
+            }
+          }), { headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+        }
+
+        // 7.2 POST /api/r2/migrate — ย้ายรูปภาพ Base64 ไปยัง R2 และลบข้อมูลเก่าตาม Retention
+        if (pathname === '/api/r2/migrate' && method === 'POST') {
+          const body = await request.json().catch(() => ({}));
+          const permit = parseInt(body.requestorPermitDo || '0', 10);
+          if (permit < 3) {
+            return new Response(JSON.stringify({ success: false, message: 'เฉพาะผู้ดูแลระบบระดับ Super Admin (P3) เท่านั้น' }), { status: 403 });
+          }
+
+          const migrationResult = await migrateImagesToR2(env);
+          return new Response(JSON.stringify(migrationResult), {
+            headers: { 'Content-Type': 'application/json; charset=utf-8' }
+          });
+        }
+
+        // 7.3 POST /api/r2/cleanup — ล้างข้อมูลเก่าตาม Retention Policy (ลบ <= 2023)
+        if ((pathname === '/api/r2/cleanup' || pathname === '/api/r2/retention') && method === 'POST') {
+          const body = await request.json().catch(() => ({}));
+          const permit = parseInt(body.requestorPermitDo || '0', 10);
+          if (permit < 3) {
+            return new Response(JSON.stringify({ success: false, message: 'เฉพาะผู้ดูแลระบบระดับ Super Admin (P3) เท่านั้น' }), { status: 403 });
+          }
+
+          const cleanupResult = await purgeExpiredRetention(env);
+          return new Response(JSON.stringify({ success: true, ...cleanupResult }), {
+            headers: { 'Content-Type': 'application/json; charset=utf-8' }
+          });
         }
       }
 

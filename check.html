@@ -355,7 +355,7 @@
 
       let picSrc = 'https://placehold.co/80x80?text=No+Pic';
       if (tank.PicTank) {
-        picSrc = tank.PicTank.startsWith('data:') ? tank.PicTank : (tank.PicTank.startsWith('static/') ? tank.PicTank : 'static/' + tank.PicTank);
+        picSrc = resolveImageUrl(tank.PicTank) || picSrc;
       }
       $('#infoPic').attr('src', picSrc);
 

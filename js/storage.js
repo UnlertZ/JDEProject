@@ -11,6 +11,21 @@ try {
 // ตัวแปรเก็บข้อมูลชั่วคราวใน RAM ของหน้านั้นๆ (In-Memory Cache) เพื่อความรวดเร็วในการเปิดดูรายละเอียด
 let _memoryTanks = [];
 
+// Helper: ปรับ URL รูปภาพให้ถูกต้อง รองรับ Cloudflare R2 (/r2/...), Base64 (data:...), HTTP/HTTPS, และ static/...
+function resolveImageUrl(src) {
+  if (!src || typeof src !== 'string') return '';
+  src = src.trim();
+  if (!src || src === '-' || src === '—') return '';
+  if (src.startsWith('data:') || src.startsWith('http://') || src.startsWith('https://') || src.startsWith('/')) {
+    return src;
+  }
+  if (src.startsWith('static/')) {
+    return src;
+  }
+  return 'static/' + src;
+}
+window.resolveImageUrl = resolveImageUrl;
+
 // Helper: สกัดปี 4 หลัก
 function extractYear(val) {
   if (val === null || val === undefined) return null;
@@ -438,9 +453,9 @@ async function saveCheckResult(fireTankId, isReady, inspectorName, newPicDataUrl
         remark: remark || ''
       })
     });
+    const resData = await res.json().catch(() => ({}));
     if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      alert(`⚠️ บันทึกลง Cloudflare D1 ไม่สำเร็จ: ${err.message || err.error || 'Server error'}`);
+      alert(`⚠️ บันทึกลง Cloudflare D1 ไม่สำเร็จ: ${resData.message || resData.error || 'Server error'}`);
       return false;
     }
 
@@ -456,7 +471,11 @@ async function saveCheckResult(fireTankId, isReady, inspectorName, newPicDataUrl
       tank.Inspector = inspectorName || '';
       tank.Remark = remark || '';
       if (newWeight) tank['Weight (lb)'] = parseFloat(newWeight);
-      if (newPicDataUrl) tank.PicTank = newPicDataUrl;
+      if (resData.data && resData.data.pic_tank) {
+        tank.PicTank = resData.data.pic_tank;
+      } else if (newPicDataUrl) {
+        tank.PicTank = newPicDataUrl;
+      }
     }
     return true;
   } catch (e) {
@@ -842,12 +861,13 @@ async function downloadAllTankImagesZip() {
             }
           } else {
             const possibleUrls = [
+              resolveImageUrl(picVal),
               picVal,
               picVal.startsWith('static/') ? picVal : 'static/' + picVal,
               picVal.startsWith('/') ? picVal : '/' + picVal
             ];
 
-            for (const u of possibleUrls) {
+            for (const u of [...new Set(possibleUrls.filter(Boolean))]) {
               try {
                 const res = await fetch(u);
                 if (res.ok) {
@@ -880,12 +900,13 @@ async function downloadAllTankImagesZip() {
             }
           } else {
             const possibleUrls = [
+              resolveImageUrl(areaVal),
               areaVal,
               areaVal.startsWith('static/') ? areaVal : 'static/' + areaVal,
               areaVal.startsWith('/') ? areaVal : '/' + areaVal
             ];
 
-            for (const u of possibleUrls) {
+            for (const u of [...new Set(possibleUrls.filter(Boolean))]) {
               try {
                 const res = await fetch(u);
                 if (res.ok) {

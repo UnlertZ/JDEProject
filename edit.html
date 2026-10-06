@@ -256,12 +256,12 @@
 
       // แสดงรูปเดิม
       if (tank.PicTank) {
-        const pSrc = tank.PicTank.startsWith('data:') ? tank.PicTank : (tank.PicTank.startsWith('static/') ? tank.PicTank : 'static/' + tank.PicTank);
+        const pSrc = resolveImageUrl(tank.PicTank);
         document.getElementById('currentPicTankImg').src = pSrc;
         document.getElementById('currentPicTankBox').classList.remove('d-none');
       }
       if (tank.PicArea) {
-        const aSrc = tank.PicArea.startsWith('data:') ? tank.PicArea : (tank.PicArea.startsWith('static/') ? tank.PicArea : 'static/' + tank.PicArea);
+        const aSrc = resolveImageUrl(tank.PicArea);
         document.getElementById('currentPicAreaImg').src = aSrc;
         document.getElementById('currentPicAreaBox').classList.remove('d-none');
       }
