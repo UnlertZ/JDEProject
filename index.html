@@ -1004,6 +1004,7 @@
     async function renderDashboard(customTanks = null) {
       if (typeof renderNavbarAuth === 'function') renderNavbarAuth();
       updateActionButtons();
+      const currentUser = getCurrentUser();
       let tanks = [];
       if (customTanks && Array.isArray(customTanks)) {
         tanks = customTanks;
@@ -1019,17 +1020,17 @@
         }
         tanks = _memoryTanks && _memoryTanks.length > 0 ? _memoryTanks : await fetchAllTanks();
         isTanksDataLoaded = true;
-        
-        window._liveTanksReferenceMap = {};
-        tanks.forEach(t => {
-          if (t.FireTank) {
-            window._liveTanksReferenceMap[t.FireTank] = {
-              PicTank: t.PicTank,
-              PicArea: t.PicArea
-            };
-          }
-        });
       }
+
+      window._liveTanksReferenceMap = {};
+      tanks.forEach(t => {
+        if (t.FireTank) {
+          window._liveTanksReferenceMap[t.FireTank] = {
+            PicTank: t.PicTank,
+            PicArea: t.PicArea
+          };
+        }
+      });
 
       // อัปเดตตัวเลขการ์ดสรุป 4 ใบ
       updateSummaryCardsDisplay(tanks);
