@@ -107,10 +107,10 @@
             <i class="bi bi-person-check-fill me-1"></i>อนุมัติสมาชิก <span id="btnApprovalsBadge" class="badge bg-danger ms-1 d-none">0</span>
           </a>
           <!-- Export & Import Excel & Download Images (Admin P2+) -->
-          <button id="btnExportExcel" onclick="exportToExcel()" class="btn btn-outline-success shadow-sm action-btn-touch rounded-pill d-none" title="ดาวน์โหลดรายงานข้อมูลทั้งปีเป็นไฟล์ Excel (สิทธิ์ P2 ขึ้นไป)">
-            <i class="bi bi-file-earmark-excel me-1"></i>ส่งออกทั้งปี
+          <button id="btnExportExcel" onclick="openExportExcelModal()" class="btn btn-outline-success shadow-sm action-btn-touch rounded-pill d-none" title="ดาวน์โหลดรายงานข้อมูลเป็นไฟล์ Excel (สิทธิ์ P2 ขึ้นไป)">
+            <i class="bi bi-file-earmark-excel me-1"></i>ส่งออก Excel
           </button>
-          <button id="btnDownloadImagesZip" onclick="downloadAllTankImagesZip()" class="btn btn-outline-primary shadow-sm action-btn-touch rounded-pill d-none" title="ดาวน์โหลดรูปภาพถังดับเพลิงทั้งหมดเป็นไฟล์ ZIP (สิทธิ์ P2 ขึ้นไป)">
+          <button id="btnDownloadImagesZip" onclick="openDownloadImagesModal()" class="btn btn-outline-primary shadow-sm action-btn-touch rounded-pill d-none" title="ดาวน์โหลดรูปภาพถังดับเพลิงเป็นไฟล์ ZIP (สิทธิ์ P2 ขึ้นไป)">
             <i class="bi bi-file-earmark-zip-fill me-1"></i>ดาวน์โหลดรูป (ZIP)
           </button>
           <label id="btnImportExcel" class="btn btn-outline-secondary shadow-sm mb-0 cursor-pointer action-btn-touch rounded-pill d-none" title="นำเข้าไฟล์ Excel เพื่ออัปเดตข้อมูล">
@@ -762,7 +762,156 @@
     </div>
   </div>
 
+  <!-- ─── Modal: ดาวน์โหลดรูปภาพ ZIP (Admin P2+) ─── -->
+  <div class="modal fade" id="downloadImagesModal" tabindex="-1" aria-labelledby="downloadImagesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
+        <div class="modal-header text-white border-0 py-3" style="background: linear-gradient(135deg, #1b2838 0%, #0d6efd 100%) !important;">
+          <h5 class="modal-title fw-bold fs-6 d-flex align-items-center gap-2" id="downloadImagesModalLabel">
+            <i class="bi bi-file-earmark-zip-fill text-warning"></i>
+            <span>ดาวน์โหลดรูปภาพ (ZIP)</span>
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="text-secondary small mb-3">เลือกประเภทรูปภาพและช่วงเวลาที่ต้องการดาวน์โหลด</p>
+
+          <!-- ประเภทรูป -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold small text-dark mb-2">
+              <i class="bi bi-image text-primary me-1"></i>ประเภทรูปภาพ <span class="text-danger">*</span>
+            </label>
+            <div class="d-flex gap-2 flex-wrap">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="dlImgType" id="dlTypeAll" value="both" checked>
+                <label class="form-check-label small" for="dlTypeAll">🖼️ ทั้งสองอย่าง</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="dlImgType" id="dlTypeTank" value="tank">
+                <label class="form-check-label small" for="dlTypeTank">🧯 รูปถังดับเพลิง</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="dlImgType" id="dlTypeArea" value="area">
+                <label class="form-check-label small" for="dlTypeArea">📍 รูปสถานที่</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- ช่วงเวลา -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold small text-dark mb-2">
+              <i class="bi bi-calendar3 text-danger me-1"></i>ช่วงเวลา <span class="text-danger">*</span>
+            </label>
+            <select id="dlScopeSelect" class="form-select form-select-sm mb-2" onchange="onDlScopeChange()">
+              <option value="current">📅 รอบปัจจุบัน (ข้อมูลสด)</option>
+              <option value="month">🗓️ ระบุรอบเดือน</option>
+              <option value="year">📆 รวมทั้งปี</option>
+            </select>
+            <!-- เลือกเดือน (แสดงเมื่อเลือก "ระบุรอบเดือน") -->
+            <div id="dlMonthPickerWrapper" class="d-none">
+              <select id="dlMonthSelect" class="form-select form-select-sm">
+                <option value="">-- กำลังโหลดรายการ... --</option>
+              </select>
+            </div>
+            <!-- เลือกปี (แสดงเมื่อเลือก "รวมทั้งปี") -->
+            <div id="dlYearPickerWrapper" class="d-none">
+              <select id="dlYearSelect" class="form-select form-select-sm">
+                <option value="2026">2026 (2569)</option>
+                <option value="2025">2025 (2568)</option>
+                <option value="2024">2024 (2567)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="alert alert-info py-2 small mb-0 d-flex align-items-start gap-2">
+            <i class="bi bi-info-circle-fill mt-0 text-info"></i>
+            <span>รูปภาพจะถูกบีบอัดเป็นไฟล์ <strong>.zip</strong> — สามารถเปิดด้วย WinRAR หรือแอป Files บน iOS/Android ได้ทันที</span>
+          </div>
+        </div>
+        <div class="modal-footer py-2 border-top bg-light">
+          <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">ยกเลิก</button>
+          <button type="button" class="btn btn-primary btn-sm rounded-pill px-4 fw-semibold" onclick="confirmDownloadImagesZip()">
+            <i class="bi bi-download me-1"></i>ดาวน์โหลด ZIP
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Modal: ส่งออก Excel (Admin P2+) ─── -->
+  <div class="modal fade" id="exportExcelModal" tabindex="-1" aria-labelledby="exportExcelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
+        <div class="modal-header text-white border-0 py-3" style="background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%) !important;">
+          <h5 class="modal-title fw-bold fs-6 d-flex align-items-center gap-2" id="exportExcelModalLabel">
+            <i class="bi bi-file-earmark-excel-fill text-success" style="filter: brightness(2);"></i>
+            <span>ส่งออกรายงาน Excel</span>
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="text-secondary small mb-3">เลือกปีและขอบเขตรายงานที่ต้องการส่งออก</p>
+
+          <!-- เลือกปี -->
+          <div class="mb-3">
+            <label for="excelYearSelect" class="form-label fw-semibold small text-dark mb-1">
+              <i class="bi bi-calendar-event text-success me-1"></i>ปีที่ต้องการ <span class="text-danger">*</span>
+            </label>
+            <select id="excelYearSelect" class="form-select form-select-sm">
+              <option value="2026">2026 (พ.ศ. 2569)</option>
+              <option value="2025">2025 (พ.ศ. 2568)</option>
+              <option value="2024">2024 (พ.ศ. 2567)</option>
+            </select>
+          </div>
+
+          <!-- ขอบเขต -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold small text-dark mb-2">
+              <i class="bi bi-layout-text-window text-success me-1"></i>ขอบเขตรายงาน <span class="text-danger">*</span>
+            </label>
+            <div class="p-3 rounded-3 border bg-light">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="excelScope" id="excelScopeFullYear" value="full_year" checked onchange="onExcelScopeChange()">
+                <label class="form-check-label small fw-semibold" for="excelScopeFullYear">
+                  📊 รายงานทั้งปี — สรุปภาพรวม + ฐานข้อมูลทุกรอบ + แท็บแยกรายเดือน
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="excelScope" id="excelScopeSingleMonth" value="single_month" onchange="onExcelScopeChange()">
+                <label class="form-check-label small fw-semibold" for="excelScopeSingleMonth">
+                  🗓️ เฉพาะรอบเดือน — ส่งออกเฉพาะเดือนที่เลือก
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- เลือกเดือน (แสดงเมื่อเลือก single_month) -->
+          <div id="excelMonthPickerWrapper" class="mb-3 d-none">
+            <label for="excelMonthSelect" class="form-label fw-semibold small text-dark mb-1">
+              <i class="bi bi-calendar-month text-danger me-1"></i>รอบเดือนที่ต้องการ
+            </label>
+            <select id="excelMonthSelect" class="form-select form-select-sm">
+              <option value="">-- กำลังโหลดรายการ... --</option>
+            </select>
+          </div>
+
+          <div class="alert alert-success py-2 small mb-0 d-flex align-items-start gap-2">
+            <i class="bi bi-file-earmark-excel-fill mt-0 text-success"></i>
+            <span>ไฟล์ <strong>.xlsx</strong> จะถูกสร้างและดาวน์โหลดอัตโนมัติ — รองรับ Microsoft Excel, Google Sheets</span>
+          </div>
+        </div>
+        <div class="modal-footer py-2 border-top bg-light">
+          <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">ยกเลิก</button>
+          <button type="button" class="btn btn-success btn-sm rounded-pill px-4 fw-semibold" onclick="confirmExportExcel()">
+            <i class="bi bi-file-earmark-arrow-down me-1"></i>ส่งออก Excel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
+
   <footer class="bg-dark text-white py-4 mt-5 shadow-lg border-top border-danger border-3">
     <div class="container-fluid px-4">
       <div class="row align-items-center">
@@ -806,9 +955,9 @@
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 
   <!-- Application Logic -->
-  <script src="js/initial_data.js?v=20261001_v4"></script>
-  <script src="js/storage.js?v=20261001_v4"></script>
-  <script src="js/auth.js?v=20261001_v4"></script>
+  <script src="js/initial_data.js?v=20261006_v5"></script>
+  <script src="js/storage.js?v=20261006_v5"></script>
+  <script src="js/auth.js?v=20261006_v5"></script>
 
   <script>
     let dataTableInstance = null;
@@ -2197,6 +2346,124 @@
     }
 
     // ─── ฟังก์ชันสำหรับ Super Admin (P3): จัดการ Cloudflare R2 & Retention ───
+    // ─── Modal: ดาวน์โหลดรูปภาพ ZIP ───
+    async function openDownloadImagesModal() {
+      const user = getCurrentUser();
+      if (!user || user.PermitDo < 2) {
+        alert('⚠️ เฉพาะผู้ดูแลระบบ (Admin P2 ขึ้นไป) เท่านั้นที่สามารถดาวน์โหลดรูปภาพได้');
+        return;
+      }
+      // Reset form
+      document.getElementById('dlTypeAll').checked = true;
+      document.getElementById('dlScopeSelect').value = 'current';
+      $('#dlMonthPickerWrapper').addClass('d-none');
+      $('#dlYearPickerWrapper').addClass('d-none');
+      // โหลด option เดือนไว้ล่วงหน้า
+      await populateModalMonthOptions('dlMonthSelect');
+      new bootstrap.Modal(document.getElementById('downloadImagesModal')).show();
+    }
+
+    // ─── Modal: ส่งออก Excel ───
+    async function openExportExcelModal() {
+      const user = getCurrentUser();
+      if (!user || user.PermitDo < 2) {
+        alert('⚠️ เฉพาะผู้ดูแลระบบ (Admin P2 ขึ้นไป) เท่านั้นที่สามารถส่งออก Excel ได้');
+        return;
+      }
+      // Reset form
+      document.getElementById('excelScopeFullYear').checked = true;
+      const curYear = new Date().getFullYear();
+      $('#excelYearSelect').val(String(curYear));
+      $('#excelMonthPickerWrapper').addClass('d-none');
+      // โหลด option เดือนไว้ล่วงหน้า
+      await populateModalMonthOptions('excelMonthSelect');
+      new bootstrap.Modal(document.getElementById('exportExcelModal')).show();
+    }
+
+    // ─── โหลดรายการเดือนจาก API เข้า <select> ───
+    async function populateModalMonthOptions(selectId) {
+      try {
+        const $sel = $(`#${selectId}`);
+        if (!$sel.length) return;
+        $sel.html('<option value="">กำลังโหลด...</option>');
+        const data = await fetchMonthlyList();
+        $sel.empty();
+        if (data && data.current) {
+          $sel.append(`<option value="current">📅 ${data.current.month_label} (ปัจจุบัน)</option>`);
+        }
+        if (data && data.history && data.history.length > 0) {
+          const grp = $('<optgroup label="📂 ประวัติย้อนหลัง"></optgroup>');
+          data.history.forEach(h => {
+            grp.append(`<option value="${h.month_key}">🗓️ ${h.month_label} (${h.total_tanks} ถัง)</option>`);
+          });
+          $sel.append(grp);
+        }
+        if ($sel.find('option').length === 0) {
+          $sel.append('<option value="">-- ไม่พบข้อมูล --</option>');
+        }
+      } catch (e) {
+        console.error('populateModalMonthOptions error:', e);
+      }
+    }
+
+    function onDlScopeChange() {
+      const scope = document.getElementById('dlScopeSelect').value;
+      $('#dlMonthPickerWrapper').toggleClass('d-none', scope !== 'month');
+      $('#dlYearPickerWrapper').toggleClass('d-none', scope !== 'year');
+    }
+
+    function onExcelScopeChange() {
+      const scope = $('input[name="excelScope"]:checked').val();
+      $('#excelMonthPickerWrapper').toggleClass('d-none', scope !== 'single_month');
+    }
+
+    async function confirmDownloadImagesZip() {
+      const imageType = $('input[name="dlImgType"]:checked').val() || 'both';
+      const scope = document.getElementById('dlScopeSelect').value;
+      let monthKey = null;
+      let year = null;
+
+      if (scope === 'month') {
+        const rawVal = document.getElementById('dlMonthSelect').value;
+        monthKey = rawVal === 'current' ? null : rawVal;
+        if (rawVal === 'current') {
+          // ใช้ scope current แทน
+          const modal = bootstrap.Modal.getInstance(document.getElementById('downloadImagesModal'));
+          if (modal) modal.hide();
+          await downloadTankImagesWithOptions({ imageType, scope: 'current' });
+          return;
+        }
+        if (!monthKey) { alert('กรุณาเลือกรอบเดือน'); return; }
+      } else if (scope === 'year') {
+        year = parseInt(document.getElementById('dlYearSelect').value, 10);
+      }
+
+      const modal = bootstrap.Modal.getInstance(document.getElementById('downloadImagesModal'));
+      if (modal) modal.hide();
+      await downloadTankImagesWithOptions({ imageType, scope, monthKey, year });
+    }
+
+    async function confirmExportExcel() {
+      const targetYear = parseInt(document.getElementById('excelYearSelect').value, 10);
+      const targetScope = $('input[name="excelScope"]:checked').val() || 'full_year';
+      let targetMonthKey = null;
+
+      if (targetScope === 'single_month') {
+        const rawVal = document.getElementById('excelMonthSelect').value;
+        if (!rawVal) { alert('กรุณาเลือกรอบเดือน'); return; }
+        if (rawVal === 'current') {
+          const now = new Date();
+          targetMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        } else {
+          targetMonthKey = rawVal;
+        }
+      }
+
+      const modal = bootstrap.Modal.getInstance(document.getElementById('exportExcelModal'));
+      if (modal) modal.hide();
+      await exportToExcelWithOptions({ targetYear, targetScope, targetMonthKey });
+    }
+
     function openR2Modal() {
       const user = getCurrentUser();
       if (!user || user.PermitDo < 3) {
