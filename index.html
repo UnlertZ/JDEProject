@@ -941,28 +941,22 @@
           if (isPastMonthMode && window._currentPastMonthTanks) {
             tanks = window._currentPastMonthTanks;
           } else {
-            if (!_memoryTanks || _memoryTanks.length === 0) {
+            tanks = await fetchAllTanks(false);
+            if (!tanks || tanks.length === 0) {
               const cached = getLocalTanksCache();
               if (cached && cached.length > 0) {
-                _memoryTanks = cached.map(applyThirtyDaysRule);
-                _memoryTanks.sort((a, b) => (a.FireTank || '').localeCompare(b.FireTank || '', undefined, { numeric: true, sensitivity: 'base' }));
+                tanks = cached.map(applyThirtyDaysRule);
               }
             }
-            if (_memoryTanks && _memoryTanks.length > 0) {
-              $('#tableSectionWrapper').removeClass('d-none');
-              isTableSectionVisible = true;
-              await renderDashboard(_memoryTanks);
-            }
-            tanks = await fetchAllTanks(false);
           }
           $('#tableSectionWrapper').removeClass('d-none');
           isTableSectionVisible = true;
-          await renderDashboard(tanks);
+          await renderDashboard(tanks || []);
           isTanksDataLoaded = true;
           $('#d1LiveBadge').html('<i class="bi bi-circle-fill text-success me-1 pulse-animation" style="font-size:0.5rem;"></i>Cloudflare D1 Live');
         } catch (err) {
           console.error('Error loading tanks on demand:', err);
-          alert('เกิดข้อผิดพลาดในการโหลดข้อมูลตาราง กรุณาลองใหม่อีกครั้ง');
+          alert('เกิดข้อผิดพลาดในการโหลดข้อมูลตาราง: ' + (err.message || 'กรุณาลองใหม่อีกครั้ง'));
         } finally {
           $btn.prop('disabled', false);
           $spinner.addClass('d-none');
@@ -971,7 +965,9 @@
         $('#tableSectionWrapper').removeClass('d-none');
         isTableSectionVisible = true;
         if (dataTableInstance) {
-          setTimeout(() => dataTableInstance.columns.adjust().draw(), 50);
+          setTimeout(() => {
+            try { dataTableInstance.columns.adjust().draw(); } catch (e) {}
+          }, 50);
         }
       }
 
@@ -1052,7 +1048,12 @@
 
       // Destroy DataTable เก่าก่อนเรนเดอร์ใหม่
       if (dataTableInstance) {
-        dataTableInstance.destroy();
+        try {
+          dataTableInstance.destroy();
+        } catch (e) {
+          console.warn('DataTable destroy error:', e);
+        }
+        dataTableInstance = null;
       }
 
       // เรียงลำดับถังแบบ Natural Sort (EX01, EX02 ... EX10, EX11, EX12 ... EX99, EX100)
@@ -1195,7 +1196,7 @@
       });
 
       // ให้คอลัมน์ # เรียงลำดับ 1, 2, 3... ตามลำดับที่แสดงจริงเสมอ
-      dataTableInstance.on('order.dt search.dt draw.dt', function () {
+      dataTableInstance.on('order.dt search.dt', function () {
         let i = 1;
         dataTableInstance.cells(null, 0, { search: 'applied', order: 'applied' }).every(function () {
           this.data(i++);
@@ -1206,22 +1207,23 @@
       // Filter Logic (ลงทะเบียนเพียงครั้งเดียว)
       if (!window._dtFilterRegistered) {
         $.fn.dataTable.ext.search.push(function (settings, data, dataIndex, rowData, counter) {
-          if (!dataTableInstance) return true;
-          const rowNode = dataTableInstance.row(counter).node();
+          if (!settings || !settings.nTable || settings.nTable.id !== 'tankTable') return true;
+          const rowNode = (settings.aoData && settings.aoData[dataIndex]) ? settings.aoData[dataIndex].nTr : null;
           if (!rowNode) return true;
+          const $r = $(rowNode);
           const selType = $('#filterType').val();
           const selArea = $('#filterArea').val();
           const selCheck = $('#filterCheck').val();
           const selReady = $('#filterReady').val();
-          const searchVal = $('#searchInput').val().toLowerCase();
+          const searchVal = ($('#searchInput').val() || '').toLowerCase().trim();
 
-          if (selType && $(rowNode).data('type') !== selType) return false;
-          if (selArea && $(rowNode).data('area') !== selArea) return false;
-          if (selCheck && $(rowNode).data('check') !== selCheck) return false;
-          if (selReady && $(rowNode).data('ready') !== selReady) return false;
+          if (selType && $r.data('type') !== selType) return false;
+          if (selArea && $r.data('area') !== selArea) return false;
+          if (selCheck && $r.data('check') !== selCheck) return false;
+          if (selReady && $r.data('ready') !== selReady) return false;
           
           if (searchVal) {
-            const tankId = String($(rowNode).data('tank-id')).toLowerCase();
+            const tankId = String($r.data('tank-id') || '').toLowerCase();
             if (!tankId.includes(searchVal)) return false;
           }
 

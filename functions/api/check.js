@@ -42,6 +42,30 @@ export async function onRequestPost(context) {
     const newPic = body.newPic || null;
     const remark = body.remark || '';
 
+    let picTankUrl = newPic;
+    if (newPic && typeof newPic === 'string' && newPic.startsWith('data:') && env.R2) {
+      try {
+        const match = newPic.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
+        if (match) {
+          const mimeType = match[1];
+          const binaryStr = atob(match[2]);
+          const bytes = new Uint8Array(binaryStr.length);
+          for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+          let ext = 'jpg';
+          if (mimeType.includes('png')) ext = 'png';
+          else if (mimeType.includes('webp')) ext = 'webp';
+          const safeTank = tankId.replace(/[^a-zA-Z0-9_-]/g, '_');
+          const key = `${year}/${month}/tanks/${safeTank}_${Date.now()}.${ext}`;
+          await env.R2.put(key, bytes.buffer, {
+            httpMetadata: { contentType: mimeType, cacheControl: 'public, max-age=31536000, immutable' }
+          });
+          picTankUrl = `/r2/${key}`;
+        }
+      } catch (e) {
+        console.error('R2 upload error in check.js:', e);
+      }
+    }
+
     await env.DB.prepare(`
       UPDATE tanks
       SET lastcheck = ?, tankcheck = 'เช็คแล้ว', ready_or_not = ?, tank_status = ?,
@@ -55,7 +79,7 @@ export async function onRequestPost(context) {
       exptank,
       inspectorName,
       weightVal,
-      newPic,
+      picTankUrl,
       remark,
       tankId
     ).run();
@@ -65,7 +89,8 @@ export async function onRequestPost(context) {
       data: {
         lastcheck: timeStr,
         exptank: exptank,
-        ready_or_not: isReady ? 'Ready' : 'Not Ready'
+        ready_or_not: isReady ? 'Ready' : 'Not Ready',
+        pic_tank: picTankUrl
       }
     }), { headers: { 'Content-Type': 'application/json' } });
 

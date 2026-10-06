@@ -140,6 +140,41 @@ export async function onRequestPost(context) {
     const weightVal = body['Weight (lb)'] ? parseFloat(body['Weight (lb)']) : null;
     const isReady = body.ReadyorNot === 'Ready';
 
+    let picTank = body.PicTank || null;
+    let picArea = body.PicArea || null;
+    const now = new Date();
+    const yStr = String(now.getFullYear());
+    const mStr = String(now.getMonth() + 1).padStart(2, '0');
+
+    if (env.R2) {
+      const uploadR2Helper = async (base64Str, subDir) => {
+        if (!base64Str || typeof base64Str !== 'string' || !base64Str.startsWith('data:')) return base64Str;
+        try {
+          const match = base64Str.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
+          if (!match) return base64Str;
+          const mimeType = match[1];
+          const binaryStr = atob(match[2]);
+          const bytes = new Uint8Array(binaryStr.length);
+          for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+          let ext = 'jpg';
+          if (mimeType.includes('png')) ext = 'png';
+          else if (mimeType.includes('webp')) ext = 'webp';
+          const safeTank = tankId.replace(/[^a-zA-Z0-9_-]/g, '_');
+          const key = `${yStr}/${mStr}/${subDir}/${safeTank}_${Date.now()}.${ext}`;
+          await env.R2.put(key, bytes.buffer, {
+            httpMetadata: { contentType: mimeType, cacheControl: 'public, max-age=31536000, immutable' }
+          });
+          return `/r2/${key}`;
+        } catch (e) {
+          console.error(`R2 upload error (${subDir}):`, e);
+          return base64Str;
+        }
+      };
+
+      picTank = await uploadR2Helper(picTank, 'tanks');
+      picArea = await uploadR2Helper(picArea, 'areas');
+    }
+
     await env.DB.prepare(`
       INSERT INTO tanks (fire_tank, types, weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -154,13 +189,13 @@ export async function onRequestPost(context) {
       body.ReadyorNot || 'Not Ready',
       isReady ? 1 : 0,
       body.Exptank || '',
-      body.PicTank || null,
-      body.PicArea || null,
+      picTank,
+      picArea,
       body.Inspector || '',
       body.Responsible || ''
     ).run();
 
-    return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ success: true, picTank, picArea }), { headers: { 'Content-Type': 'application/json' } });
   } catch (err) {
     return new Response(JSON.stringify({ success: false, message: err.message }), { status: 500 });
   }
@@ -179,6 +214,41 @@ export async function onRequestPut(context) {
     const weightVal = body['Weight (lb)'] ? parseFloat(body['Weight (lb)']) : null;
     const isReady = body.ReadyorNot === 'Ready';
 
+    let picTank = body.PicTank || null;
+    let picArea = body.PicArea || null;
+    const now = new Date();
+    const yStr = String(now.getFullYear());
+    const mStr = String(now.getMonth() + 1).padStart(2, '0');
+
+    if (env.R2) {
+      const uploadR2Helper = async (base64Str, subDir) => {
+        if (!base64Str || typeof base64Str !== 'string' || !base64Str.startsWith('data:')) return base64Str;
+        try {
+          const match = base64Str.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
+          if (!match) return base64Str;
+          const mimeType = match[1];
+          const binaryStr = atob(match[2]);
+          const bytes = new Uint8Array(binaryStr.length);
+          for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+          let ext = 'jpg';
+          if (mimeType.includes('png')) ext = 'png';
+          else if (mimeType.includes('webp')) ext = 'webp';
+          const safeTank = tankId.replace(/[^a-zA-Z0-9_-]/g, '_');
+          const key = `${yStr}/${mStr}/${subDir}/${safeTank}_${Date.now()}.${ext}`;
+          await env.R2.put(key, bytes.buffer, {
+            httpMetadata: { contentType: mimeType, cacheControl: 'public, max-age=31536000, immutable' }
+          });
+          return `/r2/${key}`;
+        } catch (e) {
+          console.error(`R2 upload error (${subDir}):`, e);
+          return base64Str;
+        }
+      };
+
+      picTank = await uploadR2Helper(picTank, 'tanks');
+      picArea = await uploadR2Helper(picArea, 'areas');
+    }
+
     await env.DB.prepare(`
       UPDATE tanks
       SET types = ?, weight = ?, area = ?, inuse = ?, lastcheck = ?,
@@ -196,14 +266,14 @@ export async function onRequestPut(context) {
       body.ReadyorNot || 'Not Ready',
       isReady ? 1 : 0,
       body.Exptank || '',
-      body.PicTank || null,
-      body.PicArea || null,
+      picTank,
+      picArea,
       body.Inspector || '',
       body.Responsible || '',
       tankId
     ).run();
 
-    return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ success: true, picTank, picArea }), { headers: { 'Content-Type': 'application/json' } });
   } catch (err) {
     return new Response(JSON.stringify({ success: false, message: err.message }), { status: 500 });
   }
