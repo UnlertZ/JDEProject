@@ -211,8 +211,6 @@ async function ensureDatabase(db) {
     `).run();
 
     await db.prepare(`
-      
-    await db.prepare(`
       CREATE TABLE IF NOT EXISTS fhc (
         eq_id TEXT PRIMARY KEY,
         types TEXT,
