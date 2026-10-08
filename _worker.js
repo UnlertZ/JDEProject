@@ -206,9 +206,7 @@ async function ensureDatabase(db) {
         pic_area TEXT,
         inspector TEXT,
         responsible TEXT,
-        remark TEXT,
-        eq_type TEXT DEFAULT 'tank',
-        eq_data TEXT
+        remark TEXT
       )
     `).run();
 

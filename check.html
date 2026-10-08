@@ -362,9 +362,7 @@
       $('#tankInfoBox').removeClass('d-none');
     }
 
-    
     function updateLiveStatus() {
-<<<<<<< HEAD
       
       let isReady = false;
       let eqData = {};
@@ -439,41 +437,28 @@
       if (!tankId) {
         alert('กรุณาเลือกหมายเลขถังดับเพลิง');
         return;
-=======
-      let isReady = false;
-      
-      if (currentEqType === 'tank') {
-        
-      let isReady = false;
-      let eqData = {};
-
-      if (currentEqType === 'tank') {
-        const g = $('input[name="gauge_status"]:checked').val() === 'normal';
-        const b = $('input[name="body_status"]:checked').val() === 'normal';
-        const l = $('input[name="leak_status"]:checked').val() === 'normal';
-        const w = $('input[name="weight_status"]:checked').val() === 'normal';
-        isReady = g && b && l && w;
-        eqData = { gauge: g, body: b, leak: l, weight: w, weightVal: $('#weightInput').val() };
-      } else if (currentEqType === 'fhc') {
-        const gl = $('input[name="fhc_glass"]:checked').val() === 'normal';
-        const v = $('input[name="fhc_valve"]:checked').val() === 'normal';
-        const h = $('input[name="fhc_hose"]:checked').val() === 'normal';
-        const n = $('input[name="fhc_nozzle"]:checked').val() === 'normal';
-        isReady = gl && v && h && n;
-        eqData = { glass: gl, valve: v, hose: h, nozzle: n };
-      } else if (currentEqType === 'fh') {
-        const h = $('input[name="fh_hose"]:checked').val() === 'normal';
-        const c = $('input[name="fh_coupling"]:checked').val() === 'normal';
-        isReady = h && c;
-        eqData = { hose: h, coupling: c };
-      } else if (currentEqType === 'hd') {
-        const v = $('input[name="hd_valve"]:checked').val() === 'normal';
-        const c = $('input[name="hd_coupling"]:checked').val() === 'normal';
-        isReady = v && c;
-        eqData = { valve: v, coupling: c };
->>>>>>> bb015259c4466832e38f55c2107acde9ae1f7c19
       }
 
+      // ─── Validate แนบรูปภาพ (หากไม่แนบรูป จะไม่สามารถบันทึกได้) ───
+      if (!currentUploadedBase64) {
+        $('#imageError').removeClass('d-none');
+        $('#picTankInput').addClass('is-invalid').removeClass('is-valid');
+        const inputEl = document.getElementById('picTankInput');
+        if (inputEl) {
+          inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          inputEl.focus();
+        }
+        alert('⚠️ ไม่สามารถบันทึกได้: กรุณาถ่ายหรือแนบรูปภาพถังดับเพลิงก่อนบันทึกผลการตรวจเช็ค');
+        return;
+      }
+      $('#imageError').addClass('d-none');
+      $('#picTankInput').removeClass('is-invalid').addClass('is-valid');
+
+      const g = $('input[name="gauge_status"]:checked').val() === 'normal';
+      const b = $('input[name="body_status"]:checked').val() === 'normal';
+      const l = $('input[name="leak_status"]:checked').val() === 'normal';
+      const w = $('input[name="weight_status"]:checked').val() === 'normal';
+      const isReady = g && b && l && w;
 
       // ─── Validate หมายเหตุ (บังคับเมื่อ Not Ready) ───
       const remark = $('#remarkInput').val().trim();
