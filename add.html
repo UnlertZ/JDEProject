@@ -94,7 +94,7 @@
 
           <div class="row g-3 mb-3">
             <div class="col-12 col-sm-6">
-              <label class="form-label fw-semibold small">
+              <label for="tankIdInput" class="form-label fw-semibold small">
                 รหัสถัง (FireTank) <span class="text-danger">*</span>
               </label>
               <input type="text" id="tankIdInput" class="form-control text-uppercase" placeholder="เช่น EX117" required />
@@ -109,7 +109,7 @@
 
           <!-- Row 2: Weight & Area -->
           <div class="row g-3 mb-3">
-            <div class="col-12 col-sm-4">
+            <div class="col-md-4" id="weightContainer">
               <label class="form-label fw-semibold small">น้ำหนักถัง (Weight lb)</label>
               <div class="input-group">
                 <input type="number" step="0.1" id="weightInput" class="form-control" placeholder="เช่น 15" />
@@ -224,7 +224,23 @@
       }
     }
 
-    async function initPage() {
+    async 
+    $('#eqTypeSelect').on('change', function() {
+      const v = $(this).val();
+      if (v === 'tank') {
+        $('label[for="tankIdInput"]').html('รหัสถัง (FireTank) <span class="text-danger">*</span>');
+        $('label[for="typeInput"]').html('ประเภทถัง (Types)');
+        $('#weightContainer').removeClass('d-none');
+        $('#expiryContainer').removeClass('d-none');
+      } else {
+        $('label[for="tankIdInput"]').html('ชื่อ/รหัสอุปกรณ์ <span class="text-danger">*</span>');
+        $('label[for="typeInput"]').html('ลักษณะอุปกรณ์ (Types)');
+        $('#weightContainer').addClass('d-none');
+        $('#expiryContainer').addClass('d-none');
+      }
+    });
+
+    function initPage() {
       // ตรวจสอบสิทธิ์ (เฉพาะ Admin P2)
       if (!requireAuth(2)) return;
 

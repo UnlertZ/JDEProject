@@ -266,6 +266,18 @@
         document.getElementById('currentPicAreaBox').classList.remove('d-none');
       }
 
+      // UI Changes for non-tanks
+      const eqType = tank.EqType || 'tank';
+      if (eqType !== 'tank') {
+        const wContainer = document.getElementById('weightInput').closest('.col-md-4');
+        if (wContainer) wContainer.classList.add('d-none');
+        const tankIdLabel = document.querySelector('label.text-danger').parentNode;
+        if (tankIdLabel) tankIdLabel.innerHTML = 'ชื่อ/รหัสอุปกรณ์';
+        const typesLabel = document.querySelector('label[for="typeInput"]');
+        if (typesLabel) typesLabel.innerHTML = 'ลักษณะอุปกรณ์ (Types)';
+      }
+
+
       // Dropdown Datalists
       const types = [...new Set(tanks.map(t => t.Types).filter(Boolean))].sort();
       const areas = [...new Set(tanks.map(t => t.Area).filter(Boolean))].sort();
@@ -280,6 +292,7 @@
       e.preventDefault();
       const isChecked = document.querySelector('input[name="Tankcheck"]:checked').value;
       const data = {
+        EqType: currentTankData.EqType || 'tank',
         Types: document.getElementById('typeInput').value.trim(),
         'Weight (lb)': document.getElementById('weightInput').value,
         Area: document.getElementById('areaInput').value.trim(),
