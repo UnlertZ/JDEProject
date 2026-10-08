@@ -1210,7 +1210,12 @@
         isTanksDataLoaded = true;
       }
 
+      
+      // Filter tanks by currentEqType before rendering
+      tanks = tanks.filter(t => (t.EqType || 'tank') === currentEqType);
+      
       window._liveTanksReferenceMap = {};
+
       tanks.forEach(t => {
         if (t.FireTank) {
           window._liveTanksReferenceMap[t.FireTank] = {
@@ -1570,7 +1575,10 @@
         const isReady = isChecked && tank.ReadyorNot === 'Ready' && tank.TankStatus;
         const readyStatus = !isChecked ? 'Pending' : (isReady ? 'Ready' : 'Not Ready');
 
+        
+        if ((tank.EqType || 'tank') !== currentEqType) return false;
         if (selType && tank.Types !== selType) return false;
+
         if (selArea && tank.Area !== selArea) return false;
         if (selCheck && checkStatus !== selCheck) return false;
         if (selReady && readyStatus !== selReady) return false;

@@ -133,7 +133,9 @@ function formatTankResponse(row) {
     PicArea: get('pic_area') || get('PicArea') || null,
     Inspector: String(get('inspector') || get('Inspector') || ''),
     Responsible: String(get('responsible') || get('Responsible') || ''),
-    Remark: String(get('remark') || get('Remark') || '')
+    Remark: String(get('remark') || get('Remark') || ''),
+    EqType: String(get('eq_type') || get('EqType') || 'tank'),
+    EqData: String(get('eq_data') || get('EqData') || '{}')
   };
 }
 
