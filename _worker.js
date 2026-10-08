@@ -794,6 +794,7 @@ export default {
       // 4. /api/tanks — ดึงสดจาก Cloudflare D1 100%
       if (pathname === '/api/tanks') {
         if (method === 'GET') {
+          await ensureDatabase(env.DB);
           let rows = [];
           try {
             const query = await env.DB.prepare(`
