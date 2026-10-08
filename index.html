@@ -1382,6 +1382,15 @@
         window._dtFilterRegistered = true;
       }
 
+      
+      $('#equipmentTabs button').on('click', function (e) {
+        e.preventDefault();
+        $('#equipmentTabs button').removeClass('active bg-danger text-white').addClass('bg-white border text-dark');
+        $(this).removeClass('bg-white border text-dark').addClass('active bg-danger text-white');
+        currentEqType = $(this).data('eq-type');
+        renderDashboard();
+      });
+
       $('#filterType, #filterArea, #filterCheck, #filterReady, #searchInput').off('input change').on('input change', function () {
         activeCardFilter = null;
         $('.card-summary').removeClass('card-summary-active');
