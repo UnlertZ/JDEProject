@@ -796,12 +796,28 @@ export default {
         if (method === 'GET') {
           let rows = [];
           try {
-            const query = await env.DB.prepare('SELECT * FROM tanks').all();
+            const query = await env.DB.prepare(`
+          SELECT fire_tank, types, weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'tank' as eq_type, '' as eq_data FROM tanks
+          UNION ALL
+          SELECT eq_id as fire_tank, types, NULL as weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'fhc' as eq_type, eq_data FROM fhc
+          UNION ALL
+          SELECT eq_id as fire_tank, types, NULL as weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'fh' as eq_type, eq_data FROM fh
+          UNION ALL
+          SELECT eq_id as fire_tank, types, NULL as weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'hd' as eq_type, eq_data FROM hd
+`).all();
             rows = query.results || [];
           } catch (dbErr) {
             if (String(dbErr.message).includes('no such table')) {
               await ensureDatabase(env.DB);
-              const retryQ = await env.DB.prepare('SELECT * FROM tanks').all().catch(() => ({ results: [] }));
+              const retryQ = await env.DB.prepare(`
+          SELECT fire_tank, types, weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'tank' as eq_type, '' as eq_data FROM tanks
+          UNION ALL
+          SELECT eq_id as fire_tank, types, NULL as weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'fhc' as eq_type, eq_data FROM fhc
+          UNION ALL
+          SELECT eq_id as fire_tank, types, NULL as weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'fh' as eq_type, eq_data FROM fh
+          UNION ALL
+          SELECT eq_id as fire_tank, types, NULL as weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'hd' as eq_type, eq_data FROM hd
+`).all().catch(() => ({ results: [] }));
               rows = retryQ.results || [];
             } else {
               // หากตารางชื่ออื่นใน D1 ตรวจสอบตารางที่มีอยู่
