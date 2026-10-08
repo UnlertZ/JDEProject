@@ -211,6 +211,69 @@ async function ensureDatabase(db) {
     `).run();
 
     await db.prepare(`
+      
+    await db.prepare(`
+      CREATE TABLE IF NOT EXISTS fhc (
+        eq_id TEXT PRIMARY KEY,
+        types TEXT,
+        area TEXT,
+        inuse TEXT,
+        lastcheck TEXT,
+        tankcheck TEXT DEFAULT 'ยังไม่ตรวจ',
+        ready_or_not TEXT DEFAULT 'Not Ready',
+        tank_status INTEGER DEFAULT 0,
+        exptank TEXT,
+        pic_tank TEXT,
+        pic_area TEXT,
+        inspector TEXT,
+        responsible TEXT,
+        remark TEXT,
+        eq_data TEXT
+      )
+    `).run();
+
+    await db.prepare(`
+      CREATE TABLE IF NOT EXISTS fh (
+        eq_id TEXT PRIMARY KEY,
+        types TEXT,
+        area TEXT,
+        inuse TEXT,
+        lastcheck TEXT,
+        tankcheck TEXT DEFAULT 'ยังไม่ตรวจ',
+        ready_or_not TEXT DEFAULT 'Not Ready',
+        tank_status INTEGER DEFAULT 0,
+        exptank TEXT,
+        pic_tank TEXT,
+        pic_area TEXT,
+        inspector TEXT,
+        responsible TEXT,
+        remark TEXT,
+        eq_data TEXT
+      )
+    `).run();
+
+    await db.prepare(`
+      CREATE TABLE IF NOT EXISTS hd (
+        eq_id TEXT PRIMARY KEY,
+        types TEXT,
+        area TEXT,
+        inuse TEXT,
+        lastcheck TEXT,
+        tankcheck TEXT DEFAULT 'ยังไม่ตรวจ',
+        ready_or_not TEXT DEFAULT 'Not Ready',
+        tank_status INTEGER DEFAULT 0,
+        exptank TEXT,
+        pic_tank TEXT,
+        pic_area TEXT,
+        inspector TEXT,
+        responsible TEXT,
+        remark TEXT,
+        eq_data TEXT
+      )
+    `).run();
+
+
+    await db.prepare(`
       CREATE TABLE IF NOT EXISTS monthly_snapshots (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         month_key TEXT NOT NULL UNIQUE,
@@ -236,7 +299,15 @@ async function ensureDatabase(db) {
     // Migration: เพิ่มข้อมูลย้อนหลัง 01/01/2026 ถึง 01/09/2026 ตรวจครบและพร้อมใช้งาน 100% (รันครั้งเดียว ไม่ทำซ้ำเมื่อลบ)
     const migCheck = await db.prepare("SELECT id FROM system_migrations WHERE id = 'seed_past_snapshots_2026_v2'").first().catch(() => null);
     if (!migCheck) {
-      const tankQ = await db.prepare("SELECT * FROM tanks").all().catch(() => ({ results: [] }));
+      const tankQ = await db.prepare(`
+          SELECT fire_tank, types, weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'tank' as eq_type, '' as eq_data FROM tanks
+          UNION ALL
+          SELECT eq_id as fire_tank, types, NULL as weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'fhc' as eq_type, eq_data FROM fhc
+          UNION ALL
+          SELECT eq_id as fire_tank, types, NULL as weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'fh' as eq_type, eq_data FROM fh
+          UNION ALL
+          SELECT eq_id as fire_tank, types, NULL as weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'hd' as eq_type, eq_data FROM hd
+`).all().catch(() => ({ results: [] }));
       const liveTanks = (tankQ.results || []).map(formatTankResponse);
       const total = liveTanks.length;
       if (total > 0) {
@@ -782,10 +853,21 @@ export default {
             picArea = await saveImageToR2(env, picArea, 'areas', tankId, body.Lastcheck || new Date());
           }
 
-          await env.DB.prepare(`
-            INSERT INTO tanks (fire_tank, types, weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, eq_type, eq_data)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-          `).bind(tankId, body.Types || '', weightVal, body.Area || '', body.Inuse || '', body.Lastcheck || '', body.Tankcheck || 'ยังไม่เช็ค', body.ReadyorNot || 'Not Ready', isReady ? 1 : 0, body.Exptank || '', picTank, picArea, body.Inspector || '', body.Responsible || '', body.Remark || '').run();
+          
+          const eqType = body.EqType || 'tank';
+          if (eqType === 'tank') {
+            await env.DB.prepare(`
+              INSERT INTO tanks (fire_tank, types, weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `).bind(tankId, body.Types || '', weightVal, body.Area || '', body.Inuse || '', body.Lastcheck || '', body.Tankcheck || 'ยังไม่ตรวจ', body.ReadyorNot || 'Not Ready', isReady ? 1 : 0, body.Exptank || '', picTank, picArea, body.Inspector || '', body.Responsible || '', body.Remark || '').run();
+          } else {
+            const tableName = eqType === 'fhc' ? 'fhc' : (eqType === 'fh' ? 'fh' : 'hd');
+            await env.DB.prepare(`
+              INSERT INTO ${tableName} (eq_id, types, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, eq_data)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `).bind(tankId, body.Types || '', body.Area || '', body.Inuse || '', body.Lastcheck || '', body.Tankcheck || 'ยังไม่ตรวจ', body.ReadyorNot || 'Not Ready', isReady ? 1 : 0, body.Exptank || '', picTank, picArea, body.Inspector || '', body.Responsible || '', body.Remark || '', body.EqData || '{}').run();
+          }
+
 
           return new Response(JSON.stringify({ success: true, picTank, picArea }), { headers: { 'Content-Type': 'application/json' } });
         }
@@ -823,7 +905,13 @@ export default {
         if (method === 'DELETE') {
           const tankId = url.searchParams.get('id');
           if (!tankId) return new Response(JSON.stringify({ success: false, message: 'กรุณาระบุรหัสถัง' }), { status: 400 });
-          await env.DB.prepare('DELETE FROM tanks WHERE UPPER(fire_tank) = ?').bind(tankId.toUpperCase()).run();
+          
+          const upId = tankId.toUpperCase();
+          await env.DB.prepare('DELETE FROM tanks WHERE UPPER(fire_tank) = ?').bind(upId).run();
+          await env.DB.prepare('DELETE FROM fhc WHERE UPPER(eq_id) = ?').bind(upId).run();
+          await env.DB.prepare('DELETE FROM fh WHERE UPPER(eq_id) = ?').bind(upId).run();
+          await env.DB.prepare('DELETE FROM hd WHERE UPPER(eq_id) = ?').bind(upId).run();
+
           return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
         }
       }
@@ -1038,7 +1126,15 @@ export default {
           const monthKey = String(body.monthKey || body.month || '').trim();
           const inspector = String(body.inspector || 'SHE').trim();
 
-          const tankQ = await env.DB.prepare('SELECT * FROM tanks').all().catch(() => ({ results: [] }));
+          const tankQ = await env.DB.prepare(`
+          SELECT fire_tank, types, weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'tank' as eq_type, '' as eq_data FROM tanks
+          UNION ALL
+          SELECT eq_id as fire_tank, types, NULL as weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'fhc' as eq_type, eq_data FROM fhc
+          UNION ALL
+          SELECT eq_id as fire_tank, types, NULL as weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'fh' as eq_type, eq_data FROM fh
+          UNION ALL
+          SELECT eq_id as fire_tank, types, NULL as weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, 'hd' as eq_type, eq_data FROM hd
+`).all().catch(() => ({ results: [] }));
           const liveTanks = (tankQ.results || []).map(formatTankResponse);
           const total = liveTanks.length;
           if (total === 0) {
