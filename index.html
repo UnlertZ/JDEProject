@@ -1197,6 +1197,7 @@
       areas.forEach(ar => areaSelect.append(`<option value="${ar}">${ar}</option>`));
 
       // Destroy DataTable เก่าก่อนเรนเดอร์ใหม่
+      
       if (dataTableInstance) {
         try {
           dataTableInstance.destroy();
@@ -1205,6 +1206,40 @@
         }
         dataTableInstance = null;
       }
+
+      const theadHtml = currentEqType === 'tank' ? `
+              <tr>
+                <th class="text-center" style="width: 40px;">#</th>
+                <th>รหัสถัง</th>
+                <th>ประเภท</th>
+                <th class="text-center">ขนาดบรรจุ (lb)</th>
+                <th>พื้นที่</th>
+                <th>ผู้รับผิดชอบ</th>
+                <th class="text-center">วันที่นำมาใช้งาน</th>
+                <th class="text-center">ตรวจล่าสุด</th>
+                <th class="text-center">สถานะการตรวจ</th>
+                <th class="text-center">ความพร้อม</th>
+                <th class="text-center">วันหมดอายุ</th>
+                <th class="text-center">ผู้ตรวจสอบ</th>
+                <th class="text-center" id="thAction">จัดการ</th>
+              </tr>
+      ` : `
+              <tr>
+                <th class="text-center" style="width: 40px;">#</th>
+                <th>ชื่อ/รหัส</th>
+                <th>ลักษณะ</th>
+                <th>สถานที่/พื้นที่</th>
+                <th>ผู้รับผิดชอบ</th>
+                <th class="text-center">วันที่นำมาใช้งาน</th>
+                <th class="text-center">ตรวจล่าสุด</th>
+                <th class="text-center">สถานะการตรวจ</th>
+                <th class="text-center">ความพร้อม</th>
+                <th class="text-center">ผู้ตรวจสอบ</th>
+                <th class="text-center" id="thAction">จัดการ</th>
+              </tr>
+      `;
+      $('#tankTable thead').html(theadHtml);
+
 
       // เรียงลำดับถังแบบ Natural Sort (EX01, EX02 ... EX10, EX11, EX12 ... EX99, EX100)
       tanks.sort((a, b) => {
@@ -1282,39 +1317,35 @@
         const sortKey = getTankSortKey(tank.FireTank);
         const readyDataVal = !isChecked ? 'Pending' : (isReady ? 'Ready' : 'Not Ready');
 
-        const tr = `
-          <tr data-type="${tank.Types || ''}" 
-              data-area="${tank.Area || ''}" 
-              data-check="${isChecked ? 'เช็คแล้ว' : 'ยังไม่เช็ค'}" 
-              data-ready="${readyDataVal}"
-              data-tank-id="${tank.FireTank}"
-              style="cursor:pointer;"
-              title="คลิกเพื่อดูรายละเอียดถัง ${tank.FireTank}">
+                const cols = currentEqType === 'tank' ? `
             <td class="text-center text-muted small" data-order="${idx + 1}">${idx + 1}</td>
             <td data-order="${sortKey}"><strong class="text-danger">${tank.FireTank}</strong></td>
             <td class="small">${tank.Types || '—'}</td>
             <td class="text-center small">${tank['Weight (lb)'] ?? '—'}</td>
             <td class="small">${tank.Area || '—'}</td>
-            <td class="small">${tank.Responsible
-              ? `<span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle"><i class="bi bi-person-fill me-1"></i>${tank.Responsible}</span>`
-              : '<span class="text-muted">—</span>'}</td>
+            <td class="small">${tank.Responsible ? \`<span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle"><i class="bi bi-person-fill me-1"></i>${tank.Responsible}</span>\` : '<span class="text-muted">—</span>'}</td>
             <td class="text-center small">${formatDateOnly(tank.Inuse)}</td>
             <td class="text-center small">${formatDateOnly(tank.Lastcheck)}</td>
-            <td class="text-center">
-              ${checkBadgeHtml}
-            </td>
-            <td class="text-center">
-              ${readyBadgeHtml}
-            </td>
+            <td class="text-center">${checkBadgeHtml}</td>
+            <td class="text-center">${readyBadgeHtml}</td>
             <td class="text-center small fw-semibold text-primary">${tank.Exptank || '—'}</td>
-            <td class="text-center small">
-              ${tank.Inspector 
-                ? `<span class="badge bg-info-subtle text-info-emphasis border border-info-subtle"><i class="bi bi-person-check me-1"></i>${tank.Inspector}</span>` 
-                : '<span class="text-muted">—</span>'}
-            </td>
+            <td class="text-center small">${tank.Inspector ? \`<span class="badge bg-info-subtle text-info-emphasis border border-info-subtle"><i class="bi bi-person-check me-1"></i>${tank.Inspector}</span>\` : '<span class="text-muted">—</span>'}</td>
             <td class="text-center text-nowrap">${actionButtons}</td>
-          </tr>
+        ` : `
+            <td class="text-center text-muted small" data-order="${idx + 1}">${idx + 1}</td>
+            <td data-order="${sortKey}"><strong class="text-danger">${tank.FireTank}</strong></td>
+            <td class="small">${tank.Types || '—'}</td>
+            <td class="small">${tank.Area || '—'}</td>
+            <td class="small">${tank.Responsible ? \`<span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle"><i class="bi bi-person-fill me-1"></i>${tank.Responsible}</span>\` : '<span class="text-muted">—</span>'}</td>
+            <td class="text-center small">${formatDateOnly(tank.Inuse)}</td>
+            <td class="text-center small">${formatDateOnly(tank.Lastcheck)}</td>
+            <td class="text-center">${checkBadgeHtml}</td>
+            <td class="text-center">${readyBadgeHtml}</td>
+            <td class="text-center small">${tank.Inspector ? \`<span class="badge bg-info-subtle text-info-emphasis border border-info-subtle"><i class="bi bi-person-check me-1"></i>${tank.Inspector}</span>\` : '<span class="text-muted">—</span>'}</td>
+            <td class="text-center text-nowrap">${actionButtons}</td>
         `;
+
+        const tr = `<tr data-type="${tank.Types || ''}" data-area="${tank.Area || ''}" data-check="${isChecked ? 'เช็คแล้ว' : 'ยังไม่เช็ค'}" data-ready="${readyDataVal}" data-tank-id="${tank.FireTank}" style="cursor:pointer;" title="คลิกเพื่อดูรายละเอียด ${tank.FireTank}">${cols}</tr>`;
         tbody.append(tr);
       });
 

@@ -324,6 +324,30 @@
       const tank = getTankById(selectedId);
       if (!tank) return;
 
+      // Update global currentEqType
+      currentEqType = tank.EqType || 'tank';
+
+      // Hide/Show Checklists
+      $('#checklist-tank, #checklist-fhc, #checklist-fh, #checklist-hd').addClass('d-none');
+      $('#checklist-' + currentEqType).removeClass('d-none');
+      updateLiveStatus();
+
+      // UI Changes for non-tanks
+      if (currentEqType !== 'tank') {
+        $('#infoWeight').parent().hide();
+        $('#infoExptank').parent().hide();
+        $('#infoId').prev('strong').text('ชื่อ/รหัส:');
+        $('#infoType').prev('strong').text(currentEqType === 'hd' ? 'ลักษณะ (เช่น 2หัว):' : 'ประเภท:');
+        $('#infoArea').prev('strong').text('สถานที่/พื้นที่:');
+      } else {
+        $('#infoWeight').parent().show();
+        $('#infoExptank').parent().show();
+        $('#infoId').prev('strong').text('รหัสถัง:');
+        $('#infoType').prev('strong').text('ประเภท:');
+        $('#infoArea').prev('strong').text('พื้นที่:');
+      }
+
+
       $('#infoId').text(tank.FireTank);
       $('#infoType').text(tank.Types || '-');
       $('#infoArea').text(tank.Area || '-');
