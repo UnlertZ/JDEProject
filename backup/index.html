@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>à¸£à¸°à¸šà¸šà¸šà¸£à¸´à¸«à¸²à¸£à¸ˆà¸±à¸”à¸à¸²à¸£à¹à¸¥à¸°à¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„à¸–à¸±à¸‡à¸”à¸±à¸šà¹€à¸žà¸¥à¸´à¸‡ | FireTank</title>
+  <title>ระบบบริหารจัดการและตรวจเช็คถังดับเพลิง | FireTank</title>
 
   <!-- Bootstrap 5 CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
@@ -35,22 +35,22 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <a class="nav-link active fw-semibold" href="index.html" id="navDashboardLink" onclick="onNavDashboardClick(event)">
-              <i class="bi bi-speedometer2 me-1"></i>à¹à¸”à¸Šà¸šà¸­à¸£à¹Œà¸”
+              <i class="bi bi-speedometer2 me-1"></i>แดชบอร์ด
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link fw-semibold" href="check.html">
-              <i class="bi bi-clipboard2-check me-1"></i>à¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„à¸–à¸±à¸‡
+              <i class="bi bi-clipboard2-check me-1"></i>ตรวจเช็คถัง
             </a>
           </li>
         </ul>
 
         <div id="navbarAuthArea" class="d-flex align-items-center gap-2">
           <a href="register.html" class="btn btn-outline-light btn-sm fw-semibold">
-            <i class="bi bi-person-plus me-1"></i>à¸¥à¸‡à¸—à¸°à¹€à¸šà¸µà¸¢à¸™
+            <i class="bi bi-person-plus me-1"></i>ลงทะเบียน
           </a>
           <a href="login.html" class="btn btn-warning btn-sm fw-bold">
-            <i class="bi bi-box-arrow-in-right me-1"></i>à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸£à¸°à¸šà¸š
+            <i class="bi bi-box-arrow-in-right me-1"></i>เข้าสู่ระบบ
           </a>
         </div>
       </div>
@@ -76,21 +76,21 @@
             </span>
           </div>
           <h2 class="fw-bold text-dark mb-2 d-flex align-items-center gap-2" style="font-size: clamp(1.4rem, 3vw, 1.8rem); letter-spacing: -0.5px;">
-            <i class="bi bi-fire text-danger icon-rotate"></i>à¸£à¸²à¸¢à¸à¸²à¸£à¸–à¸±à¸‡à¸”à¸±à¸šà¹€à¸žà¸¥à¸´à¸‡à¹à¸¥à¸°à¸ªà¸–à¸²à¸™à¸°à¸à¸²à¸£à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸š
+            <i class="bi bi-fire text-danger icon-rotate"></i>รายการถังดับเพลิงและสถานะการตรวจสอบ
           </h2>
           <div class="d-flex align-items-center flex-wrap gap-3 text-muted small mb-2">
-            <p class="mb-0 border-end pe-3">à¸£à¸°à¸šà¸šà¸šà¸£à¸´à¸«à¸²à¸£à¸ˆà¸±à¸”à¸à¸²à¸£à¹à¸¥à¸°à¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„à¸ªà¸ à¸²à¸žà¸„à¸§à¸²à¸¡à¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™à¸›à¸£à¸°à¸ˆà¸³à¹€à¸”à¸·à¸­à¸™</p>
+            <p class="mb-0 border-end pe-3">ระบบบริหารจัดการและตรวจเช็คสภาพความพร้อมใช้งานประจำเดือน</p>
             <div class="d-flex align-items-center gap-1 text-secondary" id="liveClockContainer">
-              <i class="bi bi-clock"></i> <span id="liveClock">à¸à¸³à¸¥à¸±à¸‡à¹‚à¸«à¸¥à¸”à¹€à¸§à¸¥à¸²...</span>
+              <i class="bi bi-clock"></i> <span id="liveClock">กำลังโหลดเวลา...</span>
             </div>
           </div>
-          <!-- Month Selector Dropdown (à¹€à¸¥à¸·à¸­à¸à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸š / à¸¢à¹‰à¸­à¸™à¸«à¸¥à¸±à¸‡) -->
+          <!-- Month Selector Dropdown (เลือกรอบเดือนตรวจสอบ / ย้อนหลัง) -->
           <div class="d-inline-flex align-items-center gap-2 mt-1 p-1 px-2.5 bg-light rounded-pill border">
             <label for="monthSelect" class="small fw-bold text-dark mb-0 d-flex align-items-center text-nowrap">
-              <i class="bi bi-calendar3 me-1 text-danger"></i>à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™:
+              <i class="bi bi-calendar3 me-1 text-danger"></i>รอบเดือน:
             </label>
             <select id="monthSelect" class="form-select form-select-sm border-0 bg-transparent fw-bold text-dark py-0" style="min-width: 220px; cursor: pointer;" onchange="onMonthChange()">
-              <option value="current">ðŸ“… à¸à¸³à¸¥à¸±à¸‡à¹‚à¸«à¸¥à¸”à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™...</option>
+              <option value="current">📅 กำลังโหลดรอบเดือน...</option>
             </select>
           </div>
         </div>
@@ -98,94 +98,77 @@
         <!-- Action Toolbar -->
         <div class="d-flex flex-wrap align-items-center gap-2 action-btn-group pt-lg-2">
           <a href="check.html" id="btnGoCheck" class="btn btn-success shadow-sm fw-bold px-4 py-2 action-btn-touch btn-primary-action rounded-pill">
-            <i class="bi bi-clipboard2-check-fill me-2"></i>à¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„à¸–à¸±à¸‡
+            <i class="bi bi-clipboard2-check-fill me-2"></i>ตรวจเช็คถัง
           </a>
           <a href="add.html" id="btnAddTank" class="btn btn-danger shadow-sm fw-semibold action-btn-touch rounded-pill d-none">
-            <i class="bi bi-plus-circle me-1"></i>à¹€à¸žà¸´à¹ˆà¸¡à¸–à¸±à¸‡à¹ƒà¸«à¸¡à¹ˆ
+            <i class="bi bi-plus-circle me-1"></i>เพิ่มถังใหม่
           </a>
           <a href="approvals.html" id="btnApprovals" class="btn btn-warning shadow-sm fw-semibold action-btn-touch rounded-pill d-none">
-            <i class="bi bi-person-check-fill me-1"></i>à¸­à¸™à¸¸à¸¡à¸±à¸•à¸´à¸ªà¸¡à¸²à¸Šà¸´à¸ <span id="btnApprovalsBadge" class="badge bg-danger ms-1 d-none">0</span>
+            <i class="bi bi-person-check-fill me-1"></i>อนุมัติสมาชิก <span id="btnApprovalsBadge" class="badge bg-danger ms-1 d-none">0</span>
           </a>
           <!-- Export & Import Excel & Download Images (Admin P2+) -->
-          <button id="btnExportExcel" onclick="openExportExcelModal()" class="btn btn-outline-success shadow-sm action-btn-touch rounded-pill d-none" title="à¸”à¸²à¸§à¸™à¹Œà¹‚à¸«à¸¥à¸”à¸£à¸²à¸¢à¸‡à¸²à¸™à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹€à¸›à¹‡à¸™à¹„à¸Ÿà¸¥à¹Œ Excel (à¸ªà¸´à¸—à¸˜à¸´à¹Œ P2 à¸‚à¸¶à¹‰à¸™à¹„à¸›)">
-            <i class="bi bi-file-earmark-excel me-1"></i>à¸ªà¹ˆà¸‡à¸­à¸­à¸ Excel
+          <button id="btnExportExcel" onclick="openExportExcelModal()" class="btn btn-outline-success shadow-sm action-btn-touch rounded-pill d-none" title="ดาวน์โหลดรายงานข้อมูลเป็นไฟล์ Excel (สิทธิ์ P2 ขึ้นไป)">
+            <i class="bi bi-file-earmark-excel me-1"></i>ส่งออก Excel
           </button>
-          <button id="btnDownloadImagesZip" onclick="openDownloadImagesModal()" class="btn btn-outline-primary shadow-sm action-btn-touch rounded-pill d-none" title="à¸”à¸²à¸§à¸™à¹Œà¹‚à¸«à¸¥à¸”à¸£à¸¹à¸›à¸ à¸²à¸žà¸–à¸±à¸‡à¸”à¸±à¸šà¹€à¸žà¸¥à¸´à¸‡à¹€à¸›à¹‡à¸™à¹„à¸Ÿà¸¥à¹Œ ZIP (à¸ªà¸´à¸—à¸˜à¸´à¹Œ P2 à¸‚à¸¶à¹‰à¸™à¹„à¸›)">
-            <i class="bi bi-file-earmark-zip-fill me-1"></i>à¸”à¸²à¸§à¸™à¹Œà¹‚à¸«à¸¥à¸”à¸£à¸¹à¸› (ZIP)
+          <button id="btnDownloadImagesZip" onclick="openDownloadImagesModal()" class="btn btn-outline-primary shadow-sm action-btn-touch rounded-pill d-none" title="ดาวน์โหลดรูปภาพถังดับเพลิงเป็นไฟล์ ZIP (สิทธิ์ P2 ขึ้นไป)">
+            <i class="bi bi-file-earmark-zip-fill me-1"></i>ดาวน์โหลดรูป (ZIP)
           </button>
-          <label id="btnImportExcel" class="btn btn-outline-secondary shadow-sm mb-0 cursor-pointer action-btn-touch rounded-pill d-none" title="à¸™à¸³à¹€à¸‚à¹‰à¸²à¹„à¸Ÿà¸¥à¹Œ Excel à¹€à¸žà¸·à¹ˆà¸­à¸­à¸±à¸›à¹€à¸”à¸•à¸‚à¹‰à¸­à¸¡à¸¹à¸¥">
-            <i class="bi bi-upload me-1"></i>à¸™à¸³à¹€à¸‚à¹‰à¸²
+          <label id="btnImportExcel" class="btn btn-outline-secondary shadow-sm mb-0 cursor-pointer action-btn-touch rounded-pill d-none" title="นำเข้าไฟล์ Excel เพื่ออัปเดตข้อมูล">
+            <i class="bi bi-upload me-1"></i>นำเข้า
             <input type="file" id="excelFileInput" accept=".xlsx, .xls" class="d-none" onchange="handleExcelImport(event)">
           </label>
-          <button id="btnQuickSeedMonth" onclick="openQuickSeedModal()" class="btn btn-outline-primary shadow-sm action-btn-touch rounded-pill d-none" title="à¹€à¸žà¸´à¹ˆà¸¡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸¢à¹‰à¸­à¸™à¸«à¸¥à¸±à¸‡à¹€à¸‚à¹‰à¸² Database à¹à¸šà¸šà¸£à¸§à¸”à¹€à¸£à¹‡à¸§ (à¸ªà¸´à¸—à¸˜à¸´à¹Œ P3)">
-            <i class="bi bi-calendar-plus-fill me-1"></i>à¹€à¸žà¸´à¹ˆà¸¡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸¢à¹‰à¸­à¸™à¸«à¸¥à¸±à¸‡
+          <button id="btnQuickSeedMonth" onclick="openQuickSeedModal()" class="btn btn-outline-primary shadow-sm action-btn-touch rounded-pill d-none" title="เพิ่มข้อมูลย้อนหลังเข้า Database แบบรวดเร็ว (สิทธิ์ P3)">
+            <i class="bi bi-calendar-plus-fill me-1"></i>เพิ่มข้อมูลย้อนหลัง
           </button>
-          <button id="btnR2Manage" onclick="openR2Modal()" class="btn btn-outline-info shadow-sm action-btn-touch rounded-pill d-none" title="à¸ˆà¸±à¸”à¸à¸²à¸£ Cloudflare R2 & à¸­à¸²à¸¢à¸¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥ Retention (à¸ªà¸´à¸—à¸˜à¸´à¹Œ P3)">
-            <i class="bi bi-cloud-arrow-up-fill me-1"></i>à¸ˆà¸±à¸”à¸à¸²à¸£ R2 & à¸­à¸²à¸¢à¸¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥
+          <button id="btnR2Manage" onclick="openR2Modal()" class="btn btn-outline-info shadow-sm action-btn-touch rounded-pill d-none" title="จัดการ Cloudflare R2 & อายุข้อมูล Retention (สิทธิ์ P3)">
+            <i class="bi bi-cloud-arrow-up-fill me-1"></i>จัดการ R2 & อายุข้อมูล
           </button>
-          <button id="btnResetDb" onclick="resetDatabase()" class="btn btn-outline-danger shadow-sm action-btn-touch rounded-pill d-none" title="à¸„à¸·à¸™à¸„à¹ˆà¸²à¹€à¸£à¸´à¹ˆà¸¡à¸•à¹‰à¸™">
+          <button id="btnResetDb" onclick="resetDatabase()" class="btn btn-outline-danger shadow-sm action-btn-touch rounded-pill d-none" title="คืนค่าเริ่มต้น">
             <i class="bi bi-arrow-counterclockwise"></i>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Past Month Notice Banner (à¹à¸ªà¸”à¸‡à¹€à¸¡à¸·à¹ˆà¸­à¸”à¸¹à¸›à¸£à¸°à¸§à¸±à¸•à¸´à¸¢à¹‰à¸­à¸™à¸«à¸¥à¸±à¸‡) -->
+    <!-- Past Month Notice Banner (แสดงเมื่อดูประวัติย้อนหลัง) -->
     <div id="pastMonthNotice" class="alert alert-warning border-warning d-flex flex-column flex-md-row align-items-md-center justify-content-between p-3 mb-3 rounded-3 shadow-sm d-none gap-2">
       <div class="d-flex align-items-center gap-2">
         <i class="bi bi-lock-fill fs-3 text-warning"></i>
         <div>
-          <strong id="pastMonthNoticeTitle" class="fs-6">à¸à¸³à¸¥à¸±à¸‡à¸”à¸¹à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸¢à¹‰à¸­à¸™à¸«à¸¥à¸±à¸‡à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™</strong>
-          <div class="small text-secondary">à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹ƒà¸™à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸—à¸µà¹ˆà¸œà¹ˆà¸²à¸™à¸¡à¸²à¸–à¸¹à¸à¸›à¸´à¸”à¸£à¸­à¸šà¹à¸¥à¸°à¸ˆà¸±à¸”à¹€à¸à¹‡à¸šà¸–à¸²à¸§à¸£ (à¹‚à¸«à¸¡à¸”à¸­à¹ˆà¸²à¸™à¸­à¸¢à¹ˆà¸²à¸‡à¹€à¸”à¸µà¸¢à¸§ à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¹à¸à¹‰à¹„à¸‚à¹„à¸”à¹‰)</div>
+          <strong id="pastMonthNoticeTitle" class="fs-6">กำลังดูข้อมูลย้อนหลังรอบเดือน</strong>
+          <div class="small text-secondary">ข้อมูลในรอบเดือนที่ผ่านมาถูกปิดรอบและจัดเก็บถาวร (โหมดอ่านอย่างเดียว ไม่สามารถแก้ไขได้)</div>
         </div>
       </div>
       <div>
         <button class="btn btn-dark btn-sm rounded-pill px-3 shadow-xs" onclick="returnToCurrentMonth()">
-          <i class="bi bi-arrow-return-left me-1"></i>à¸à¸¥à¸±à¸šà¸ªà¸¹à¹ˆà¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™
+          <i class="bi bi-arrow-return-left me-1"></i>กลับสู่รอบเดือนปัจจุบัน
         </button>
       </div>
     </div>
 
-    <!-- â”€â”€â”€ 1. Annual & Monthly Inspection Analytics Chart â”€â”€â”€ -->
-    
-    <!-- Equipment Tabs -->
-    <ul class="nav nav-pills mb-3" id="equipmentTabs" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active bg-danger text-white rounded-pill px-4 fw-bold shadow-sm" id="tab-tank" data-eq-type="tank" type="button" role="tab">🧯 ถังดับเพลิง</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link rounded-pill px-4 fw-bold ms-2 shadow-sm bg-white border text-dark" id="tab-fhc" data-eq-type="fhc" type="button" role="tab">🧰 ตู้ดับเพลิง (FHC)</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link rounded-pill px-4 fw-bold ms-2 shadow-sm bg-white border text-dark" id="tab-fh" data-eq-type="fh" type="button" role="tab">🚒 สายฉีด (FH)</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link rounded-pill px-4 fw-bold ms-2 shadow-sm bg-white border text-dark" id="tab-hd" data-eq-type="hd" type="button" role="tab">🚰 หัวรับน้ำ (HD)</button>
-      </li>
-    </ul>
-
+    <!-- ─── 1. Annual & Monthly Inspection Analytics Chart ─── -->
     <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden" id="analyticsChartCard">
       <div class="card-header bg-white border-bottom py-3 px-3 px-md-4 d-flex flex-wrap align-items-center justify-content-between gap-2">
         <div class="d-flex align-items-center gap-2 flex-wrap">
           <span class="fw-bold text-dark fs-6 d-flex align-items-center">
             <i class="bi bi-bar-chart-line-fill text-danger me-2 fs-5" id="chartHeaderIcon"></i>
-            <span id="chartMainTitle">à¸ªà¸–à¸´à¸•à¸´à¸à¸²à¸£à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸šà¸›à¸£à¸°à¸ˆà¸³à¸›à¸µ <span id="chartYearLabel">2569</span></span>
+            <span id="chartMainTitle">สถิติการตรวจสอบประจำปี <span id="chartYearLabel">2569</span></span>
           </span>
-          <span id="chartModeBadge" class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle small">à¸à¸£à¸²à¸Ÿà¹à¸—à¹ˆà¸‡ (3 à¸ªà¸–à¸²à¸™à¸°)</span>
-          <!-- Dropdown à¹€à¸¥à¸·à¸­à¸à¹€à¸”à¸·à¸­à¸™à¹€à¸‰à¸žà¸²à¸°à¹€à¸¡à¸·à¹ˆà¸­à¸”à¸¹à¹€à¸›à¸­à¸£à¹Œà¹€à¸‹à¹‡à¸™à¸•à¹Œà¸£à¸²à¸¢à¹€à¸”à¸·à¸­à¸™ (à¹à¸œà¸™à¸ à¸¹à¸¡à¸´à¸§à¸‡à¸à¸¥à¸¡) -->
+          <span id="chartModeBadge" class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle small">กราฟแท่ง (3 สถานะ)</span>
+          <!-- Dropdown เลือกเดือนเฉพาะเมื่อดูเปอร์เซ็นต์รายเดือน (แผนภูมิวงกลม) -->
           <div id="pieMonthSelectContainer" class="d-none align-items-center gap-1.5 ms-md-2 p-1 px-2.5 bg-light rounded-pill border">
-            <label for="chartMonthSelect" class="small fw-bold text-muted mb-0"><i class="bi bi-calendar-event me-1 text-danger"></i>à¹€à¸”à¸·à¸­à¸™:</label>
+            <label for="chartMonthSelect" class="small fw-bold text-muted mb-0"><i class="bi bi-calendar-event me-1 text-danger"></i>เดือน:</label>
             <select id="chartMonthSelect" class="form-select form-select-sm border-0 bg-transparent fw-bold text-dark py-0" style="min-width: 140px; cursor: pointer;" onchange="onChartMonthSelectChange()">
             </select>
           </div>
         </div>
         <div class="d-flex align-items-center gap-2 ms-auto">
           <div class="btn-group btn-group-sm rounded-pill p-1 bg-light border shadow-xs" role="group">
-            <button type="button" id="btnChartBar" class="btn btn-outline-secondary border-0 active rounded-pill px-3 fw-bold" onclick="switchChartMode('bar')" title="à¹à¸œà¸™à¸ à¸¹à¸¡à¸´à¹à¸—à¹ˆà¸‡à¹à¸ªà¸”à¸‡à¸ˆà¸³à¸™à¸§à¸™à¸–à¸±à¸‡ 3 à¸ªà¸–à¸²à¸™à¸° (à¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™, à¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™, à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸•à¸£à¸§à¸ˆ)">
-              <i class="bi bi-bar-chart-fill me-1"></i>à¸à¸£à¸²à¸Ÿà¹à¸—à¹ˆà¸‡à¸£à¸²à¸¢à¸›à¸µ
+            <button type="button" id="btnChartBar" class="btn btn-outline-secondary border-0 active rounded-pill px-3 fw-bold" onclick="switchChartMode('bar')" title="แผนภูมิแท่งแสดงจำนวนถัง 3 สถานะ (พร้อมใช้งาน, ไม่พร้อมใช้งาน, ยังไม่ได้ตรวจ)">
+              <i class="bi bi-bar-chart-fill me-1"></i>กราฟแท่งรายปี
             </button>
-            <button type="button" id="btnChartPercent" class="btn btn-outline-secondary border-0 rounded-pill px-3 fw-bold" onclick="switchChartMode('percent')" title="à¹à¸œà¸™à¸ à¸¹à¸¡à¸´à¸§à¸‡à¸à¸¥à¸¡à¹à¸ªà¸”à¸‡à¸ªà¸–à¸´à¸•à¸´à¸£à¸²à¸¢à¹€à¸”à¸·à¸­à¸™à¹€à¸›à¹‡à¸™à¹€à¸›à¸­à¸£à¹Œà¹€à¸‹à¹‡à¸™à¸•à¹Œ (à¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§, à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„, à¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™)">
-              <i class="bi bi-pie-chart-fill me-1"></i>à¹€à¸›à¸­à¸£à¹Œà¹€à¸‹à¹‡à¸™à¸•à¹Œà¸£à¸²à¸¢à¹€à¸”à¸·à¸­à¸™ (à¸§à¸‡à¸à¸¥à¸¡)
+            <button type="button" id="btnChartPercent" class="btn btn-outline-secondary border-0 rounded-pill px-3 fw-bold" onclick="switchChartMode('percent')" title="แผนภูมิวงกลมแสดงสถิติรายเดือนเป็นเปอร์เซ็นต์ (ตรวจเช็คแล้ว, ยังไม่ตรวจเช็ค, ไม่พร้อมใช้งาน)">
+              <i class="bi bi-pie-chart-fill me-1"></i>เปอร์เซ็นต์รายเดือน (วงกลม)
             </button>
           </div>
         </div>
@@ -194,22 +177,22 @@
         <div style="position: relative; height: 280px; width: 100%;">
           <canvas id="inspectionChart"></canvas>
         </div>
-        <!-- à¸„à¸³à¸­à¸˜à¸´à¸šà¸²à¸¢à¹à¸•à¹ˆà¸¥à¸°à¸ªà¸µà¸”à¹‰à¸²à¸™à¸¥à¹ˆà¸²à¸‡ (Legend / Explanation) -->
+        <!-- คำอธิบายแต่ละสีด้านล่าง (Legend / Explanation) -->
         <div class="d-flex flex-wrap justify-content-center gap-3 gap-md-4 mt-3 pt-3 border-top small" id="chartLegendArea">
           <!-- Populated dynamically via JS -->
         </div>
       </div>
     </div>
 
-    <!-- â”€â”€â”€ 2. 4 Summary Cards (Clickable for Immediate Filtering) â”€â”€â”€ -->
+    <!-- ─── 2. 4 Summary Cards (Clickable for Immediate Filtering) ─── -->
     <div class="row g-2 g-md-3 mb-4">
       <!-- Card 1: Total Tanks -->
       <div class="col-6 col-lg-3">
-        <div class="card card-summary bg-primary-gradient text-white h-100 p-3" id="cardSummaryTotal" onclick="filterByCard('all')" style="cursor: pointer;" title="à¸„à¸¥à¸´à¸à¹€à¸žà¸·à¹ˆà¸­à¹à¸ªà¸”à¸‡à¸–à¸±à¸‡à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”">
+        <div class="card card-summary bg-primary-gradient text-white h-100 p-3" id="cardSummaryTotal" onclick="filterByCard('all')" style="cursor: pointer;" title="คลิกเพื่อแสดงถังทั้งหมด">
           <div class="card-pattern-overlay"></div>
           <div class="d-flex justify-content-between align-items-start position-relative z-1">
             <div>
-              <div class="metric-label">à¸–à¸±à¸‡à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”</div>
+              <div class="metric-label">ถังทั้งหมด</div>
               <div class="metric-number mt-1 animated-counter" id="cardTotal">0</div>
             </div>
             <div class="card-summary-icon-box pulse-hover">
@@ -218,13 +201,13 @@
           </div>
           <div class="mt-3 position-relative z-1">
             <div class="d-flex align-items-center justify-content-between mb-1.5">
-              <span class="metric-sub">à¹ƒà¸™à¸£à¸°à¸šà¸šà¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”</span>
+              <span class="metric-sub">ในระบบทั้งหมด</span>
               <span class="metric-badge"><i class="bi bi-check2 me-1"></i>100%</span>
             </div>
             <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.25); border-radius: 4px;">
               <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>à¹à¸•à¸°à¹€à¸žà¸·à¹ˆà¸­à¹€à¸›à¸´à¸”à¸•à¸²à¸£à¸²à¸‡à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”</span>
+            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อเปิดตารางทั้งหมด</span>
           </div>
           <div class="card-glow-accent"></div>
         </div>
@@ -232,11 +215,11 @@
 
       <!-- Card 2: Checked Tanks -->
       <div class="col-6 col-lg-3">
-        <div class="card card-summary bg-success-gradient text-white h-100 p-3" id="cardSummaryChecked" onclick="filterByCard('checked')" style="cursor: pointer;" title="à¸„à¸¥à¸´à¸à¹€à¸žà¸·à¹ˆà¸­à¸à¸£à¸­à¸‡à¹€à¸‰à¸žà¸²à¸°à¸–à¸±à¸‡à¸—à¸µà¹ˆà¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§">
+        <div class="card card-summary bg-success-gradient text-white h-100 p-3" id="cardSummaryChecked" onclick="filterByCard('checked')" style="cursor: pointer;" title="คลิกเพื่อกรองเฉพาะถังที่เช็คแล้ว">
           <div class="card-pattern-overlay"></div>
           <div class="d-flex justify-content-between align-items-start position-relative z-1">
             <div>
-              <div class="metric-label">à¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§</div>
+              <div class="metric-label">ตรวจเช็คแล้ว</div>
               <div class="metric-number mt-1 animated-counter" id="cardChecked">0</div>
             </div>
             <div class="card-summary-icon-box pulse-hover">
@@ -245,13 +228,13 @@
           </div>
           <div class="mt-3 position-relative z-1">
             <div class="d-flex align-items-center justify-content-between mb-1.5">
-              <span class="metric-sub">à¸•à¸£à¸§à¸ˆà¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰</span>
+              <span class="metric-sub">ตรวจรอบเดือนนี้</span>
               <span class="metric-badge" id="badgePercentChecked">0%</span>
             </div>
             <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.25); border-radius: 4px;">
               <div class="progress-bar bg-white" id="barPercentChecked" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>à¹à¸•à¸°à¹€à¸žà¸·à¹ˆà¸­à¹€à¸›à¸´à¸”à¸•à¸²à¸£à¸²à¸‡à¹à¸¥à¸°à¸à¸£à¸­à¸‡</span>
+            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อเปิดตารางและกรอง</span>
           </div>
           <div class="card-glow-accent"></div>
         </div>
@@ -259,11 +242,11 @@
 
       <!-- Card 3: Unchecked Tanks -->
       <div class="col-6 col-lg-3">
-        <div class="card card-summary bg-warning-gradient text-white h-100 p-3" id="cardSummaryUnchecked" onclick="filterByCard('unchecked')" style="cursor: pointer;" title="à¸„à¸¥à¸´à¸à¹€à¸žà¸·à¹ˆà¸­à¸à¸£à¸­à¸‡à¹€à¸‰à¸žà¸²à¸°à¸–à¸±à¸‡à¸—à¸µà¹ˆà¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸•à¸£à¸§à¸ˆ">
+        <div class="card card-summary bg-warning-gradient text-white h-100 p-3" id="cardSummaryUnchecked" onclick="filterByCard('unchecked')" style="cursor: pointer;" title="คลิกเพื่อกรองเฉพาะถังที่ยังไม่ได้ตรวจ">
           <div class="card-pattern-overlay"></div>
           <div class="d-flex justify-content-between align-items-start position-relative z-1">
             <div>
-              <div class="metric-label">à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸•à¸£à¸§à¸ˆ</div>
+              <div class="metric-label">ยังไม่ได้ตรวจ</div>
               <div class="metric-number mt-1 animated-counter" id="cardNotChecked">0</div>
             </div>
             <div class="card-summary-icon-box pulse-hover">
@@ -272,13 +255,13 @@
           </div>
           <div class="mt-3 position-relative z-1">
             <div class="d-flex align-items-center justify-content-between mb-1.5">
-              <span class="metric-sub">à¸£à¸­à¸à¸²à¸£à¹€à¸‚à¹‰à¸²à¸•à¸£à¸§à¸ˆ</span>
+              <span class="metric-sub">รอการเข้าตรวจ</span>
               <span class="metric-badge" id="badgePercentNotChecked">0%</span>
             </div>
             <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.25); border-radius: 4px;">
               <div class="progress-bar bg-white" id="barPercentNotChecked" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>à¹à¸•à¸°à¹€à¸žà¸·à¹ˆà¸­à¹€à¸›à¸´à¸”à¸•à¸²à¸£à¸²à¸‡à¹à¸¥à¸°à¸à¸£à¸­à¸‡</span>
+            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อเปิดตารางและกรอง</span>
           </div>
           <div class="card-glow-accent"></div>
         </div>
@@ -286,11 +269,11 @@
 
       <!-- Card 4: Not Ready Tanks -->
       <div class="col-6 col-lg-3">
-        <div class="card card-summary bg-danger-gradient text-white h-100 p-3" id="cardSummaryNotReady" onclick="filterByCard('not_ready')" style="cursor: pointer;" title="à¸„à¸¥à¸´à¸à¹€à¸žà¸·à¹ˆà¸­à¸à¸£à¸­à¸‡à¹€à¸‰à¸žà¸²à¸°à¸–à¸±à¸‡à¸—à¸µà¹ˆà¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™">
+        <div class="card card-summary bg-danger-gradient text-white h-100 p-3" id="cardSummaryNotReady" onclick="filterByCard('not_ready')" style="cursor: pointer;" title="คลิกเพื่อกรองเฉพาะถังที่ไม่พร้อมใช้งาน">
           <div class="card-pattern-overlay"></div>
           <div class="d-flex justify-content-between align-items-start position-relative z-1">
             <div>
-              <div class="metric-label">à¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™</div>
+              <div class="metric-label">ไม่พร้อมใช้งาน</div>
               <div class="metric-number mt-1 animated-counter" id="cardNotReady">0</div>
             </div>
             <div class="card-summary-icon-box pulse-hover">
@@ -299,20 +282,20 @@
           </div>
           <div class="mt-3 position-relative z-1">
             <div class="d-flex align-items-center justify-content-between mb-1.5">
-              <span class="metric-sub">à¸žà¸šà¸‚à¹‰à¸­à¸šà¸à¸žà¸£à¹ˆà¸­à¸‡</span>
-              <span class="metric-badge bg-white text-danger fw-bold shadow-sm"><i class="bi bi-shield-x me-1"></i>à¹à¸à¹‰à¹„à¸‚à¸”à¹ˆà¸§à¸™</span>
+              <span class="metric-sub">พบข้อบกพร่อง</span>
+              <span class="metric-badge bg-white text-danger fw-bold shadow-sm"><i class="bi bi-shield-x me-1"></i>แก้ไขด่วน</span>
             </div>
             <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.25); border-radius: 4px;">
               <div class="progress-bar bg-white" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>à¹à¸•à¸°à¹€à¸žà¸·à¹ˆà¸­à¹€à¸›à¸´à¸”à¸•à¸²à¸£à¸²à¸‡à¹à¸¥à¸°à¸à¸£à¸­à¸‡</span>
+            <span class="small opacity-75 d-block mt-1 text-end" style="font-size:0.72rem;"><i class="bi bi-hand-index-thumb me-1"></i>แตะเพื่อเปิดตารางและกรอง</span>
           </div>
           <div class="card-glow-accent"></div>
         </div>
       </div>
     </div>
 
-    <!-- â”€â”€â”€ 3. Action Banner / Toggle Button to View Tank Table (Lazy Load) â”€â”€â”€ -->
+    <!-- ─── 3. Action Banner / Toggle Button to View Tank Table (Lazy Load) ─── -->
     <div class="card mb-4 shadow-sm border-0 rounded-4 overflow-hidden" id="toggleTableBanner" style="background: linear-gradient(135deg, #ffffff 0%, #FAF6EE 100%); border: 1.5px dashed var(--jde-border) !important;">
       <div class="card-body p-3 p-md-4">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 text-center text-md-start">
@@ -322,20 +305,20 @@
             </div>
             <div>
               <h5 class="fw-bold text-dark mb-1 d-flex align-items-center gap-2 justify-content-center justify-content-md-start flex-wrap">
-                <span>à¸•à¸²à¸£à¸²à¸‡à¸£à¸²à¸¢à¸à¸²à¸£à¸–à¸±à¸‡à¸”à¸±à¸šà¹€à¸žà¸¥à¸´à¸‡à¹à¸¥à¸°à¸•à¸±à¸§à¸à¸£à¸­à¸‡</span>
+                <span>ตารางรายการถังดับเพลิงและตัวกรอง</span>
                 <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle small fw-normal" id="bannerTableStateBadge">
-                  <i class="bi bi-eye-slash me-1"></i>à¸‹à¹ˆà¸­à¸™à¸­à¸¢à¸¹à¹ˆà¹€à¸žà¸·à¹ˆà¸­à¸„à¸§à¸²à¸¡à¹€à¸£à¹‡à¸§
+                  <i class="bi bi-eye-slash me-1"></i>ซ่อนอยู่เพื่อความเร็ว
                 </span>
               </h5>
               <div class="text-muted small">
-                à¸‹à¹ˆà¸­à¸™à¸•à¸²à¸£à¸²à¸‡à¹„à¸§à¹‰à¹€à¸žà¸·à¹ˆà¸­à¹‚à¸«à¸¥à¸”à¸«à¸™à¹‰à¸²à¹€à¸§à¹‡à¸šà¹€à¸£à¹‡à¸§à¸‚à¸¶à¹‰à¸™ à¹à¸•à¸°à¸—à¸µà¹ˆà¸à¸²à¸£à¹Œà¸”à¸ªà¸£à¸¸à¸›à¹à¸”à¸Šà¸šà¸­à¸£à¹Œà¸” 4 à¹ƒà¸šà¸”à¹‰à¸²à¸™à¸šà¸™ à¸«à¸£à¸·à¸­à¸à¸”à¸›à¸¸à¹ˆà¸¡à¸”à¹‰à¸²à¸™à¸‚à¹‰à¸²à¸‡à¹€à¸žà¸·à¹ˆà¸­à¹€à¸›à¸´à¸”à¸”à¸¹à¸‚à¹‰à¸­à¸¡à¸¹à¸¥
+                ซ่อนตารางไว้เพื่อโหลดหน้าเว็บเร็วขึ้น แตะที่การ์ดสรุปแดชบอร์ด 4 ใบด้านบน หรือกดปุ่มด้านข้างเพื่อเปิดดูข้อมูล
               </div>
             </div>
           </div>
           <div class="d-flex align-items-center gap-2 flex-shrink-0">
             <button type="button" id="btnToggleTankTable" class="btn btn-danger shadow-sm rounded-pill px-4 py-2.5 fw-bold action-btn-touch d-flex align-items-center gap-2" onclick="toggleTankTableSection()">
               <i class="bi bi-table" id="btnToggleTankTableIcon"></i>
-              <span id="btnToggleTankTableText">à¹à¸ªà¸”à¸‡à¸•à¸²à¸£à¸²à¸‡à¸£à¸²à¸¢à¸à¸²à¸£à¸–à¸±à¸‡</span>
+              <span id="btnToggleTankTableText">แสดงตารางรายการถัง</span>
               <span id="tableLoadingSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
             </button>
           </div>
@@ -343,7 +326,7 @@
       </div>
     </div>
 
-    <!-- â”€â”€â”€ 4. Table & Filter Section (Hidden initially to reduce initial payload) â”€â”€â”€ -->
+    <!-- ─── 4. Table & Filter Section (Hidden initially to reduce initial payload) ─── -->
     <div id="tableSectionWrapper" class="d-none">
 
       <!-- Filter Card & View Controls -->
@@ -351,24 +334,24 @@
       <div class="card-header bg-white border-bottom py-3 px-3 px-md-4 d-flex flex-wrap align-items-center justify-content-between gap-2">
         <div class="d-flex align-items-center gap-2" role="button" data-bs-toggle="collapse" data-bs-target="#filterBody" aria-expanded="true" aria-controls="filterBody">
           <span class="fw-bold text-dark d-flex align-items-center">
-            <i class="bi bi-funnel-fill text-danger me-2"></i>à¸•à¸±à¸§à¸à¸£à¸­à¸‡à¹à¸¥à¸°à¸„à¹‰à¸™à¸«à¸²
+            <i class="bi bi-funnel-fill text-danger me-2"></i>ตัวกรองและค้นหา
             <i class="bi bi-chevron-down ms-2 text-muted small filter-chevron transition-rotate"></i>
           </span>
-          <span id="filterCountBadge" class="badge rounded-pill bg-secondary small shadow-sm">à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸” 0 à¸–à¸±à¸‡</span>
+          <span id="filterCountBadge" class="badge rounded-pill bg-secondary small shadow-sm">ทั้งหมด 0 ถัง</span>
           <span id="activeFilterDot" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle d-none">
             <span class="visually-hidden">New alerts</span>
           </span>
         </div>
 
-        <!-- View Switcher (à¸ªà¸¥à¸±à¸šà¹‚à¸«à¸¡à¸” PC / Mobile) -->
+        <!-- View Switcher (สลับโหมด PC / Mobile) -->
         <div class="d-flex align-items-center gap-2 ms-auto">
-          <span class="small text-muted d-none d-sm-inline fw-semibold"><i class="bi bi-display me-1 text-secondary"></i>à¹‚à¸«à¸¡à¸”à¹à¸ªà¸”à¸‡à¸œà¸¥:</span>
-          <div class="btn-group btn-group-sm bg-light rounded-pill p-1 border shadow-xs" role="group" aria-label="à¸ªà¸¥à¸±à¸šà¹‚à¸«à¸¡à¸” PC à¹à¸¥à¸° Mobile">
-            <button type="button" id="btnViewTable" class="btn btn-outline-secondary border-0 view-switch-btn active rounded-pill px-3" onclick="switchView('pc')" title="à¹‚à¸«à¸¡à¸” PC (à¹à¸ªà¸”à¸‡à¸œà¸¥à¹à¸šà¸šà¸•à¸²à¸£à¸²à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹€à¸•à¹‡à¸¡à¸£à¸¹à¸›à¹à¸šà¸š)">
-              <i class="bi bi-laptop me-1"></i>à¹‚à¸«à¸¡à¸” PC
+          <span class="small text-muted d-none d-sm-inline fw-semibold"><i class="bi bi-display me-1 text-secondary"></i>โหมดแสดงผล:</span>
+          <div class="btn-group btn-group-sm bg-light rounded-pill p-1 border shadow-xs" role="group" aria-label="สลับโหมด PC และ Mobile">
+            <button type="button" id="btnViewTable" class="btn btn-outline-secondary border-0 view-switch-btn active rounded-pill px-3" onclick="switchView('pc')" title="โหมด PC (แสดงผลแบบตารางข้อมูลเต็มรูปแบบ)">
+              <i class="bi bi-laptop me-1"></i>โหมด PC
             </button>
-            <button type="button" id="btnViewCards" class="btn btn-outline-secondary border-0 view-switch-btn rounded-pill px-3" onclick="switchView('mobile')" title="à¹‚à¸«à¸¡à¸” Mobile (à¹à¸ªà¸”à¸‡à¸œà¸¥à¹à¸šà¸šà¸à¸²à¸£à¹Œà¸” à¹€à¸«à¸¡à¸²à¸°à¸ªà¸³à¸«à¸£à¸±à¸šà¹‚à¸—à¸£à¸¨à¸±à¸žà¸—à¹Œ)">
-              <i class="bi bi-phone me-1"></i>à¹‚à¸«à¸¡à¸” Mobile
+            <button type="button" id="btnViewCards" class="btn btn-outline-secondary border-0 view-switch-btn rounded-pill px-3" onclick="switchView('mobile')" title="โหมด Mobile (แสดงผลแบบการ์ด เหมาะสำหรับโทรศัพท์)">
+              <i class="bi bi-phone me-1"></i>โหมด Mobile
             </button>
           </div>
         </div>
@@ -381,7 +364,7 @@
             <div class="col-12 col-md-3">
               <div class="search-box position-relative">
                 <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                <input type="text" id="searchInput" class="form-control form-control-sm ps-5 rounded-pill shadow-xs" placeholder="à¸„à¹‰à¸™à¸«à¸²à¸£à¸«à¸±à¸ªà¸–à¸±à¸‡...">
+                <input type="text" id="searchInput" class="form-control form-control-sm ps-5 rounded-pill shadow-xs" placeholder="ค้นหารหัสถัง...">
               </div>
             </div>
             
@@ -389,7 +372,7 @@
               <div class="input-group input-group-sm custom-select-group shadow-xs rounded-pill overflow-hidden">
                 <span class="input-group-text bg-white border-end-0"><i class="bi bi-fire text-danger"></i></span>
                 <select id="filterType" class="form-select form-select-sm border-start-0 ps-0">
-                  <option value="">à¸—à¸¸à¸à¸›à¸£à¸°à¹€à¸ à¸—</option>
+                  <option value="">ทุกประเภท</option>
                 </select>
               </div>
             </div>
@@ -397,7 +380,7 @@
               <div class="input-group input-group-sm custom-select-group shadow-xs rounded-pill overflow-hidden">
                 <span class="input-group-text bg-white border-end-0"><i class="bi bi-geo-alt text-danger"></i></span>
                 <select id="filterArea" class="form-select form-select-sm border-start-0 ps-0">
-                  <option value="">à¸—à¸¸à¸à¸žà¸·à¹‰à¸™à¸—à¸µà¹ˆ</option>
+                  <option value="">ทุกพื้นที่</option>
                 </select>
               </div>
             </div>
@@ -405,9 +388,9 @@
               <div class="input-group input-group-sm custom-select-group shadow-xs rounded-pill overflow-hidden">
                 <span class="input-group-text bg-white border-end-0"><i class="bi bi-check2-circle text-success"></i></span>
                 <select id="filterCheck" class="form-select form-select-sm border-start-0 ps-0">
-                  <option value="">à¸ªà¸–à¸²à¸™à¸°à¸•à¸£à¸§à¸ˆ</option>
-                  <option value="à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§">à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§</option>
-                  <option value="à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹€à¸Šà¹‡à¸„">à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸•à¸£à¸§à¸ˆ</option>
+                  <option value="">สถานะตรวจ</option>
+                  <option value="เช็คแล้ว">เช็คแล้ว</option>
+                  <option value="ยังไม่เช็ค">ยังไม่ได้ตรวจ</option>
                 </select>
               </div>
             </div>
@@ -415,10 +398,10 @@
               <div class="input-group input-group-sm custom-select-group shadow-xs rounded-pill overflow-hidden">
                 <span class="input-group-text bg-white border-end-0"><i class="bi bi-activity text-warning"></i></span>
                 <select id="filterReady" class="form-select form-select-sm border-start-0 ps-0">
-                  <option value="">à¸„à¸§à¸²à¸¡à¸žà¸£à¹‰à¸­à¸¡</option>
-                  <option value="Ready">à¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™</option>
-                  <option value="Not Ready">à¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™</option>
-                  <option value="Pending">à¸£à¸­à¸à¸²à¸£à¸•à¸£à¸§à¸ˆ</option>
+                  <option value="">ความพร้อม</option>
+                  <option value="Ready">พร้อมใช้งาน</option>
+                  <option value="Not Ready">ไม่พร้อมใช้งาน</option>
+                  <option value="Pending">รอการตรวจ</option>
                 </select>
               </div>
             </div>
@@ -438,10 +421,10 @@
         <!-- Mobile Table Scroll Tip -->
         <div class="d-lg-none d-flex align-items-center justify-content-between p-2 mb-2 bg-light rounded-3 border">
           <span class="small text-muted">
-            <i class="bi bi-hand-index-thumb text-danger me-1"></i>à¹à¸•à¸°à¹à¸–à¸§à¹€à¸žà¸·à¹ˆà¸­à¸”à¸¹à¸£à¸²à¸¢à¸¥à¸°à¹€à¸­à¸µà¸¢à¸”
+            <i class="bi bi-hand-index-thumb text-danger me-1"></i>แตะแถวเพื่อดูรายละเอียด
           </span>
           <span class="badge bg-white text-secondary border shadow-xs" style="font-size: 0.72rem;">
-            à¹€à¸¥à¸·à¹ˆà¸­à¸™à¸‹à¹‰à¸²à¸¢-à¸‚à¸§à¸²à¹„à¸”à¹‰ <i class="bi bi-arrow-left-right ms-1"></i>
+            เลื่อนซ้าย-ขวาได้ <i class="bi bi-arrow-left-right ms-1"></i>
           </span>
         </div>
 
@@ -450,18 +433,18 @@
             <thead class="table-dark">
               <tr>
                 <th class="text-center" style="width: 40px;">#</th>
-                <th>à¸£à¸«à¸±à¸ªà¸–à¸±à¸‡</th>
-                <th>à¸›à¸£à¸°à¹€à¸ à¸—</th>
-                <th class="text-center">à¸™à¹‰à¸³à¸«à¸™à¸±à¸ (lb)</th>
-                <th>à¸žà¸·à¹‰à¸™à¸—à¸µà¹ˆ</th>
-                <th>à¸œà¸¹à¹‰à¸£à¸±à¸šà¸œà¸´à¸”à¸Šà¸­à¸š</th>
-                <th class="text-center">à¸§à¸±à¸™à¸—à¸µà¹ˆà¹€à¸£à¸´à¹ˆà¸¡à¹ƒà¸Šà¹‰</th>
-                <th class="text-center">à¸•à¸£à¸§à¸ˆà¸¥à¹ˆà¸²à¸ªà¸¸à¸”</th>
-                <th class="text-center">à¸ªà¸–à¸²à¸™à¸°à¸•à¸£à¸§à¸ˆ</th>
-                <th class="text-center">à¸„à¸§à¸²à¸¡à¸žà¸£à¹‰à¸­à¸¡</th>
-                <th class="text-center">à¸­à¸²à¸¢à¸¸à¸–à¸±à¸‡</th>
-                <th class="text-center">à¸œà¸¹à¹‰à¸•à¸£à¸§à¸ˆ</th>
-                <th class="text-center" id="thAction">à¸ˆà¸±à¸”à¸à¸²à¸£</th>
+                <th>รหัสถัง</th>
+                <th>ประเภท</th>
+                <th class="text-center">น้ำหนัก (lb)</th>
+                <th>พื้นที่</th>
+                <th>ผู้รับผิดชอบ</th>
+                <th class="text-center">วันที่เริ่มใช้</th>
+                <th class="text-center">ตรวจล่าสุด</th>
+                <th class="text-center">สถานะตรวจ</th>
+                <th class="text-center">ความพร้อม</th>
+                <th class="text-center">อายุถัง</th>
+                <th class="text-center">ผู้ตรวจ</th>
+                <th class="text-center" id="thAction">จัดการ</th>
               </tr>
             </thead>
             <tbody id="tankTableBody"></tbody>
@@ -481,144 +464,144 @@
 
   </main>
 
-  <!-- â”€â”€â”€ Modal: à¸”à¸¹à¸£à¸²à¸¢à¸¥à¸°à¹€à¸­à¸µà¸¢à¸”à¸–à¸±à¸‡ (Read-Only) â”€â”€â”€ -->
+  <!-- ─── Modal: ดูรายละเอียดถัง (Read-Only) ─── -->
   <div class="modal fade" id="tankDetailModal" tabindex="-1" aria-labelledby="tankDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header" style="background:#A04830;">
           <h5 class="modal-title text-white fw-bold" id="tankDetailModalLabel">
-            <i class="bi bi-fire me-2"></i>à¸£à¸²à¸¢à¸¥à¸°à¹€à¸­à¸µà¸¢à¸”à¸–à¸±à¸‡à¸”à¸±à¸šà¹€à¸žà¸¥à¸´à¸‡
+            <i class="bi bi-fire me-2"></i>รายละเอียดถังดับเพลิง
           </h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4">
           <div class="row g-3">
-            <!-- à¸£à¸¹à¸›à¸–à¸±à¸‡ + à¸£à¸¹à¸›à¸ªà¸–à¸²à¸™à¸—à¸µà¹ˆ -->
+            <!-- รูปถัง + รูปสถานที่ -->
             <div class="col-12 mb-2">
               <div class="d-flex flex-wrap gap-3 justify-content-center">
                 <div class="text-center p-2 rounded-3 bg-light border shadow-2xs" style="min-width: 140px;">
-                  <div class="small text-muted mb-1 fw-semibold"><i class="bi bi-image me-1 text-danger"></i>à¸£à¸¹à¸›à¸–à¸±à¸‡à¸”à¸±à¸šà¹€à¸žà¸¥à¸´à¸‡</div>
-                  <a id="mdPicTankLink" href="#" target="_blank" title="à¸„à¸¥à¸´à¸à¸”à¸¹à¸ à¸²à¸žà¸‚à¸™à¸²à¸”à¹ƒà¸«à¸à¹ˆ">
+                  <div class="small text-muted mb-1 fw-semibold"><i class="bi bi-image me-1 text-danger"></i>รูปถังดับเพลิง</div>
+                  <a id="mdPicTankLink" href="#" target="_blank" title="คลิกดูภาพขนาดใหญ่">
                     <img id="mdPicTank" src="https://placehold.co/140x140?text=No+Pic" class="rounded-3 border shadow-xs" style="width:140px;height:140px;object-fit:cover;cursor:pointer;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
                   </a>
-                  <div class="text-muted mt-1" style="font-size:0.7rem;"><i class="bi bi-zoom-in me-1"></i>à¸„à¸¥à¸´à¸à¹€à¸žà¸·à¹ˆà¸­à¸”à¸¹à¸£à¸¹à¸›à¹€à¸•à¹‡à¸¡</div>
+                  <div class="text-muted mt-1" style="font-size:0.7rem;"><i class="bi bi-zoom-in me-1"></i>คลิกเพื่อดูรูปเต็ม</div>
                 </div>
                 <div class="text-center p-2 rounded-3 bg-light border shadow-2xs" style="min-width: 140px;">
-                  <div class="small text-muted mb-1 fw-semibold"><i class="bi bi-geo-alt me-1 text-danger"></i>à¸£à¸¹à¸›à¸ªà¸–à¸²à¸™à¸—à¸µà¹ˆà¸•à¸´à¸”à¸•à¸±à¹‰à¸‡</div>
-                  <a id="mdPicAreaLink" href="#" target="_blank" title="à¸„à¸¥à¸´à¸à¸”à¸¹à¸ à¸²à¸žà¸‚à¸™à¸²à¸”à¹ƒà¸«à¸à¹ˆ">
+                  <div class="small text-muted mb-1 fw-semibold"><i class="bi bi-geo-alt me-1 text-danger"></i>รูปสถานที่ติดตั้ง</div>
+                  <a id="mdPicAreaLink" href="#" target="_blank" title="คลิกดูภาพขนาดใหญ่">
                     <img id="mdPicArea" src="https://placehold.co/140x140?text=No+Pic" class="rounded-3 border shadow-xs" style="width:140px;height:140px;object-fit:cover;cursor:pointer;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
                   </a>
-                  <div class="text-muted mt-1" style="font-size:0.7rem;"><i class="bi bi-zoom-in me-1"></i>à¸„à¸¥à¸´à¸à¹€à¸žà¸·à¹ˆà¸­à¸”à¸¹à¸£à¸¹à¸›à¹€à¸•à¹‡à¸¡</div>
+                  <div class="text-muted mt-1" style="font-size:0.7rem;"><i class="bi bi-zoom-in me-1"></i>คลิกเพื่อดูรูปเต็ม</div>
                 </div>
               </div>
             </div>
-            <!-- à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸–à¸±à¸‡ -->
+            <!-- ข้อมูลถัง -->
             <div class="col-6 col-md-4">
-              <div class="small text-muted">à¸£à¸«à¸±à¸ªà¸–à¸±à¸‡</div>
-              <div class="fw-bold text-danger fs-5" id="mdFireTank">â€”</div>
+              <div class="small text-muted">รหัสถัง</div>
+              <div class="fw-bold text-danger fs-5" id="mdFireTank">—</div>
             </div>
             <div class="col-6 col-md-4">
-              <div class="small text-muted">à¸›à¸£à¸°à¹€à¸ à¸—à¸–à¸±à¸‡</div>
-              <div class="fw-semibold" id="mdTypes">â€”</div>
+              <div class="small text-muted">ประเภทถัง</div>
+              <div class="fw-semibold" id="mdTypes">—</div>
             </div>
             <div class="col-6 col-md-4">
-              <div class="small text-muted">à¸™à¹‰à¸³à¸«à¸™à¸±à¸ (lb)</div>
-              <div class="fw-semibold" id="mdWeight">â€”</div>
+              <div class="small text-muted">น้ำหนัก (lb)</div>
+              <div class="fw-semibold" id="mdWeight">—</div>
             </div>
             <div class="col-6 col-md-4">
-              <div class="small text-muted">à¸žà¸·à¹‰à¸™à¸—à¸µà¹ˆà¸•à¸´à¸”à¸•à¸±à¹‰à¸‡</div>
-              <div class="fw-semibold" id="mdArea">â€”</div>
+              <div class="small text-muted">พื้นที่ติดตั้ง</div>
+              <div class="fw-semibold" id="mdArea">—</div>
             </div>
             <div class="col-6 col-md-4">
-              <div class="small text-muted">à¸œà¸¹à¹‰à¸£à¸±à¸šà¸œà¸´à¸”à¸Šà¸­à¸š</div>
-              <div class="fw-semibold" id="mdResponsible">â€”</div>
+              <div class="small text-muted">ผู้รับผิดชอบ</div>
+              <div class="fw-semibold" id="mdResponsible">—</div>
             </div>
             <div class="col-6 col-md-4">
-              <div class="small text-muted">à¸§à¸±à¸™à¸—à¸µà¹ˆà¹€à¸£à¸´à¹ˆà¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™</div>
-              <div class="fw-semibold" id="mdInuse">â€”</div>
+              <div class="small text-muted">วันที่เริ่มใช้งาน</div>
+              <div class="fw-semibold" id="mdInuse">—</div>
             </div>
             <div class="col-6 col-md-4">
-              <div class="small text-muted">à¸•à¸£à¸§à¸ˆà¸¥à¹ˆà¸²à¸ªà¸¸à¸”</div>
-              <div class="fw-semibold" id="mdLastcheck">â€”</div>
+              <div class="small text-muted">ตรวจล่าสุด</div>
+              <div class="fw-semibold" id="mdLastcheck">—</div>
             </div>
             <div class="col-6 col-md-4">
-              <div class="small text-muted">à¸­à¸²à¸¢à¸¸à¸à¸²à¸£à¹ƒà¸Šà¹‰à¸‡à¸²à¸™</div>
-              <div class="fw-semibold text-primary" id="mdExptank">â€”</div>
+              <div class="small text-muted">อายุการใช้งาน</div>
+              <div class="fw-semibold text-primary" id="mdExptank">—</div>
             </div>
             <div class="col-6 col-md-4">
-              <div class="small text-muted">à¸œà¸¹à¹‰à¸•à¸£à¸§à¸ˆà¸¥à¹ˆà¸²à¸ªà¸¸à¸”</div>
-              <div class="fw-semibold" id="mdInspector">â€”</div>
+              <div class="small text-muted">ผู้ตรวจล่าสุด</div>
+              <div class="fw-semibold" id="mdInspector">—</div>
             </div>
             <div class="col-6 col-md-4">
-              <div class="small text-muted">à¸ªà¸–à¸²à¸™à¸°à¸à¸²à¸£à¸•à¸£à¸§à¸ˆ</div>
-              <div id="mdTankcheck">â€”</div>
+              <div class="small text-muted">สถานะการตรวจ</div>
+              <div id="mdTankcheck">—</div>
             </div>
             <div class="col-6 col-md-4">
-              <div class="small text-muted">à¸ªà¸ à¸²à¸žà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™</div>
-              <div id="mdReadyorNot">â€”</div>
+              <div class="small text-muted">สภาพพร้อมใช้งาน</div>
+              <div id="mdReadyorNot">—</div>
             </div>
             <div class="col-12 col-md-4" id="mdRemarkRow" style="display:none;">
-              <div class="small text-muted">à¸«à¸¡à¸²à¸¢à¹€à¸«à¸•à¸¸</div>
-              <div class="fw-semibold text-danger" id="mdRemark">â€”</div>
+              <div class="small text-muted">หมายเหตุ</div>
+              <div class="fw-semibold text-danger" id="mdRemark">—</div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            <i class="bi bi-x-circle me-1"></i>à¸›à¸´à¸”
+            <i class="bi bi-x-circle me-1"></i>ปิด
           </button>
           <a href="#" id="mdBtnEdit" class="btn btn-warning d-none fw-semibold">
-            <i class="bi bi-pencil-fill me-1"></i>à¹à¸à¹‰à¹„à¸‚à¸‚à¹‰à¸­à¸¡à¸¹à¸¥
+            <i class="bi bi-pencil-fill me-1"></i>แก้ไขข้อมูล
           </a>
           <a href="#" id="mdBtnCheck" class="btn btn-success fw-semibold">
-            <i class="bi bi-clipboard2-check-fill me-1"></i>à¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„à¸–à¸±à¸‡
+            <i class="bi bi-clipboard2-check-fill me-1"></i>ตรวจเช็คถัง
           </a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal: à¹€à¸žà¸´à¹ˆà¸¡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸›à¸£à¸°à¸§à¸±à¸•à¸´à¸¢à¹‰à¸­à¸™à¸«à¸¥à¸±à¸‡à¹€à¸‚à¹‰à¸² Database (à¸ªà¸´à¸—à¸˜à¸´à¹Œ P3) -->
+  <!-- Modal: เพิ่มข้อมูลประวัติย้อนหลังเข้า Database (สิทธิ์ P3) -->
   <div class="modal fade" id="quickSeedModal" tabindex="-1" aria-labelledby="quickSeedModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
         <div class="modal-header text-white border-0 py-3" style="background: linear-gradient(135deg, #1b2838 0%, #0d6efd 100%) !important;">
           <h5 class="modal-title fw-bold fs-6 d-flex align-items-center gap-2" id="quickSeedModalLabel">
             <i class="bi bi-database-fill-add text-warning"></i>
-            <span>à¹€à¸žà¸´à¹ˆà¸¡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸›à¸£à¸°à¸§à¸±à¸•à¸´à¸¢à¹‰à¸­à¸™à¸«à¸¥à¸±à¸‡ (Super Admin P3)</span>
+            <span>เพิ่มข้อมูลประวัติย้อนหลัง (Super Admin P3)</span>
           </h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-4">
           <p class="text-secondary small mb-3">
-            à¹€à¸¥à¸·à¸­à¸à¹€à¸”à¸·à¸­à¸™/à¸›à¸µ (MM/YYYY) à¸—à¸µà¹ˆà¸•à¹‰à¸­à¸‡à¸à¸²à¸£à¹€à¸•à¸´à¸¡ à¸£à¸°à¸šà¸šà¸ˆà¸°à¸ªà¸£à¹‰à¸²à¸‡ Snapshot à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸–à¸±à¸‡à¸”à¸±à¸šà¹€à¸žà¸¥à¸´à¸‡à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”à¸—à¸µà¹ˆà¸¡à¸µà¹ƒà¸™ Database à¹ƒà¸«à¹‰à¸—à¸±à¸™à¸—à¸µà¸­à¸¢à¹ˆà¸²à¸‡à¸ªà¸°à¸”à¸§à¸à¸£à¸§à¸”à¹€à¸£à¹‡à¸§
+            เลือกเดือน/ปี (MM/YYYY) ที่ต้องการเติม ระบบจะสร้าง Snapshot ข้อมูลถังดับเพลิงทั้งหมดที่มีใน Database ให้ทันทีอย่างสะดวกรวดเร็ว
           </p>
 
           <form id="quickSeedForm" onsubmit="handleQuickSeedSubmit(event)">
             <div class="row g-2 mb-3">
               <div class="col-7">
                 <label for="quickSeedMonth" class="form-label fw-semibold small text-dark mb-1">
-                  <i class="bi bi-calendar-month text-danger me-1"></i>à¹€à¸”à¸·à¸­à¸™à¸—à¸µà¹ˆà¸•à¹‰à¸­à¸‡à¸à¸²à¸£à¹€à¸•à¸´à¸¡ <span class="text-danger">*</span>
+                  <i class="bi bi-calendar-month text-danger me-1"></i>เดือนที่ต้องการเติม <span class="text-danger">*</span>
                 </label>
                 <select id="quickSeedMonth" class="form-select form-select-sm" required>
-                  <option value="all_01_09" style="font-weight: 600; color: #0d6efd;">âš¡ à¹€à¸•à¸´à¸¡à¸£à¸§à¸”à¹€à¸”à¸µà¸¢à¸§ (à¸¡.à¸„. - à¸.à¸¢. à¸—à¸±à¹‰à¸‡ 9 à¹€à¸”à¸·à¸­à¸™)</option>
-                  <option value="01">01 - à¸¡à¸à¸£à¸²à¸„à¸¡</option>
-                  <option value="02">02 - à¸à¸¸à¸¡à¸ à¸²à¸žà¸±à¸™à¸˜à¹Œ</option>
-                  <option value="03">03 - à¸¡à¸µà¸™à¸²à¸„à¸¡</option>
-                  <option value="04">04 - à¹€à¸¡à¸©à¸²à¸¢à¸™</option>
-                  <option value="05">05 - à¸žà¸¤à¸©à¸ à¸²à¸„à¸¡</option>
-                  <option value="06">06 - à¸¡à¸´à¸–à¸¸à¸™à¸²à¸¢à¸™</option>
-                  <option value="07">07 - à¸à¸£à¸à¸Žà¸²à¸„à¸¡</option>
-                  <option value="08">08 - à¸ªà¸´à¸‡à¸«à¸²à¸„à¸¡</option>
-                  <option value="09">09 - à¸à¸±à¸™à¸¢à¸²à¸¢à¸™</option>
-                  <option value="10">10 - à¸•à¸¸à¸¥à¸²à¸„à¸¡</option>
-                  <option value="11">11 - à¸žà¸¤à¸¨à¸ˆà¸´à¸à¸²à¸¢à¸™</option>
-                  <option value="12">12 - à¸˜à¸±à¸™à¸§à¸²à¸„à¸¡</option>
+                  <option value="all_01_09" style="font-weight: 600; color: #0d6efd;">⚡ เติมรวดเดียว (ม.ค. - ก.ย. ทั้ง 9 เดือน)</option>
+                  <option value="01">01 - มกราคม</option>
+                  <option value="02">02 - กุมภาพันธ์</option>
+                  <option value="03">03 - มีนาคม</option>
+                  <option value="04">04 - เมษายน</option>
+                  <option value="05">05 - พฤษภาคม</option>
+                  <option value="06">06 - มิถุนายน</option>
+                  <option value="07">07 - กรกฎาคม</option>
+                  <option value="08">08 - สิงหาคม</option>
+                  <option value="09">09 - กันยายน</option>
+                  <option value="10">10 - ตุลาคม</option>
+                  <option value="11">11 - พฤศจิกายน</option>
+                  <option value="12">12 - ธันวาคม</option>
                 </select>
               </div>
               <div class="col-5">
                 <label for="quickSeedYear" class="form-label fw-semibold small text-dark mb-1">
-                  <i class="bi bi-calendar-event text-danger me-1"></i>à¸›à¸µ (à¸„.à¸¨.) <span class="text-danger">*</span>
+                  <i class="bi bi-calendar-event text-danger me-1"></i>ปี (ค.ศ.) <span class="text-danger">*</span>
                 </label>
                 <select id="quickSeedYear" class="form-select form-select-sm" required>
                   <option value="2026" selected>2026 (2569)</option>
@@ -631,31 +614,31 @@
 
             <div class="mb-3">
               <label class="form-label fw-semibold small text-dark mb-1">
-                <i class="bi bi-shield-check text-success me-1"></i>à¸£à¸¹à¸›à¹à¸šà¸šà¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸à¸²à¸£à¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„ <span class="text-danger">*</span>
+                <i class="bi bi-shield-check text-success me-1"></i>รูปแบบข้อมูลการตรวจเช็ค <span class="text-danger">*</span>
               </label>
               <div class="p-3 rounded-3 border bg-light">
                 <div class="form-check mb-2">
                   <input class="form-check-input" type="radio" name="seedMode" id="seedMode100" value="100_percent" checked onchange="toggleSeedCustomFields()">
                   <label class="form-check-label fw-semibold small text-success" for="seedMode100">
-                    <i class="bi bi-check-all me-1"></i>à¸•à¸£à¸§à¸ˆà¸„à¸£à¸š 100% à¹à¸¥à¸°à¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™ 100% (à¹à¸™à¸°à¸™à¸³)
+                    <i class="bi bi-check-all me-1"></i>ตรวจครบ 100% และพร้อมใช้งาน 100% (แนะนำ)
                   </label>
                   <div class="small text-muted ps-4" style="font-size:0.75rem;">
-                    à¸–à¸±à¸‡à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”à¹ƒà¸™à¸£à¸°à¸šà¸šà¸ˆà¸°à¸¡à¸µà¸ªà¸–à¸²à¸™à¸° "à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§" à¹à¸¥à¸° "à¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™" à¸—à¸¸à¸à¹ƒà¸šà¹ƒà¸™à¹€à¸”à¸·à¸­à¸™à¸™à¸±à¹‰à¸™
+                    ถังทั้งหมดในระบบจะมีสถานะ "เช็คแล้ว" และ "พร้อมใช้งาน" ทุกใบในเดือนนั้น
                   </div>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="seedMode" id="seedModeCustom" value="custom" onchange="toggleSeedCustomFields()">
                   <label class="form-check-label fw-semibold small text-dark" for="seedModeCustom">
-                    <i class="bi bi-sliders me-1"></i>à¸à¸³à¸«à¸™à¸”à¸ªà¸±à¸”à¸ªà¹ˆà¸§à¸™à¸ˆà¸³à¸™à¸§à¸™à¸–à¸±à¸‡à¹€à¸­à¸‡
+                    <i class="bi bi-sliders me-1"></i>กำหนดสัดส่วนจำนวนถังเอง
                   </label>
                 </div>
                 <div id="seedCustomFields" class="row g-2 mt-2 ps-4 d-none">
                   <div class="col-6">
-                    <label class="small text-muted mb-0">à¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™ (à¸–à¸±à¸‡)</label>
+                    <label class="small text-muted mb-0">พร้อมใช้งาน (ถัง)</label>
                     <input type="number" id="seedReadyCount" class="form-control form-control-sm" min="0" value="116">
                   </div>
                   <div class="col-6">
-                    <label class="small text-muted mb-0">à¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™ (à¸–à¸±à¸‡)</label>
+                    <label class="small text-muted mb-0">ไม่พร้อมใช้งาน (ถัง)</label>
                     <input type="number" id="seedNotReadyCount" class="form-control form-control-sm" min="0" value="0">
                   </div>
                 </div>
@@ -664,22 +647,22 @@
 
             <div class="mb-3">
               <label for="quickSeedInspector" class="form-label fw-semibold small text-dark mb-1">
-                <i class="bi bi-person-badge text-primary me-1"></i>à¸Šà¸·à¹ˆà¸­à¸œà¸¹à¹‰à¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„
+                <i class="bi bi-person-badge text-primary me-1"></i>ชื่อผู้ตรวจเช็ค
               </label>
-              <input type="text" id="quickSeedInspector" class="form-control form-control-sm" value="SHE" placeholder="à¹€à¸Šà¹ˆà¸™ SHE, à¸ˆà¸›.à¸§à¸´à¸Šà¸²à¸Šà¸µà¸ž">
+              <input type="text" id="quickSeedInspector" class="form-control form-control-sm" value="SHE" placeholder="เช่น SHE, จป.วิชาชีพ">
             </div>
 
             <div class="alert alert-info py-2 px-3 small rounded-3 mb-3 d-flex align-items-center gap-2">
               <i class="bi bi-info-circle-fill text-primary fs-5 flex-shrink-0"></i>
-              <div style="font-size:0.78rem;">à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸ˆà¸°à¸–à¸¹à¸à¸šà¸±à¸™à¸—à¸¶à¸à¹€à¸›à¹‡à¸™ Snapshot à¸›à¸£à¸°à¸ˆà¸³à¹€à¸”à¸·à¸­à¸™à¹ƒà¸™ Cloudflare Database à¸—à¸±à¸™à¸—à¸µ à¸ªà¸²à¸¡à¸²à¸£à¸–à¹€à¸£à¸µà¸¢à¸à¸”à¸¹à¹„à¸”à¹‰à¸ˆà¸²à¸à¹€à¸¡à¸™à¸¹à¹€à¸¥à¸·à¸­à¸à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¹à¸¥à¸°à¸à¸£à¸²à¸Ÿ</div>
+              <div style="font-size:0.78rem;">ข้อมูลจะถูกบันทึกเป็น Snapshot ประจำเดือนใน Cloudflare Database ทันที สามารถเรียกดูได้จากเมนูเลือกรอบเดือนและกราฟ</div>
             </div>
 
             <div class="d-flex justify-content-end gap-2 pt-2 border-top">
               <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">
-                <i class="bi bi-x-circle me-1"></i>à¸¢à¸à¹€à¸¥à¸´à¸
+                <i class="bi bi-x-circle me-1"></i>ยกเลิก
               </button>
               <button type="submit" id="btnSubmitQuickSeed" class="btn btn-primary btn-sm rounded-pill px-4 fw-semibold shadow-xs">
-                <i class="bi bi-save2 me-1"></i>à¸šà¸±à¸™à¸—à¸¶à¸à¸¥à¸‡ Database
+                <i class="bi bi-save2 me-1"></i>บันทึกลง Database
               </button>
             </div>
           </form>
@@ -688,14 +671,14 @@
     </div>
   </div>
 
-  <!-- Modal: à¸ˆà¸±à¸”à¸à¸²à¸£ Cloudflare R2 Storage & Data Retention (à¸ªà¸³à¸«à¸£à¸±à¸š Super Admin P3) -->
+  <!-- Modal: จัดการ Cloudflare R2 Storage & Data Retention (สำหรับ Super Admin P3) -->
   <div class="modal fade" id="r2Modal" tabindex="-1" aria-labelledby="r2ModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content shadow-lg border-0 rounded-4">
         <div class="modal-header bg-gradient bg-info text-white py-3 border-0">
           <h6 class="modal-title fw-bold d-flex align-items-center gap-2" id="r2ModalLabel">
             <i class="bi bi-cloud-arrow-up-fill fs-5"></i>
-            <span>à¸ˆà¸±à¸”à¸à¸²à¸£ Cloudflare R2 Storage & à¸­à¸²à¸¢à¸¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥ Retention (Super Admin P3)</span>
+            <span>จัดการ Cloudflare R2 Storage & อายุข้อมูล Retention (Super Admin P3)</span>
           </h6>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -704,7 +687,7 @@
           <div class="card border-0 bg-light rounded-3 p-3 mb-3 shadow-xs">
             <div class="row g-2 small">
               <div class="col-12 col-md-6">
-                <div class="text-muted">à¸Šà¸·à¹ˆà¸­ Cloudflare R2 Bucket:</div>
+                <div class="text-muted">ชื่อ Cloudflare R2 Bucket:</div>
                 <div class="fw-bold text-dark font-monospace"><i class="bi bi-hdd-network me-1 text-primary"></i>r2jde</div>
               </div>
               <div class="col-12 col-md-6">
@@ -712,16 +695,16 @@
                 <div class="fw-bold text-dark font-monospace text-truncate">1b94436b2a20e6311d5f6e5fc3174c6e</div>
               </div>
               <div class="col-12 col-md-6">
-                <div class="text-muted">à¹‚à¸„à¸£à¸‡à¸ªà¸£à¹‰à¸²à¸‡à¹‚à¸Ÿà¸¥à¹€à¸”à¸­à¸£à¹Œ R2:</div>
+                <div class="text-muted">โครงสร้างโฟลเดอร์ R2:</div>
                 <div class="fw-semibold text-primary font-monospace">/{YYYY}/{MM}/tanks/ & /{YYYY}/{MM}/areas/</div>
               </div>
               <div class="col-12 col-md-6">
-                <div class="text-muted">à¸™à¹‚à¸¢à¸šà¸²à¸¢à¸­à¸²à¸¢à¸¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥ (Retention Policy):</div>
-                <div class="fw-bold text-success"><i class="bi bi-calendar-check me-1"></i>à¹€à¸à¹‡à¸šà¸›à¸µà¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™ + à¸¢à¹‰à¸­à¸™à¸«à¸¥à¸±à¸‡ 2 à¸›à¸µ (<span id="r2KeepYearsText">2024, 2025, 2026</span>)</div>
+                <div class="text-muted">นโยบายอายุข้อมูล (Retention Policy):</div>
+                <div class="fw-bold text-success"><i class="bi bi-calendar-check me-1"></i>เก็บปีปัจจุบัน + ย้อนหลัง 2 ปี (<span id="r2KeepYearsText">2024, 2025, 2026</span>)</div>
               </div>
             </div>
             <div class="mt-2 pt-2 border-top small text-danger">
-              <i class="bi bi-trash3-fill me-1"></i><strong>à¸à¸Žà¸à¸²à¸£à¸¥à¸šà¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸–à¸²à¸§à¸£:</strong> à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹à¸¥à¸°à¸£à¸¹à¸›à¸ à¸²à¸žà¸—à¸µà¹ˆà¸¡à¸µà¸­à¸²à¸¢à¸¸à¹€à¸à¸´à¸™à¸à¸³à¸«à¸™à¸” (<span id="r2DeleteYearsText">2023 à¹à¸¥à¸°à¹€à¸à¹ˆà¸²à¸à¸§à¹ˆà¸²</span>) à¸ˆà¸°à¸–à¸¹à¸à¸¥à¸šà¸­à¸­à¸à¸ˆà¸²à¸à¸—à¸±à¹‰à¸‡ Cloudflare D1 à¹à¸¥à¸° Cloudflare R2 à¹‚à¸”à¸¢à¸­à¸±à¸•à¹‚à¸™à¸¡à¸±à¸•à¸´
+              <i class="bi bi-trash3-fill me-1"></i><strong>กฎการลบข้อมูลถาวร:</strong> ข้อมูลและรูปภาพที่มีอายุเกินกำหนด (<span id="r2DeleteYearsText">2023 และเก่ากว่า</span>) จะถูกลบออกจากทั้ง Cloudflare D1 และ Cloudflare R2 โดยอัตโนมัติ
             </div>
           </div>
 
@@ -729,27 +712,27 @@
           <div class="card border mb-3 rounded-3 shadow-xs">
             <div class="card-body p-3">
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="fw-bold small text-dark"><i class="bi bi-bar-chart-fill me-1 text-info"></i>à¸ªà¸–à¸²à¸™à¸°à¸à¸²à¸£à¸ˆà¸±à¸”à¹€à¸à¹‡à¸šà¸£à¸¹à¸›à¸ à¸²à¸žà¹ƒà¸™à¸£à¸°à¸šà¸š:</span>
-                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2" onclick="refreshR2Status()" title="à¸£à¸µà¹€à¸Ÿà¸£à¸Šà¸‚à¹‰à¸­à¸¡à¸¹à¸¥">
-                  <i class="bi bi-arrow-clockwise"></i> à¸£à¸µà¹€à¸Ÿà¸£à¸Š
+                <span class="fw-bold small text-dark"><i class="bi bi-bar-chart-fill me-1 text-info"></i>สถานะการจัดเก็บรูปภาพในระบบ:</span>
+                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-0 px-2" onclick="refreshR2Status()" title="รีเฟรชข้อมูล">
+                  <i class="bi bi-arrow-clockwise"></i> รีเฟรช
                 </button>
               </div>
               <div class="row g-2 text-center small">
                 <div class="col-4">
                   <div class="p-2 border rounded-2 bg-white">
-                    <div class="text-muted" style="font-size:0.75rem;">à¸–à¸±à¸‡à¸—à¸µà¹ˆà¸¡à¸µà¸£à¸¹à¸› Base64 à¹ƒà¸™ D1</div>
+                    <div class="text-muted" style="font-size:0.75rem;">ถังที่มีรูป Base64 ใน D1</div>
                     <div id="statBase64Count" class="fs-6 fw-bold text-warning">-</div>
                   </div>
                 </div>
                 <div class="col-4">
                   <div class="p-2 border rounded-2 bg-white">
-                    <div class="text-muted" style="font-size:0.75rem;">à¸–à¸±à¸‡à¸—à¸µà¹ˆà¸¢à¹‰à¸²à¸¢à¹€à¸‚à¹‰à¸² R2 à¹à¸¥à¹‰à¸§</div>
+                    <div class="text-muted" style="font-size:0.75rem;">ถังที่ย้ายเข้า R2 แล้ว</div>
                     <div id="statR2Count" class="fs-6 fw-bold text-success">-</div>
                   </div>
                 </div>
                 <div class="col-4">
                   <div class="p-2 border rounded-2 bg-white">
-                    <div class="text-muted" style="font-size:0.75rem;">à¹„à¸Ÿà¸¥à¹Œà¹ƒà¸™ R2 Bucket</div>
+                    <div class="text-muted" style="font-size:0.75rem;">ไฟล์ใน R2 Bucket</div>
                     <div id="statR2TotalObjects" class="fs-6 fw-bold text-info">-</div>
                   </div>
                 </div>
@@ -760,10 +743,10 @@
           <!-- Action Buttons -->
           <div class="d-flex flex-column flex-sm-row gap-2 mb-3">
             <button type="button" id="btnStartR2Migrate" onclick="triggerR2Migration()" class="btn btn-primary btn-sm rounded-pill flex-fill py-2 fw-semibold shadow-xs">
-              <i class="bi bi-cloud-arrow-up-fill me-1"></i>à¸¢à¹‰à¸²à¸¢à¸£à¸¹à¸›à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”à¸ˆà¸²à¸ D1 à¹„à¸›à¸¢à¸±à¸‡ R2 & à¸¥à¹‰à¸²à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹€à¸à¹ˆà¸²
+              <i class="bi bi-cloud-arrow-up-fill me-1"></i>ย้ายรูปทั้งหมดจาก D1 ไปยัง R2 & ล้างข้อมูลเก่า
             </button>
             <button type="button" id="btnStartR2Cleanup" onclick="triggerR2Cleanup()" class="btn btn-outline-danger btn-sm rounded-pill py-2 fw-semibold shadow-xs">
-              <i class="bi bi-trash3 me-1"></i>à¸¥à¹‰à¸²à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹€à¸à¸´à¸™à¸­à¸²à¸¢à¸¸à¹€à¸‰à¸žà¸²à¸°à¸à¸´à¸ˆ (<span id="r2CleanupYearLabel">â‰¤ 2023</span>)
+              <i class="bi bi-trash3 me-1"></i>ล้างข้อมูลเกินอายุเฉพาะกิจ (<span id="r2CleanupYearLabel">≤ 2023</span>)
             </button>
           </div>
 
@@ -773,64 +756,64 @@
           </div>
         </div>
         <div class="modal-footer py-2 border-top bg-light">
-          <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">à¸›à¸´à¸”à¸«à¸™à¹‰à¸²à¸•à¹ˆà¸²à¸‡</button>
+          <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">ปิดหน้าต่าง</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- â”€â”€â”€ Modal: à¸”à¸²à¸§à¸™à¹Œà¹‚à¸«à¸¥à¸”à¸£à¸¹à¸›à¸ à¸²à¸ž ZIP (Admin P2+) â”€â”€â”€ -->
+  <!-- ─── Modal: ดาวน์โหลดรูปภาพ ZIP (Admin P2+) ─── -->
   <div class="modal fade" id="downloadImagesModal" tabindex="-1" aria-labelledby="downloadImagesModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md">
       <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
         <div class="modal-header text-white border-0 py-3" style="background: linear-gradient(135deg, #1b2838 0%, #0d6efd 100%) !important;">
           <h5 class="modal-title fw-bold fs-6 d-flex align-items-center gap-2" id="downloadImagesModalLabel">
             <i class="bi bi-file-earmark-zip-fill text-warning"></i>
-            <span>à¸”à¸²à¸§à¸™à¹Œà¹‚à¸«à¸¥à¸”à¸£à¸¹à¸›à¸ à¸²à¸ž (ZIP)</span>
+            <span>ดาวน์โหลดรูปภาพ (ZIP)</span>
           </h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-4">
-          <p class="text-secondary small mb-3">à¹€à¸¥à¸·à¸­à¸à¸›à¸£à¸°à¹€à¸ à¸—à¸£à¸¹à¸›à¸ à¸²à¸žà¹à¸¥à¸°à¸Šà¹ˆà¸§à¸‡à¹€à¸§à¸¥à¸²à¸—à¸µà¹ˆà¸•à¹‰à¸­à¸‡à¸à¸²à¸£à¸”à¸²à¸§à¸™à¹Œà¹‚à¸«à¸¥à¸”</p>
+          <p class="text-secondary small mb-3">เลือกประเภทรูปภาพและช่วงเวลาที่ต้องการดาวน์โหลด</p>
 
-          <!-- à¸›à¸£à¸°à¹€à¸ à¸—à¸£à¸¹à¸› -->
+          <!-- ประเภทรูป -->
           <div class="mb-3">
             <label class="form-label fw-semibold small text-dark mb-2">
-              <i class="bi bi-image text-primary me-1"></i>à¸›à¸£à¸°à¹€à¸ à¸—à¸£à¸¹à¸›à¸ à¸²à¸ž <span class="text-danger">*</span>
+              <i class="bi bi-image text-primary me-1"></i>ประเภทรูปภาพ <span class="text-danger">*</span>
             </label>
             <div class="d-flex gap-2 flex-wrap">
               <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="dlImgType" id="dlTypeAll" value="both" checked>
-                <label class="form-check-label small" for="dlTypeAll">ðŸ–¼ï¸ à¸—à¸±à¹‰à¸‡à¸ªà¸­à¸‡à¸­à¸¢à¹ˆà¸²à¸‡</label>
+                <label class="form-check-label small" for="dlTypeAll">🖼️ ทั้งสองอย่าง</label>
               </div>
               <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="dlImgType" id="dlTypeTank" value="tank">
-                <label class="form-check-label small" for="dlTypeTank">ðŸ§¯ à¸£à¸¹à¸›à¸–à¸±à¸‡à¸”à¸±à¸šà¹€à¸žà¸¥à¸´à¸‡</label>
+                <label class="form-check-label small" for="dlTypeTank">🧯 รูปถังดับเพลิง</label>
               </div>
               <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="dlImgType" id="dlTypeArea" value="area">
-                <label class="form-check-label small" for="dlTypeArea">ðŸ“ à¸£à¸¹à¸›à¸ªà¸–à¸²à¸™à¸—à¸µà¹ˆ</label>
+                <label class="form-check-label small" for="dlTypeArea">📍 รูปสถานที่</label>
               </div>
             </div>
           </div>
 
-          <!-- à¸Šà¹ˆà¸§à¸‡à¹€à¸§à¸¥à¸² -->
+          <!-- ช่วงเวลา -->
           <div class="mb-3">
             <label class="form-label fw-semibold small text-dark mb-2">
-              <i class="bi bi-calendar3 text-danger me-1"></i>à¸Šà¹ˆà¸§à¸‡à¹€à¸§à¸¥à¸² <span class="text-danger">*</span>
+              <i class="bi bi-calendar3 text-danger me-1"></i>ช่วงเวลา <span class="text-danger">*</span>
             </label>
             <select id="dlScopeSelect" class="form-select form-select-sm mb-2" onchange="onDlScopeChange()">
-              <option value="current">ðŸ“… à¸£à¸­à¸šà¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™ (à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸ªà¸”)</option>
-              <option value="month">ðŸ—“ï¸ à¸£à¸°à¸šà¸¸à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™</option>
-              <option value="year">ðŸ“† à¸£à¸§à¸¡à¸—à¸±à¹‰à¸‡à¸›à¸µ</option>
+              <option value="current">📅 รอบปัจจุบัน (ข้อมูลสด)</option>
+              <option value="month">🗓️ ระบุรอบเดือน</option>
+              <option value="year">📆 รวมทั้งปี</option>
             </select>
-            <!-- à¹€à¸¥à¸·à¸­à¸à¹€à¸”à¸·à¸­à¸™ (à¹à¸ªà¸”à¸‡à¹€à¸¡à¸·à¹ˆà¸­à¹€à¸¥à¸·à¸­à¸ "à¸£à¸°à¸šà¸¸à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™") -->
+            <!-- เลือกเดือน (แสดงเมื่อเลือก "ระบุรอบเดือน") -->
             <div id="dlMonthPickerWrapper" class="d-none">
               <select id="dlMonthSelect" class="form-select form-select-sm">
-                <option value="">-- à¸à¸³à¸¥à¸±à¸‡à¹‚à¸«à¸¥à¸”à¸£à¸²à¸¢à¸à¸²à¸£... --</option>
+                <option value="">-- กำลังโหลดรายการ... --</option>
               </select>
             </div>
-            <!-- à¹€à¸¥à¸·à¸­à¸à¸›à¸µ (à¹à¸ªà¸”à¸‡à¹€à¸¡à¸·à¹ˆà¸­à¹€à¸¥à¸·à¸­à¸ "à¸£à¸§à¸¡à¸—à¸±à¹‰à¸‡à¸›à¸µ") -->
+            <!-- เลือกปี (แสดงเมื่อเลือก "รวมทั้งปี") -->
             <div id="dlYearPickerWrapper" class="d-none">
               <select id="dlYearSelect" class="form-select form-select-sm">
                 <option value="2026">2026 (2569)</option>
@@ -842,85 +825,85 @@
 
           <div class="alert alert-info py-2 small mb-0 d-flex align-items-start gap-2">
             <i class="bi bi-info-circle-fill mt-0 text-info"></i>
-            <span>à¸£à¸¹à¸›à¸ à¸²à¸žà¸ˆà¸°à¸–à¸¹à¸à¸šà¸µà¸šà¸­à¸±à¸”à¹€à¸›à¹‡à¸™à¹„à¸Ÿà¸¥à¹Œ <strong>.zip</strong> â€” à¸ªà¸²à¸¡à¸²à¸£à¸–à¹€à¸›à¸´à¸”à¸”à¹‰à¸§à¸¢ WinRAR à¸«à¸£à¸·à¸­à¹à¸­à¸› Files à¸šà¸™ iOS/Android à¹„à¸”à¹‰à¸—à¸±à¸™à¸—à¸µ</span>
+            <span>รูปภาพจะถูกบีบอัดเป็นไฟล์ <strong>.zip</strong> — สามารถเปิดด้วย WinRAR หรือแอป Files บน iOS/Android ได้ทันที</span>
           </div>
         </div>
         <div class="modal-footer py-2 border-top bg-light">
-          <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">à¸¢à¸à¹€à¸¥à¸´à¸</button>
+          <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">ยกเลิก</button>
           <button type="button" class="btn btn-primary btn-sm rounded-pill px-4 fw-semibold" onclick="confirmDownloadImagesZip()">
-            <i class="bi bi-download me-1"></i>à¸”à¸²à¸§à¸™à¹Œà¹‚à¸«à¸¥à¸” ZIP
+            <i class="bi bi-download me-1"></i>ดาวน์โหลด ZIP
           </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- â”€â”€â”€ Modal: à¸ªà¹ˆà¸‡à¸­à¸­à¸ Excel (Admin P2+) â”€â”€â”€ -->
+  <!-- ─── Modal: ส่งออก Excel (Admin P2+) ─── -->
   <div class="modal fade" id="exportExcelModal" tabindex="-1" aria-labelledby="exportExcelModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md">
       <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
         <div class="modal-header text-white border-0 py-3" style="background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%) !important;">
           <h5 class="modal-title fw-bold fs-6 d-flex align-items-center gap-2" id="exportExcelModalLabel">
             <i class="bi bi-file-earmark-excel-fill text-success" style="filter: brightness(2);"></i>
-            <span>à¸ªà¹ˆà¸‡à¸­à¸­à¸à¸£à¸²à¸¢à¸‡à¸²à¸™ Excel</span>
+            <span>ส่งออกรายงาน Excel</span>
           </h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-4">
-          <p class="text-secondary small mb-3">à¹€à¸¥à¸·à¸­à¸à¸›à¸µà¹à¸¥à¸°à¸‚à¸­à¸šà¹€à¸‚à¸•à¸£à¸²à¸¢à¸‡à¸²à¸™à¸—à¸µà¹ˆà¸•à¹‰à¸­à¸‡à¸à¸²à¸£à¸ªà¹ˆà¸‡à¸­à¸­à¸</p>
+          <p class="text-secondary small mb-3">เลือกปีและขอบเขตรายงานที่ต้องการส่งออก</p>
 
-          <!-- à¹€à¸¥à¸·à¸­à¸à¸›à¸µ -->
+          <!-- เลือกปี -->
           <div class="mb-3">
             <label for="excelYearSelect" class="form-label fw-semibold small text-dark mb-1">
-              <i class="bi bi-calendar-event text-success me-1"></i>à¸›à¸µà¸—à¸µà¹ˆà¸•à¹‰à¸­à¸‡à¸à¸²à¸£ <span class="text-danger">*</span>
+              <i class="bi bi-calendar-event text-success me-1"></i>ปีที่ต้องการ <span class="text-danger">*</span>
             </label>
             <select id="excelYearSelect" class="form-select form-select-sm">
-              <option value="2026">2026 (à¸ž.à¸¨. 2569)</option>
-              <option value="2025">2025 (à¸ž.à¸¨. 2568)</option>
-              <option value="2024">2024 (à¸ž.à¸¨. 2567)</option>
+              <option value="2026">2026 (พ.ศ. 2569)</option>
+              <option value="2025">2025 (พ.ศ. 2568)</option>
+              <option value="2024">2024 (พ.ศ. 2567)</option>
             </select>
           </div>
 
-          <!-- à¸‚à¸­à¸šà¹€à¸‚à¸• -->
+          <!-- ขอบเขต -->
           <div class="mb-3">
             <label class="form-label fw-semibold small text-dark mb-2">
-              <i class="bi bi-layout-text-window text-success me-1"></i>à¸‚à¸­à¸šà¹€à¸‚à¸•à¸£à¸²à¸¢à¸‡à¸²à¸™ <span class="text-danger">*</span>
+              <i class="bi bi-layout-text-window text-success me-1"></i>ขอบเขตรายงาน <span class="text-danger">*</span>
             </label>
             <div class="p-3 rounded-3 border bg-light">
               <div class="form-check mb-2">
                 <input class="form-check-input" type="radio" name="excelScope" id="excelScopeFullYear" value="full_year" checked onchange="onExcelScopeChange()">
                 <label class="form-check-label small fw-semibold" for="excelScopeFullYear">
-                  ðŸ“Š à¸£à¸²à¸¢à¸‡à¸²à¸™à¸—à¸±à¹‰à¸‡à¸›à¸µ â€” à¸ªà¸£à¸¸à¸›à¸ à¸²à¸žà¸£à¸§à¸¡ + à¸à¸²à¸™à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸—à¸¸à¸à¸£à¸­à¸š + à¹à¸—à¹‡à¸šà¹à¸¢à¸à¸£à¸²à¸¢à¹€à¸”à¸·à¸­à¸™
+                  📊 รายงานทั้งปี — สรุปภาพรวม + ฐานข้อมูลทุกรอบ + แท็บแยกรายเดือน
                 </label>
               </div>
               <div class="form-check">
                 <input class="form-check-input" type="radio" name="excelScope" id="excelScopeSingleMonth" value="single_month" onchange="onExcelScopeChange()">
                 <label class="form-check-label small fw-semibold" for="excelScopeSingleMonth">
-                  ðŸ—“ï¸ à¹€à¸‰à¸žà¸²à¸°à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™ â€” à¸ªà¹ˆà¸‡à¸­à¸­à¸à¹€à¸‰à¸žà¸²à¸°à¹€à¸”à¸·à¸­à¸™à¸—à¸µà¹ˆà¹€à¸¥à¸·à¸­à¸
+                  🗓️ เฉพาะรอบเดือน — ส่งออกเฉพาะเดือนที่เลือก
                 </label>
               </div>
             </div>
           </div>
 
-          <!-- à¹€à¸¥à¸·à¸­à¸à¹€à¸”à¸·à¸­à¸™ (à¹à¸ªà¸”à¸‡à¹€à¸¡à¸·à¹ˆà¸­à¹€à¸¥à¸·à¸­à¸ single_month) -->
+          <!-- เลือกเดือน (แสดงเมื่อเลือก single_month) -->
           <div id="excelMonthPickerWrapper" class="mb-3 d-none">
             <label for="excelMonthSelect" class="form-label fw-semibold small text-dark mb-1">
-              <i class="bi bi-calendar-month text-danger me-1"></i>à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸—à¸µà¹ˆà¸•à¹‰à¸­à¸‡à¸à¸²à¸£
+              <i class="bi bi-calendar-month text-danger me-1"></i>รอบเดือนที่ต้องการ
             </label>
             <select id="excelMonthSelect" class="form-select form-select-sm">
-              <option value="">-- à¸à¸³à¸¥à¸±à¸‡à¹‚à¸«à¸¥à¸”à¸£à¸²à¸¢à¸à¸²à¸£... --</option>
+              <option value="">-- กำลังโหลดรายการ... --</option>
             </select>
           </div>
 
           <div class="alert alert-success py-2 small mb-0 d-flex align-items-start gap-2">
             <i class="bi bi-file-earmark-excel-fill mt-0 text-success"></i>
-            <span>à¹„à¸Ÿà¸¥à¹Œ <strong>.xlsx</strong> à¸ˆà¸°à¸–à¸¹à¸à¸ªà¸£à¹‰à¸²à¸‡à¹à¸¥à¸°à¸”à¸²à¸§à¸™à¹Œà¹‚à¸«à¸¥à¸”à¸­à¸±à¸•à¹‚à¸™à¸¡à¸±à¸•à¸´ â€” à¸£à¸­à¸‡à¸£à¸±à¸š Microsoft Excel, Google Sheets</span>
+            <span>ไฟล์ <strong>.xlsx</strong> จะถูกสร้างและดาวน์โหลดอัตโนมัติ — รองรับ Microsoft Excel, Google Sheets</span>
           </div>
         </div>
         <div class="modal-footer py-2 border-top bg-light">
-          <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">à¸¢à¸à¹€à¸¥à¸´à¸</button>
+          <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">ยกเลิก</button>
           <button type="button" class="btn btn-success btn-sm rounded-pill px-4 fw-semibold" onclick="confirmExportExcel()">
-            <i class="bi bi-file-earmark-arrow-down me-1"></i>à¸ªà¹ˆà¸‡à¸­à¸­à¸ Excel
+            <i class="bi bi-file-earmark-arrow-down me-1"></i>ส่งออก Excel
           </button>
         </div>
       </div>
@@ -937,11 +920,11 @@
             <img src="images/jdepeets_logo.svg" alt="JDE Peet's" height="24" style="filter: brightness(0) invert(1);">
             <span class="fs-6 fw-bold border-start ps-2 border-secondary">Safety System</span>
           </div>
-          <p class="text-white-50 small mb-0">à¸£à¸°à¸šà¸šà¸šà¸£à¸´à¸«à¸²à¸£à¸ˆà¸±à¸”à¸à¸²à¸£à¹à¸¥à¸°à¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„à¸–à¸±à¸‡à¸”à¸±à¸šà¹€à¸žà¸¥à¸´à¸‡à¸­à¸­à¸™à¹„à¸¥à¸™à¹Œ</p>
+          <p class="text-white-50 small mb-0">ระบบบริหารจัดการและตรวจเช็คถังดับเพลิงออนไลน์</p>
         </div>
         <div class="col-12 col-md-4 text-center mb-3 mb-md-0">
           <a href="index.html" class="btn btn-outline-light btn-sm rounded-pill px-4">
-            <i class="bi bi-house-door-fill me-1"></i>à¸à¸¥à¸±à¸šà¸ªà¸¹à¹ˆà¸«à¸™à¹‰à¸²à¹à¸£à¸
+            <i class="bi bi-house-door-fill me-1"></i>กลับสู่หน้าแรก
           </a>
         </div>
         <div class="col-12 col-md-4 text-center text-md-end">
@@ -1057,19 +1040,19 @@
       $('#barPercentChecked').css('width', `${percentChecked}%`).attr('aria-valuenow', percentChecked);
       $('#barPercentNotChecked').css('width', `${percentNotChecked}%`).attr('aria-valuenow', percentNotChecked);
       
-      $('#filterCountBadge').text(`à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸” ${total} à¸–à¸±à¸‡`);
+      $('#filterCountBadge').text(`ทั้งหมด ${total} ถัง`);
     }
 
     function updateSummaryCardsDisplay(tanks) {
       if (!tanks || !Array.isArray(tanks)) return;
       const total = tanks.length;
       const checked = isPastMonthMode
-        ? tanks.filter(t => t.Tankcheck === 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§').length
-        : tanks.filter(t => t.Tankcheck === 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§' && isCheckedInCurrentMonth(t.Lastcheck)).length;
+        ? tanks.filter(t => t.Tankcheck === 'เช็คแล้ว').length
+        : tanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(t.Lastcheck)).length;
       const notChecked = total - checked;
       const notReady = isPastMonthMode
-        ? tanks.filter(t => t.Tankcheck === 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§' && (t.ReadyorNot === 'Not Ready' || !t.TankStatus)).length
-        : tanks.filter(t => t.Tankcheck === 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§' && isCheckedInCurrentMonth(t.Lastcheck) && (t.ReadyorNot === 'Not Ready' || !t.TankStatus)).length;
+        ? tanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && (t.ReadyorNot === 'Not Ready' || !t.TankStatus)).length
+        : tanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(t.Lastcheck) && (t.ReadyorNot === 'Not Ready' || !t.TankStatus)).length;
 
       applySummaryCardNumbers(total, checked, notChecked, notReady);
     }
@@ -1100,7 +1083,7 @@
       if (!isTanksDataLoaded) {
         $btn.prop('disabled', true);
         $spinner.removeClass('d-none');
-        $text.text('à¸à¸³à¸¥à¸±à¸‡à¹‚à¸«à¸¥à¸”à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸•à¸²à¸£à¸²à¸‡...');
+        $text.text('กำลังโหลดข้อมูลตาราง...');
 
         try {
           let tanks = [];
@@ -1122,7 +1105,7 @@
           $('#d1LiveBadge').html('<i class="bi bi-circle-fill text-success me-1 pulse-animation" style="font-size:0.5rem;"></i>Cloudflare D1 Live');
         } catch (err) {
           console.error('Error loading tanks on demand:', err);
-          alert('à¹€à¸à¸´à¸”à¸‚à¹‰à¸­à¸œà¸´à¸”à¸žà¸¥à¸²à¸”à¹ƒà¸™à¸à¸²à¸£à¹‚à¸«à¸¥à¸”à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸•à¸²à¸£à¸²à¸‡: ' + (err.message || 'à¸à¸£à¸¸à¸“à¸²à¸¥à¸­à¸‡à¹ƒà¸«à¸¡à¹ˆà¸­à¸µà¸à¸„à¸£à¸±à¹‰à¸‡'));
+          alert('เกิดข้อผิดพลาดในการโหลดข้อมูลตาราง: ' + (err.message || 'กรุณาลองใหม่อีกครั้ง'));
         } finally {
           $btn.prop('disabled', false);
           $spinner.addClass('d-none');
@@ -1139,9 +1122,9 @@
 
       $btn.removeClass('btn-danger').addClass('btn-outline-secondary');
       $icon.removeClass('bi-table bi-eye-fill').addClass('bi-eye-slash-fill');
-      $text.text('à¸‹à¹ˆà¸­à¸™à¸•à¸²à¸£à¸²à¸‡à¸£à¸²à¸¢à¸à¸²à¸£à¸–à¸±à¸‡');
+      $text.text('ซ่อนตารางรายการถัง');
       $badge.removeClass('bg-secondary-subtle text-secondary').addClass('bg-success-subtle text-success')
-            .html('<i class="bi bi-check-circle me-1"></i>à¸à¸³à¸¥à¸±à¸‡à¹à¸ªà¸”à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥');
+            .html('<i class="bi bi-check-circle me-1"></i>กำลังแสดงข้อมูล');
 
       if (shouldScroll) {
         const target = document.getElementById('tableSectionWrapper');
@@ -1162,9 +1145,9 @@
 
       $btn.removeClass('btn-outline-secondary').addClass('btn-danger');
       $icon.removeClass('bi-eye-slash-fill').addClass('bi-table');
-      $text.text('à¹à¸ªà¸”à¸‡à¸•à¸²à¸£à¸²à¸‡à¸£à¸²à¸¢à¸à¸²à¸£à¸–à¸±à¸‡');
+      $text.text('แสดงตารางรายการถัง');
       $badge.removeClass('bg-success-subtle text-success').addClass('bg-secondary-subtle text-secondary')
-            .html('<i class="bi bi-eye-slash me-1"></i>à¸‹à¹ˆà¸­à¸™à¸­à¸¢à¸¹à¹ˆà¹€à¸žà¸·à¹ˆà¸­à¸„à¸§à¸²à¸¡à¹€à¸£à¹‡à¸§');
+            .html('<i class="bi bi-eye-slash me-1"></i>ซ่อนอยู่เพื่อความเร็ว');
     }
 
     async function renderDashboard(customTanks = null) {
@@ -1198,10 +1181,10 @@
         }
       });
 
-      // à¸­à¸±à¸›à¹€à¸”à¸•à¸•à¸±à¸§à¹€à¸¥à¸‚à¸à¸²à¸£à¹Œà¸”à¸ªà¸£à¸¸à¸› 4 à¹ƒà¸š
+      // อัปเดตตัวเลขการ์ดสรุป 4 ใบ
       updateSummaryCardsDisplay(tanks);
 
-      // à¹€à¸•à¸´à¸¡ Options à¹ƒà¸™à¸•à¸±à¸§à¸à¸£à¸­à¸‡
+      // เติม Options ในตัวกรอง
       const types = [...new Set(tanks.map(t => t.Types).filter(Boolean))].sort();
       const areas = [...new Set(tanks.map(t => t.Area).filter(Boolean))].sort();
 
@@ -1213,7 +1196,7 @@
       types.forEach(ty => typeSelect.append(`<option value="${ty}">${ty}</option>`));
       areas.forEach(ar => areaSelect.append(`<option value="${ar}">${ar}</option>`));
 
-      // Destroy DataTable à¹€à¸à¹ˆà¸²à¸à¹ˆà¸­à¸™à¹€à¸£à¸™à¹€à¸”à¸­à¸£à¹Œà¹ƒà¸«à¸¡à¹ˆ
+      // Destroy DataTable เก่าก่อนเรนเดอร์ใหม่
       if (dataTableInstance) {
         try {
           dataTableInstance.destroy();
@@ -1223,7 +1206,7 @@
         dataTableInstance = null;
       }
 
-      // à¹€à¸£à¸µà¸¢à¸‡à¸¥à¸³à¸”à¸±à¸šà¸–à¸±à¸‡à¹à¸šà¸š Natural Sort (EX01, EX02 ... EX10, EX11, EX12 ... EX99, EX100)
+      // เรียงลำดับถังแบบ Natural Sort (EX01, EX02 ... EX10, EX11, EX12 ... EX99, EX100)
       tanks.sort((a, b) => {
         return (a.FireTank || '').localeCompare(b.FireTank || '', undefined, {
           numeric: true,
@@ -1231,90 +1214,90 @@
         });
       });
 
-      // à¸ªà¸£à¹‰à¸²à¸‡à¹à¸–à¸§à¹ƒà¸™à¸•à¸²à¸£à¸²à¸‡
+      // สร้างแถวในตาราง
       const tbody = $('#tankTableBody');
       tbody.empty();
 
       tanks.forEach((tank, idx) => {
-        // à¸à¸Žà¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™: à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸šà¸à¸²à¸£à¸•à¸£à¸§à¸ˆà¹ƒà¸™à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™ (à¹€à¸Šà¹‡à¸„à¸—à¸¸à¸à¸•à¹‰à¸™à¹€à¸”à¸·à¸­à¸™à¹ƒà¸«à¸¡à¹ˆ)
+        // กฎรอบเดือน: ตรวจสอบการตรวจในรอบเดือนปัจจุบัน (เช็คทุกต้นเดือนใหม่)
         const isChecked = isPastMonthMode 
-          ? (tank.Tankcheck === 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§') 
-          : (tank.Tankcheck === 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§' && isCheckedInCurrentMonth(tank.Lastcheck));
+          ? (tank.Tankcheck === 'เช็คแล้ว') 
+          : (tank.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(tank.Lastcheck));
         const isReady = isChecked && tank.ReadyorNot === 'Ready' && tank.TankStatus;
         const isNotReady = isChecked && (tank.ReadyorNot === 'Not Ready' || !tank.TankStatus);
 
-        // à¸›à¹‰à¸²à¸¢à¸ªà¸–à¸²à¸™à¸°à¸à¸²à¸£à¸•à¸£à¸§à¸ˆ
+        // ป้ายสถานะการตรวจ
         let checkBadgeHtml = '';
         if (isChecked) {
-          checkBadgeHtml = '<span class="badge rounded-pill bg-success"><i class="bi bi-check-lg me-1"></i>à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§</span>';
+          checkBadgeHtml = '<span class="badge rounded-pill bg-success"><i class="bi bi-check-lg me-1"></i>เช็คแล้ว</span>';
         } else {
-          checkBadgeHtml = '<span class="badge rounded-pill bg-warning text-white" title="à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸•à¸£à¸§à¸ˆà¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰ (à¹€à¸Šà¹‡à¸„à¹ƒà¸«à¸¡à¹ˆà¸—à¸¸à¸à¸•à¹‰à¸™à¹€à¸”à¸·à¸­à¸™)"><i class="bi bi-clock me-1"></i>à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸•à¸£à¸§à¸ˆ</span>';
+          checkBadgeHtml = '<span class="badge rounded-pill bg-warning text-white" title="ยังไม่ได้ตรวจรอบเดือนนี้ (เช็คใหม่ทุกต้นเดือน)"><i class="bi bi-clock me-1"></i>ยังไม่ได้ตรวจ</span>';
         }
 
-        // à¸›à¹‰à¸²à¸¢à¸„à¸§à¸²à¸¡à¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™ (à¹€à¸¡à¸·à¹ˆà¸­à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸•à¸£à¸§à¸ˆ à¹ƒà¸«à¹‰à¹à¸ªà¸”à¸‡à¸§à¹ˆà¸² "à¸£à¸­à¸•à¸£à¸§à¸ˆ")
+        // ป้ายความพร้อมใช้งาน (เมื่อยังไม่ได้ตรวจ ให้แสดงว่า "รอตรวจ")
         let readyBadgeHtml = '';
         if (!isChecked) {
-          readyBadgeHtml = '<span class="badge rounded-pill bg-warning-subtle text-dark border border-warning-subtle" title="à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸•à¸£à¸§à¸ˆà¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰ à¸£à¸­à¸à¸²à¸£à¹€à¸‚à¹‰à¸²à¸•à¸£à¸§à¸ˆ"><i class="bi bi-clock me-1"></i>à¸£à¸­à¸•à¸£à¸§à¸ˆ</span>';
+          readyBadgeHtml = '<span class="badge rounded-pill bg-warning-subtle text-dark border border-warning-subtle" title="ยังไม่ได้ตรวจรอบเดือนนี้ รอการเข้าตรวจ"><i class="bi bi-clock me-1"></i>รอตรวจ</span>';
         } else if (isReady) {
-          readyBadgeHtml = '<span class="badge rounded-pill bg-success" title="à¸œà¹ˆà¸²à¸™à¸à¸²à¸£à¸•à¸£à¸§à¸ˆà¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰ à¸ªà¸ à¸²à¸žà¸ªà¸¡à¸šà¸¹à¸£à¸“à¹Œà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰"><i class="bi bi-check-circle me-1"></i>à¸žà¸£à¹‰à¸­à¸¡</span>';
+          readyBadgeHtml = '<span class="badge rounded-pill bg-success" title="ผ่านการตรวจรอบเดือนนี้ สภาพสมบูรณ์พร้อมใช้"><i class="bi bi-check-circle me-1"></i>พร้อม</span>';
         } else {
-          readyBadgeHtml = '<span class="badge rounded-pill bg-danger" title="à¸žà¸šà¸‚à¹‰à¸­à¸šà¸à¸žà¸£à¹ˆà¸­à¸‡ à¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™"><i class="bi bi-x-circle me-1"></i>à¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡</span>';
+          readyBadgeHtml = '<span class="badge rounded-pill bg-danger" title="พบข้อบกพร่อง ไม่พร้อมใช้งาน"><i class="bi bi-x-circle me-1"></i>ไม่พร้อม</span>';
         }
 
-        // à¸›à¸¸à¹ˆà¸¡à¸ˆà¸±à¸”à¸à¸²à¸£à¸•à¸²à¸¡à¸ªà¸´à¸—à¸˜à¸´à¹Œà¹à¸¥à¸°à¹‚à¸«à¸¡à¸”
+        // ปุ่มจัดการตามสิทธิ์และโหมด
         let actionButtons = `
           <button type="button" onclick="openTankDetailModal('${tank.FireTank}')" 
-                  class="btn btn-info btn-sm py-0 px-2 me-1 text-white shadow-xs" title="à¸”à¸¹à¸£à¸²à¸¢à¸¥à¸°à¹€à¸­à¸µà¸¢à¸”à¸–à¸±à¸‡ (à¸£à¸§à¸¡à¸£à¸¹à¸›à¸ à¸²à¸ž)">
+                  class="btn btn-info btn-sm py-0 px-2 me-1 text-white shadow-xs" title="ดูรายละเอียดถัง (รวมรูปภาพ)">
             <i class="bi bi-eye-fill"></i>
           </button>
         `;
         if (isPastMonthMode) {
           actionButtons += `
-            <span class="badge bg-secondary-subtle text-secondary border px-2 py-1 small" title="à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰à¸–à¸¹à¸à¸›à¸´à¸”à¸£à¸­à¸šà¹à¸¥à¸°à¸ˆà¸±à¸”à¹€à¸à¹‡à¸šà¸–à¸²à¸§à¸£à¹à¸¥à¹‰à¸§ (à¹‚à¸«à¸¡à¸”à¸”à¸¹à¸­à¸¢à¹ˆà¸²à¸‡à¹€à¸”à¸µà¸¢à¸§ à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¹à¸à¹‰à¹„à¸‚à¹„à¸”à¹‰)">
-              <i class="bi bi-lock-fill me-1"></i>à¸›à¸´à¸”à¸£à¸­à¸šà¹à¸¥à¹‰à¸§
+            <span class="badge bg-secondary-subtle text-secondary border px-2 py-1 small" title="รอบเดือนนี้ถูกปิดรอบและจัดเก็บถาวรแล้ว (โหมดดูอย่างเดียว ไม่สามารถแก้ไขได้)">
+              <i class="bi bi-lock-fill me-1"></i>ปิดรอบแล้ว
             </span>
           `;
         } else {
           actionButtons += `
             <a href="check.html?tank_id=${encodeURIComponent(tank.FireTank)}" 
-               class="btn btn-success btn-sm py-0 px-2 me-1" title="à¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„à¸ªà¸ à¸²à¸žà¸–à¸±à¸‡">
+               class="btn btn-success btn-sm py-0 px-2 me-1" title="ตรวจเช็คสภาพถัง">
               <i class="bi bi-clipboard2-check-fill"></i>
             </a>
           `;
           if (currentUser && currentUser.PermitDo >= 2) {
             actionButtons += `
               <a href="edit.html?tank_id=${encodeURIComponent(tank.FireTank)}" 
-                 class="btn btn-warning btn-sm py-0 px-2 me-1" title="à¹à¸à¹‰à¹„à¸‚à¸‚à¹‰à¸­à¸¡à¸¹à¸¥">
+                 class="btn btn-warning btn-sm py-0 px-2 me-1" title="แก้ไขข้อมูล">
                 <i class="bi bi-pencil-fill"></i>
               </a>
               <button onclick="handleDeleteTank('${tank.FireTank}')" 
-                      class="btn btn-danger btn-sm py-0 px-2" title="à¸¥à¸šà¸–à¸±à¸‡">
+                      class="btn btn-danger btn-sm py-0 px-2" title="ลบถัง">
                 <i class="bi bi-trash-fill"></i>
               </button>
             `;
           }
         }
 
-        // data-order à¸ªà¸³à¸«à¸£à¸±à¸šà¹€à¸£à¸µà¸¢à¸‡à¸¥à¸³à¸”à¸±à¸šà¸•à¸±à¸§à¹€à¸¥à¸‚à¸˜à¸£à¸£à¸¡à¸Šà¸²à¸•à¸´à¹ƒà¸™ DataTables
+        // data-order สำหรับเรียงลำดับตัวเลขธรรมชาติใน DataTables
         const sortKey = getTankSortKey(tank.FireTank);
         const readyDataVal = !isChecked ? 'Pending' : (isReady ? 'Ready' : 'Not Ready');
 
         const tr = `
           <tr data-type="${tank.Types || ''}" 
               data-area="${tank.Area || ''}" 
-              data-check="${isChecked ? 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§' : 'à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹€à¸Šà¹‡à¸„'}" 
+              data-check="${isChecked ? 'เช็คแล้ว' : 'ยังไม่เช็ค'}" 
               data-ready="${readyDataVal}"
               data-tank-id="${tank.FireTank}"
               style="cursor:pointer;"
-              title="à¸„à¸¥à¸´à¸à¹€à¸žà¸·à¹ˆà¸­à¸”à¸¹à¸£à¸²à¸¢à¸¥à¸°à¹€à¸­à¸µà¸¢à¸”à¸–à¸±à¸‡ ${tank.FireTank}">
+              title="คลิกเพื่อดูรายละเอียดถัง ${tank.FireTank}">
             <td class="text-center text-muted small" data-order="${idx + 1}">${idx + 1}</td>
             <td data-order="${sortKey}"><strong class="text-danger">${tank.FireTank}</strong></td>
-            <td class="small">${tank.Types || 'â€”'}</td>
-            <td class="text-center small">${tank['Weight (lb)'] ?? 'â€”'}</td>
-            <td class="small">${tank.Area || 'â€”'}</td>
+            <td class="small">${tank.Types || '—'}</td>
+            <td class="text-center small">${tank['Weight (lb)'] ?? '—'}</td>
+            <td class="small">${tank.Area || '—'}</td>
             <td class="small">${tank.Responsible
               ? `<span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle"><i class="bi bi-person-fill me-1"></i>${tank.Responsible}</span>`
-              : '<span class="text-muted">â€”</span>'}</td>
+              : '<span class="text-muted">—</span>'}</td>
             <td class="text-center small">${formatDateOnly(tank.Inuse)}</td>
             <td class="text-center small">${formatDateOnly(tank.Lastcheck)}</td>
             <td class="text-center">
@@ -1323,11 +1306,11 @@
             <td class="text-center">
               ${readyBadgeHtml}
             </td>
-            <td class="text-center small fw-semibold text-primary">${tank.Exptank || 'â€”'}</td>
+            <td class="text-center small fw-semibold text-primary">${tank.Exptank || '—'}</td>
             <td class="text-center small">
               ${tank.Inspector 
                 ? `<span class="badge bg-info-subtle text-info-emphasis border border-info-subtle"><i class="bi bi-person-check me-1"></i>${tank.Inspector}</span>` 
-                : '<span class="text-muted">â€”</span>'}
+                : '<span class="text-muted">—</span>'}
             </td>
             <td class="text-center text-nowrap">${actionButtons}</td>
           </tr>
@@ -1335,26 +1318,26 @@
         tbody.append(tr);
       });
 
-      // à¹€à¸£à¸™à¹€à¸”à¸­à¸£à¹Œà¸à¸²à¸£à¹Œà¸”à¸ªà¸³à¸«à¸£à¸±à¸šà¸¡à¸¸à¸¡à¸¡à¸­à¸‡à¸¡à¸·à¸­à¸–à¸·à¸­
+      // เรนเดอร์การ์ดสำหรับมุมมองมือถือ
       renderMobileCards();
 
-      // à¹€à¸£à¸´à¹ˆà¸¡à¸•à¹‰à¸™ DataTables à¸”à¹‰à¸§à¸¢à¸à¸²à¸£à¹€à¸£à¸µà¸¢à¸‡à¹à¸šà¸šà¸•à¸±à¸§à¹€à¸¥à¸‚à¸˜à¸£à¸£à¸¡à¸Šà¸²à¸•à¸´
+      // เริ่มต้น DataTables ด้วยการเรียงแบบตัวเลขธรรมชาติ
       dataTableInstance = $('#tankTable').DataTable({
         pageLength: 25,
         order: [[1, 'asc']],
         language: {
-          emptyTable: 'à¹„à¸¡à¹ˆà¸¡à¸µà¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹ƒà¸™à¸•à¸²à¸£à¸²à¸‡',
-          info: 'à¹à¸ªà¸”à¸‡ _START_ à¸–à¸¶à¸‡ _END_ à¸ˆà¸²à¸ _TOTAL_ à¸£à¸²à¸¢à¸à¸²à¸£',
-          infoEmpty: 'à¹à¸ªà¸”à¸‡ 0 à¸–à¸¶à¸‡ 0 à¸ˆà¸²à¸ 0 à¸£à¸²à¸¢à¸à¸²à¸£',
-          infoFiltered: '(à¸à¸£à¸­à¸‡à¸ˆà¸²à¸à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸” _MAX_ à¸£à¸²à¸¢à¸à¸²à¸£)',
-          lengthMenu: 'à¹à¸ªà¸”à¸‡ _MENU_ à¸£à¸²à¸¢à¸à¸²à¸£',
-          search: 'à¸„à¹‰à¸™à¸«à¸²:',
-          zeroRecords: 'à¹„à¸¡à¹ˆà¸žà¸šà¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸—à¸µà¹ˆà¸•à¸£à¸‡à¸à¸±à¸™',
+          emptyTable: 'ไม่มีข้อมูลในตาราง',
+          info: 'แสดง _START_ ถึง _END_ จาก _TOTAL_ รายการ',
+          infoEmpty: 'แสดง 0 ถึง 0 จาก 0 รายการ',
+          infoFiltered: '(กรองจากทั้งหมด _MAX_ รายการ)',
+          lengthMenu: 'แสดง _MENU_ รายการ',
+          search: 'ค้นหา:',
+          zeroRecords: 'ไม่พบข้อมูลที่ตรงกัน',
           paginate: {
-            first: 'à¸«à¸™à¹‰à¸²à¹à¸£à¸',
-            last: 'à¸«à¸™à¹‰à¸²à¸ªà¸¸à¸”à¸—à¹‰à¸²à¸¢',
-            next: 'à¸–à¸±à¸”à¹„à¸›',
-            previous: 'à¸à¹ˆà¸­à¸™à¸«à¸™à¹‰à¸²'
+            first: 'หน้าแรก',
+            last: 'หน้าสุดท้าย',
+            next: 'ถัดไป',
+            previous: 'ก่อนหน้า'
           }
         },
         columnDefs: [
@@ -1362,7 +1345,7 @@
         ]
       });
 
-      // à¹ƒà¸«à¹‰à¸„à¸­à¸¥à¸±à¸¡à¸™à¹Œ # à¹€à¸£à¸µà¸¢à¸‡à¸¥à¸³à¸”à¸±à¸š 1, 2, 3... à¸•à¸²à¸¡à¸¥à¸³à¸”à¸±à¸šà¸—à¸µà¹ˆà¹à¸ªà¸”à¸‡à¸ˆà¸£à¸´à¸‡à¹€à¸ªà¸¡à¸­
+      // ให้คอลัมน์ # เรียงลำดับ 1, 2, 3... ตามลำดับที่แสดงจริงเสมอ
       dataTableInstance.on('order.dt search.dt', function () {
         let i = 1;
         dataTableInstance.cells(null, 0, { search: 'applied', order: 'applied' }).every(function () {
@@ -1371,7 +1354,7 @@
         updateFilterBadge();
       });
 
-      // Filter Logic (à¸¥à¸‡à¸—à¸°à¹€à¸šà¸µà¸¢à¸™à¹€à¸žà¸µà¸¢à¸‡à¸„à¸£à¸±à¹‰à¸‡à¹€à¸”à¸µà¸¢à¸§)
+      // Filter Logic (ลงทะเบียนเพียงครั้งเดียว)
       if (!window._dtFilterRegistered) {
         $.fn.dataTable.ext.search.push(function (settings, data, dataIndex, rowData, counter) {
           if (!settings || !settings.nTable || settings.nTable.id !== 'tankTable') return true;
@@ -1398,15 +1381,6 @@
         });
         window._dtFilterRegistered = true;
       }
-
-      
-      $('#equipmentTabs button').on('click', function (e) {
-        e.preventDefault();
-        $('#equipmentTabs button').removeClass('active bg-danger text-white').addClass('bg-white border text-dark');
-        $(this).removeClass('bg-white border text-dark').addClass('active bg-danger text-white');
-        currentEqType = $(this).data('eq-type');
-        renderDashboard();
-      });
 
       $('#filterType, #filterArea, #filterCheck, #filterReady, #searchInput').off('input change').on('input change', function () {
         activeCardFilter = null;
@@ -1436,14 +1410,14 @@
 
       $('[data-bs-toggle="tooltip"]').tooltip();
 
-      // à¸„à¸¥à¸´à¸à¹à¸–à¸§à¹€à¸žà¸·à¹ˆà¸­à¹€à¸›à¸´à¸” modal à¸”à¸¹à¸£à¸²à¸¢à¸¥à¸°à¹€à¸­à¸µà¸¢à¸” (à¸¢à¸à¹€à¸§à¹‰à¸™à¸„à¸¥à¸´à¸à¸›à¸¸à¹ˆà¸¡)
+      // คลิกแถวเพื่อเปิด modal ดูรายละเอียด (ยกเว้นคลิกปุ่ม)
       $('#tankTableBody').off('click', 'tr').on('click', 'tr', function(e) {
         if ($(e.target).closest('a, button').length > 0) return;
         const tankId = $(this).data('tank-id');
         if (tankId) openTankDetailModal(tankId);
       });
 
-      // à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸šà¹‚à¸«à¸¡à¸”à¹à¸ªà¸”à¸‡à¸œà¸¥à¹€à¸£à¸´à¹ˆà¸¡à¸•à¹‰à¸™ (à¸¡à¸·à¸­à¸–à¸·à¸­à¹€à¸£à¸´à¹ˆà¸¡à¸•à¹‰à¸™à¸”à¹‰à¸§à¸¢ Mobile)
+      // ตรวจสอบโหมดแสดงผลเริ่มต้น (มือถือเริ่มต้นด้วย Mobile)
       const savedMode = localStorage.getItem('jde_view_mode');
       if (savedMode === 'mobile' || savedMode === 'cards') {
         switchView('mobile');
@@ -1460,7 +1434,7 @@
       }
     }
 
-    // â”€â”€â”€ à¸„à¸§à¸šà¸„à¸¸à¸¡à¸à¸²à¸£à¸ªà¸¥à¸±à¸šà¹‚à¸«à¸¡à¸” (PC / Mobile) â”€â”€â”€
+    // ─── ควบคุมการสลับโหมด (PC / Mobile) ───
     function switchView(mode) {
       if (mode === 'mobile' || mode === 'cards') {
         $('#btnViewCards').addClass('active');
@@ -1479,22 +1453,22 @@
       }
     }
 
-    // â”€â”€â”€ à¸­à¸±à¸›à¹€à¸”à¸•à¸•à¸±à¸§à¸™à¸±à¸šà¸ˆà¸³à¸™à¸§à¸™à¹ƒà¸™à¸•à¸±à¸§à¸à¸£à¸­à¸‡ â”€â”€â”€
+    // ─── อัปเดตตัวนับจำนวนในตัวกรอง ───
     function updateFilterBadge() {
       const allTanks = getAllTanks();
       if (!dataTableInstance) {
-        $('#filterCountBadge').text(`à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸” ${allTanks.length} à¸–à¸±à¸‡`);
+        $('#filterCountBadge').text(`ทั้งหมด ${allTanks.length} ถัง`);
         return;
       }
       const filteredCount = dataTableInstance.rows({ search: 'applied' }).count();
       if (filteredCount === allTanks.length) {
-        $('#filterCountBadge').text(`à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸” ${allTanks.length} à¸–à¸±à¸‡`);
+        $('#filterCountBadge').text(`ทั้งหมด ${allTanks.length} ถัง`);
       } else {
-        $('#filterCountBadge').html(`à¹à¸ªà¸”à¸‡ <strong>${filteredCount}</strong> à¸ˆà¸²à¸ ${allTanks.length} à¸–à¸±à¸‡`);
+        $('#filterCountBadge').html(`แสดง <strong>${filteredCount}</strong> จาก ${allTanks.length} ถัง`);
       }
     }
 
-    // â”€â”€â”€ à¹€à¸£à¸™à¹€à¸”à¸­à¸£à¹Œà¸à¸²à¸£à¹Œà¸”à¸–à¸±à¸‡à¸”à¸±à¸šà¹€à¸žà¸¥à¸´à¸‡à¸ªà¸³à¸«à¸£à¸±à¸šà¸¡à¸¸à¸¡à¸¡à¸­à¸‡à¸¡à¸·à¸­à¸–à¸·à¸­ â”€â”€â”€
+    // ─── เรนเดอร์การ์ดถังดับเพลิงสำหรับมุมมองมือถือ ───
     function renderMobileCards() {
       const container = $('#tankCardsGrid');
       if (!container.length) return;
@@ -1511,9 +1485,9 @@
 
       const filtered = allTanks.filter(tank => {
         const isChecked = isPastMonthMode 
-          ? (tank.Tankcheck === 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§') 
-          : (tank.Tankcheck === 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§' && isCheckedInCurrentMonth(tank.Lastcheck));
-        const checkStatus = isChecked ? 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§' : 'à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹€à¸Šà¹‡à¸„';
+          ? (tank.Tankcheck === 'เช็คแล้ว') 
+          : (tank.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(tank.Lastcheck));
+        const checkStatus = isChecked ? 'เช็คแล้ว' : 'ยังไม่เช็ค';
         const isReady = isChecked && tank.ReadyorNot === 'Ready' && tank.TankStatus;
         const readyStatus = !isChecked ? 'Pending' : (isReady ? 'Ready' : 'Not Ready');
 
@@ -1530,7 +1504,7 @@
         container.html(`
           <div class="col-12 py-5 text-center text-muted">
             <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary opacity-50"></i>
-            <div>à¹„à¸¡à¹ˆà¸žà¸šà¸£à¸²à¸¢à¸à¸²à¸£à¸–à¸±à¸‡à¸”à¸±à¸šà¹€à¸žà¸¥à¸´à¸‡à¸—à¸µà¹ˆà¸•à¸£à¸‡à¸à¸±à¸šà¹€à¸‡à¸·à¹ˆà¸­à¸™à¹„à¸‚à¸à¸²à¸£à¸„à¹‰à¸™à¸«à¸²</div>
+            <div>ไม่พบรายการถังดับเพลิงที่ตรงกับเงื่อนไขการค้นหา</div>
           </div>
         `);
         return;
@@ -1538,33 +1512,33 @@
 
       filtered.forEach((tank, idx) => {
         const isChecked = isPastMonthMode 
-          ? (tank.Tankcheck === 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§') 
-          : (tank.Tankcheck === 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§' && isCheckedInCurrentMonth(tank.Lastcheck));
+          ? (tank.Tankcheck === 'เช็คแล้ว') 
+          : (tank.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(tank.Lastcheck));
         const isReady = isChecked && tank.ReadyorNot === 'Ready' && tank.TankStatus;
 
         let checkBadge = '';
         if (isChecked) {
-          checkBadge = '<span class="badge rounded-pill bg-success"><i class="bi bi-check-lg me-1"></i>à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§</span>';
+          checkBadge = '<span class="badge rounded-pill bg-success"><i class="bi bi-check-lg me-1"></i>เช็คแล้ว</span>';
         } else {
-          checkBadge = '<span class="badge rounded-pill bg-warning text-white" title="à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸•à¸£à¸§à¸ˆà¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰"><i class="bi bi-clock me-1"></i>à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸•à¸£à¸§à¸ˆ</span>';
+          checkBadge = '<span class="badge rounded-pill bg-warning text-white" title="ยังไม่ได้ตรวจรอบเดือนนี้"><i class="bi bi-clock me-1"></i>ยังไม่ได้ตรวจ</span>';
         }
 
         let readyBadge = '';
         if (!isChecked) {
-          readyBadge = '<span class="badge rounded-pill bg-warning-subtle text-dark border border-warning-subtle" title="à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸•à¸£à¸§à¸ˆà¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰ à¸£à¸­à¸à¸²à¸£à¹€à¸‚à¹‰à¸²à¸•à¸£à¸§à¸ˆ"><i class="bi bi-clock me-1"></i>à¸£à¸­à¸•à¸£à¸§à¸ˆ</span>';
+          readyBadge = '<span class="badge rounded-pill bg-warning-subtle text-dark border border-warning-subtle" title="ยังไม่ได้ตรวจรอบเดือนนี้ รอการเข้าตรวจ"><i class="bi bi-clock me-1"></i>รอตรวจ</span>';
         } else if (isReady) {
-          readyBadge = '<span class="badge rounded-pill bg-success" title="à¸œà¹ˆà¸²à¸™à¸à¸²à¸£à¸•à¸£à¸§à¸ˆà¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰ à¸ªà¸ à¸²à¸žà¸ªà¸¡à¸šà¸¹à¸£à¸“à¹Œà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰"><i class="bi bi-check-circle me-1"></i>à¸žà¸£à¹‰à¸­à¸¡</span>';
+          readyBadge = '<span class="badge rounded-pill bg-success" title="ผ่านการตรวจรอบเดือนนี้ สภาพสมบูรณ์พร้อมใช้"><i class="bi bi-check-circle me-1"></i>พร้อม</span>';
         } else {
-          readyBadge = '<span class="badge rounded-pill bg-danger" title="à¸žà¸šà¸‚à¹‰à¸­à¸šà¸à¸žà¸£à¹ˆà¸­à¸‡ à¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™"><i class="bi bi-x-circle me-1"></i>à¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡</span>';
+          readyBadge = '<span class="badge rounded-pill bg-danger" title="พบข้อบกพร่อง ไม่พร้อมใช้งาน"><i class="bi bi-x-circle me-1"></i>ไม่พร้อม</span>';
         }
 
         let adminActions = '';
         if (currentUser && currentUser.PermitDo >= 2) {
           adminActions = `
-            <a href="edit.html?tank_id=${encodeURIComponent(tank.FireTank)}" class="btn btn-outline-warning btn-sm px-2.5 action-btn-touch" title="à¹à¸à¹‰à¹„à¸‚" onclick="event.stopPropagation();">
+            <a href="edit.html?tank_id=${encodeURIComponent(tank.FireTank)}" class="btn btn-outline-warning btn-sm px-2.5 action-btn-touch" title="แก้ไข" onclick="event.stopPropagation();">
               <i class="bi bi-pencil-fill"></i>
             </a>
-            <button onclick="event.stopPropagation(); handleDeleteTank('${tank.FireTank}')" class="btn btn-outline-danger btn-sm px-2.5 action-btn-touch" title="à¸¥à¸š">
+            <button onclick="event.stopPropagation(); handleDeleteTank('${tank.FireTank}')" class="btn btn-outline-danger btn-sm px-2.5 action-btn-touch" title="ลบ">
               <i class="bi bi-trash-fill"></i>
             </button>
           `;
@@ -1576,7 +1550,7 @@
               <div class="tank-mobile-card-header d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center gap-2">
                   <span class="badge bg-danger fs-6 px-2.5 py-1 fw-bold text-white shadow-xs">${tank.FireTank}</span>
-                  <span class="small text-muted fw-semibold text-truncate" style="max-width:130px;">${tank.Types || 'â€”'}</span>
+                  <span class="small text-muted fw-semibold text-truncate" style="max-width:130px;">${tank.Types || '—'}</span>
                 </div>
                 <div class="d-flex align-items-center gap-1">
                   ${checkBadge}
@@ -1590,10 +1564,10 @@
                   </div>
                   <div class="overflow-hidden">
                     <div class="fw-bold text-dark fs-6 mb-0.5 text-truncate">
-                      <i class="bi bi-geo-alt-fill text-danger me-1"></i>${tank.Area || 'â€”'}
+                      <i class="bi bi-geo-alt-fill text-danger me-1"></i>${tank.Area || '—'}
                     </div>
                     <div class="small text-muted text-truncate">
-                      ${tank.Responsible ? `<i class="bi bi-person me-1"></i>${tank.Responsible}` : '<span class="opacity-75">à¹„à¸¡à¹ˆà¸¡à¸µà¸œà¸¹à¹‰à¸£à¸±à¸šà¸œà¸´à¸”à¸Šà¸­à¸š</span>'}
+                      ${tank.Responsible ? `<i class="bi bi-person me-1"></i>${tank.Responsible}` : '<span class="opacity-75">ไม่มีผู้รับผิดชอบ</span>'}
                     </div>
                   </div>
                 </div>
@@ -1601,14 +1575,14 @@
                 <div class="row g-2 small mt-1">
                   <div class="col-6">
                     <div class="tank-info-chip">
-                      <span class="text-muted d-block" style="font-size:0.7rem;">à¸™à¹‰à¸³à¸«à¸™à¸±à¸ / à¸­à¸²à¸¢à¸¸</span>
-                      <strong class="text-dark">${tank['Weight (lb)'] ? tank['Weight (lb)'] + ' lb' : 'â€”'}</strong> / 
-                      <span class="text-primary fw-semibold">${tank.Exptank || 'â€”'}</span>
+                      <span class="text-muted d-block" style="font-size:0.7rem;">น้ำหนัก / อายุ</span>
+                      <strong class="text-dark">${tank['Weight (lb)'] ? tank['Weight (lb)'] + ' lb' : '—'}</strong> / 
+                      <span class="text-primary fw-semibold">${tank.Exptank || '—'}</span>
                     </div>
                   </div>
                   <div class="col-6">
                     <div class="tank-info-chip">
-                      <span class="text-muted d-block" style="font-size:0.7rem;">à¸•à¸£à¸§à¸ˆà¸¥à¹ˆà¸²à¸ªà¸¸à¸”</span>
+                      <span class="text-muted d-block" style="font-size:0.7rem;">ตรวจล่าสุด</span>
                       <strong class="text-dark">${formatDateOnly(tank.Lastcheck)}</strong>
                     </div>
                   </div>
@@ -1616,19 +1590,19 @@
 
                 <div class="d-flex align-items-center justify-content-between mt-3 pt-2.5 border-top">
                   <div class="small text-muted">
-                    ${tank.Inspector ? `<span class="badge bg-info-subtle text-info-emphasis"><i class="bi bi-person-check me-1"></i>${tank.Inspector}</span>` : '<span class="text-muted small">à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸¡à¸µà¸œà¸¹à¹‰à¸•à¸£à¸§à¸ˆ</span>'}
+                    ${tank.Inspector ? `<span class="badge bg-info-subtle text-info-emphasis"><i class="bi bi-person-check me-1"></i>${tank.Inspector}</span>` : '<span class="text-muted small">ยังไม่มีผู้ตรวจ</span>'}
                   </div>
                   <div class="d-flex align-items-center gap-1.5" onclick="event.stopPropagation();">
-                    <button type="button" onclick="openTankDetailModal('${tank.FireTank}')" class="btn btn-outline-info btn-sm px-2.5 fw-semibold action-btn-touch" title="à¸”à¸¹à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸–à¸±à¸‡">
-                      <i class="bi bi-eye-fill me-1"></i>à¸”à¸¹à¸‚à¹‰à¸­à¸¡à¸¹à¸¥
+                    <button type="button" onclick="openTankDetailModal('${tank.FireTank}')" class="btn btn-outline-info btn-sm px-2.5 fw-semibold action-btn-touch" title="ดูข้อมูลถัง">
+                      <i class="bi bi-eye-fill me-1"></i>ดูข้อมูล
                     </button>
                     ${isPastMonthMode ? `
-                      <span class="badge bg-secondary-subtle text-secondary border px-2.5 py-1.5 small" title="à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰à¸–à¸¹à¸à¸›à¸´à¸”à¸£à¸­à¸šà¹à¸¥à¸°à¸ˆà¸±à¸”à¹€à¸à¹‡à¸šà¸–à¸²à¸§à¸£à¹à¸¥à¹‰à¸§ (à¹‚à¸«à¸¡à¸”à¸”à¸¹à¸­à¸¢à¹ˆà¸²à¸‡à¹€à¸”à¸µà¸¢à¸§)">
-                        <i class="bi bi-lock-fill me-1"></i>à¸›à¸´à¸”à¸£à¸­à¸šà¹à¸¥à¹‰à¸§
+                      <span class="badge bg-secondary-subtle text-secondary border px-2.5 py-1.5 small" title="รอบเดือนนี้ถูกปิดรอบและจัดเก็บถาวรแล้ว (โหมดดูอย่างเดียว)">
+                        <i class="bi bi-lock-fill me-1"></i>ปิดรอบแล้ว
                       </span>
                     ` : `
                       <a href="check.html?tank_id=${encodeURIComponent(tank.FireTank)}" class="btn btn-success btn-sm px-3 fw-semibold action-btn-touch">
-                        <i class="bi bi-clipboard2-check-fill me-1"></i>à¸•à¸£à¸§à¸ˆ
+                        <i class="bi bi-clipboard2-check-fill me-1"></i>ตรวจ
                       </a>
                       ${adminActions}
                     `}
@@ -1643,13 +1617,13 @@
     }
 
     async function handleDeleteTank(tankId) {
-      if (confirm(`âš ï¸ à¸¢à¸·à¸™à¸¢à¸±à¸™à¸¥à¸šà¸–à¸±à¸‡à¸”à¸±à¸šà¹€à¸žà¸¥à¸´à¸‡ "${tankId}" à¸«à¸£à¸·à¸­à¹„à¸¡à¹ˆ?\nà¸à¸²à¸£à¸à¸£à¸°à¸—à¸³à¸™à¸µà¹‰à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¸¢à¹‰à¸­à¸™à¸à¸¥à¸±à¸šà¹„à¸”à¹‰`)) {
+      if (confirm(`⚠️ ยืนยันลบถังดับเพลิง "${tankId}" หรือไม่?\nการกระทำนี้ไม่สามารถย้อนกลับได้`)) {
         const ok = await deleteTank(tankId);
         if (ok) {
-          alert(`à¸¥à¸šà¸–à¸±à¸‡ ${tankId} à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢à¹à¸¥à¹‰à¸§`);
+          alert(`ลบถัง ${tankId} เรียบร้อยแล้ว`);
           renderDashboard();
         } else {
-          alert('à¹„à¸¡à¹ˆà¸žà¸šà¸–à¸±à¸‡à¸—à¸µà¹ˆà¸•à¹‰à¸­à¸‡à¸à¸²à¸£à¸¥à¸š');
+          alert('ไม่พบถังที่ต้องการลบ');
         }
       }
     }
@@ -1657,13 +1631,13 @@
     function handleExcelImport(event) {
       const file = event.target.files[0];
       if (!file) return;
-      if (confirm('âš ï¸ à¸à¸²à¸£à¸™à¸³à¹€à¸‚à¹‰à¸²à¹„à¸Ÿà¸¥à¹Œ Excel à¸ˆà¸°à¸­à¸±à¸›à¹€à¸”à¸•à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸–à¸±à¸‡à¸”à¸±à¸šà¹€à¸žà¸¥à¸´à¸‡à¹ƒà¸™à¸£à¸°à¸šà¸š à¸•à¹‰à¸­à¸‡à¸à¸²à¸£à¸”à¸³à¹€à¸™à¸´à¸™à¸à¸²à¸£à¸•à¹ˆà¸­à¸«à¸£à¸·à¸­à¹„à¸¡à¹ˆ?')) {
+      if (confirm('⚠️ การนำเข้าไฟล์ Excel จะอัปเดตข้อมูลถังดับเพลิงในระบบ ต้องการดำเนินการต่อหรือไม่?')) {
         importFromExcel(file, function(res) {
           if (res.success) {
-            alert(`âœ… à¸™à¸³à¹€à¸‚à¹‰à¸²à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸ªà¸³à¹€à¸£à¹‡à¸ˆà¸—à¸±à¹‰à¸‡à¸«à¸¡à¸” ${res.count} à¸£à¸²à¸¢à¸à¸²à¸£!`);
+            alert(`✅ นำเข้าข้อมูลสำเร็จทั้งหมด ${res.count} รายการ!`);
             renderDashboard();
           } else {
-            alert(`âŒ à¸™à¸³à¹€à¸‚à¹‰à¸²à¹„à¸¡à¹ˆà¸ªà¸³à¹€à¸£à¹‡à¸ˆ: ${res.message}`);
+            alert(`❌ นำเข้าไม่สำเร็จ: ${res.message}`);
           }
           event.target.value = '';
         });
@@ -1673,14 +1647,14 @@
     }
 
     $(document).ready(async function () {
-      // 1. à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸šà¸ªà¸´à¸—à¸˜à¸´à¹Œà¸œà¸¹à¹‰à¹ƒà¸Šà¹‰à¹à¸¥à¸°à¸­à¸±à¸›à¹€à¸”à¸• Navbar / à¸›à¸¸à¹ˆà¸¡ Action
+      // 1. ตรวจสอบสิทธิ์ผู้ใช้และอัปเดต Navbar / ปุ่ม Action
       if (typeof renderNavbarAuth === 'function') renderNavbarAuth();
       updateActionButtons();
 
-      // 2. à¹à¸ªà¸”à¸‡à¸•à¸±à¸§à¹€à¸¥à¸‚à¸ªà¸£à¸¸à¸›à¹€à¸£à¸´à¹ˆà¸¡à¸•à¹‰à¸™ 4 à¹ƒà¸šà¸ˆà¸²à¸à¸à¸²à¸£à¹Œà¸” (à¸ˆà¸²à¸à¹à¸„à¸Šà¹ƒà¸™à¹€à¸„à¸£à¸·à¹ˆà¸­à¸‡à¸—à¸±à¸™à¸—à¸µ à¸–à¹‰à¸²à¸¡à¸µ à¹„à¸¡à¹ˆà¸•à¹‰à¸­à¸‡à¸£à¸­ Network)
+      // 2. แสดงตัวเลขสรุปเริ่มต้น 4 ใบจากการ์ด (จากแคชในเครื่องทันที ถ้ามี ไม่ต้องรอ Network)
       initSummaryCardsFromCache();
 
-      // 3. à¸—à¸¢à¸­à¸¢à¹‚à¸«à¸¥à¸”à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¹à¸¥à¸°à¸à¸£à¸²à¸Ÿà¸›à¸£à¸°à¸ˆà¸³à¸›à¸µ (à¹€à¸£à¸µà¸¢à¸ API à¸ªà¸–à¸´à¸•à¸´à¸‚à¸™à¸²à¸”à¹€à¸¥à¹‡à¸ à¹„à¸¡à¹ˆà¸”à¸¶à¸‡à¸£à¸¹à¸›à¸ à¸²à¸ž/à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸–à¸±à¸‡à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”)
+      // 3. ทยอยโหลดรอบเดือนและกราฟประจำปี (เรียก API สถิติขนาดเล็ก ไม่ดึงรูปภาพ/ข้อมูลถังทั้งหมด)
       setTimeout(() => {
         populateMonthSelector();
         loadYearlyChart();
@@ -1699,14 +1673,14 @@
       $('#currentYear').text(new Date().getFullYear());
     });
 
-    // â”€â”€â”€ à¸à¸²à¸£à¸„à¸¥à¸´à¸à¸à¸²à¸£à¹Œà¸” 4 à¹ƒà¸šà¹€à¸žà¸·à¹ˆà¸­à¸à¸£à¸­à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹à¸¥à¸°à¹€à¸›à¸´à¸”à¸•à¸²à¸£à¸²à¸‡à¸—à¸±à¸™à¸—à¸µ â”€â”€â”€
+    // ─── การคลิกการ์ด 4 ใบเพื่อกรองข้อมูลและเปิดตารางทันที ───
     async function filterByCard(type) {
       if (!isTableSectionVisible) {
         await showTankTableSection(false);
       }
 
       if (activeCardFilter === type && type !== 'all') {
-        // à¹à¸•à¸°à¸‹à¹‰à¸³à¹€à¸žà¸·à¹ˆà¸­à¸¢à¸à¹€à¸¥à¸´à¸à¸à¸²à¸£à¸à¸£à¸­à¸‡
+        // แตะซ้ำเพื่อยกเลิกการกรอง
         activeCardFilter = null;
         $('.card-summary').removeClass('card-summary-active');
         $('#filterCheck').val('');
@@ -1719,11 +1693,11 @@
           $('#filterReady').val('');
           $('#cardSummaryTotal').addClass('card-summary-active');
         } else if (type === 'checked') {
-          $('#filterCheck').val('à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§');
+          $('#filterCheck').val('เช็คแล้ว');
           $('#filterReady').val('');
           $('#cardSummaryChecked').addClass('card-summary-active');
         } else if (type === 'unchecked') {
-          $('#filterCheck').val('à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹€à¸Šà¹‡à¸„');
+          $('#filterCheck').val('ยังไม่เช็ค');
           $('#filterReady').val('');
           $('#cardSummaryUnchecked').addClass('card-summary-active');
         } else if (type === 'not_ready') {
@@ -1737,7 +1711,7 @@
       renderMobileCards();
       updateFilterBadge();
 
-      // à¹à¸ªà¸”à¸‡à¹„à¸Ÿà¸šà¸­à¸à¸ªà¸–à¸²à¸™à¸°à¸¡à¸µà¸•à¸±à¸§à¸à¸£à¸­à¸‡à¸—à¸³à¸‡à¸²à¸™
+      // แสดงไฟบอกสถานะมีตัวกรองทำงาน
       const hasFilter = $('#filterType').val() || $('#filterArea').val() || $('#filterCheck').val() || $('#filterReady').val() || $('#searchInput').val();
       if (hasFilter) {
         $('#activeFilterDot').removeClass('d-none');
@@ -1745,36 +1719,36 @@
         $('#activeFilterDot').addClass('d-none');
       }
 
-      // à¹€à¸¥à¸·à¹ˆà¸­à¸™à¸«à¸™à¹‰à¸²à¸ˆà¸­à¸¥à¸‡à¹„à¸›à¸¢à¸±à¸‡à¸•à¸²à¸£à¸²à¸‡à¹à¸šà¸šà¸™à¸¸à¹ˆà¸¡à¸™à¸§à¸¥
+      // เลื่อนหน้าจอลงไปยังตารางแบบนุ่มนวล
       const targetElem = document.getElementById('tableSectionWrapper');
       if (targetElem) {
         targetElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
 
-    // â”€â”€â”€ à¸ˆà¸±à¸”à¸à¸²à¸£à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¹à¸¥à¸°à¸à¸²à¸£à¹€à¸£à¸µà¸¢à¸à¸”à¸¹à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸¢à¹‰à¸­à¸™à¸«à¸¥à¸±à¸‡ â”€â”€â”€
+    // ─── จัดการรอบเดือนและการเรียกดูข้อมูลย้อนหลัง ───
     async function populateMonthSelector() {
       const select = $('#monthSelect');
       select.empty();
       try {
         const data = await fetchMonthlyList();
         if (data && data.current) {
-          select.append(`<option value="current" selected>ðŸŸ¢ ${data.current.month_label}</option>`);
+          select.append(`<option value="current" selected>🟢 ${data.current.month_label}</option>`);
         } else {
           const now = new Date();
-          select.append(`<option value="current" selected>ðŸŸ¢ à¸£à¸­à¸šà¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™ (${now.getFullYear()})</option>`);
+          select.append(`<option value="current" selected>🟢 รอบปัจจุบัน (${now.getFullYear()})</option>`);
         }
 
         if (data && data.history && data.history.length > 0) {
-          const optGroup = $('<optgroup label="â”€â”€ à¸›à¸£à¸°à¸§à¸±à¸•à¸´à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸—à¸µà¹ˆà¸œà¹ˆà¸²à¸™à¸¡à¸² (à¸›à¸´à¸”à¸£à¸­à¸šà¹à¸¥à¹‰à¸§) â”€â”€"></optgroup>');
+          const optGroup = $('<optgroup label="── ประวัติรอบเดือนที่ผ่านมา (ปิดรอบแล้ว) ──"></optgroup>');
           data.history.forEach(h => {
-            optGroup.append(`<option value="${h.month_key}">ðŸ”’ ${h.month_label} (${h.total_tanks} à¸–à¸±à¸‡)</option>`);
+            optGroup.append(`<option value="${h.month_key}">🔒 ${h.month_label} (${h.total_tanks} ถัง)</option>`);
           });
           select.append(optGroup);
         }
       } catch (e) {
         console.error('populateMonthSelector error:', e);
-        select.html('<option value="current">ðŸŸ¢ à¸£à¸­à¸šà¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™</option>');
+        select.html('<option value="current">🟢 รอบปัจจุบัน</option>');
       }
     }
 
@@ -1805,7 +1779,7 @@
         const res = await fetchMonthSnapshot(selectedKey);
         if (res && res.success && res.snapshot) {
           const label = res.snapshot.month_label || selectedKey;
-          $('#pastMonthNoticeTitle').html(`à¸à¸³à¸¥à¸±à¸‡à¸”à¸¹à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸¢à¹‰à¸­à¸™à¸«à¸¥à¸±à¸‡à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™ <strong>${label}</strong>`);
+          $('#pastMonthNoticeTitle').html(`กำลังดูข้อมูลย้อนหลังรอบเดือน <strong>${label}</strong>`);
           $('#pastMonthNotice').removeClass('d-none');
           updateActionButtons();
           window._currentPastMonthTanks = res.tanks || [];
@@ -1815,7 +1789,7 @@
             updateSummaryCardsDisplay(res.tanks || []);
           }
         } else {
-          alert('âš ï¸ à¹„à¸¡à¹ˆà¸žà¸šà¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸‚à¸­à¸‡à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸—à¸µà¹ˆà¹€à¸¥à¸·à¸­à¸');
+          alert('⚠️ ไม่พบข้อมูลของรอบเดือนที่เลือก');
           returnToCurrentMonth();
           return;
         }
@@ -1835,7 +1809,7 @@
       onMonthChange();
     }
 
-    // â”€â”€â”€ à¹à¸œà¸™à¸ à¸¹à¸¡à¸´à¸§à¸´à¹€à¸„à¸£à¸²à¸°à¸«à¹Œà¸›à¸£à¸°à¸ˆà¸³à¸›à¸µà¹à¸¥à¸°à¸£à¸²à¸¢à¹€à¸”à¸·à¸­à¸™ (Chart.js) â”€â”€â”€
+    // ─── แผนภูมิวิเคราะห์ประจำปีและรายเดือน (Chart.js) ───
     let selectedPieMonthKey = 'current';
 
     async function loadYearlyChart(year) {
@@ -1852,7 +1826,7 @@
           renderInspectionChart();
           $('#d1LiveBadge').html('<i class="bi bi-circle-fill text-success me-1 pulse-animation" style="font-size:0.5rem;"></i>Cloudflare D1 Live');
 
-          // à¸–à¹‰à¸²à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¹‚à¸«à¸¥à¸”à¸•à¸²à¸£à¸²à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥ à¸­à¸±à¸›à¹€à¸”à¸•à¸•à¸±à¸§à¹€à¸¥à¸‚à¸à¸²à¸£à¹Œà¸”à¸ªà¸£à¸¸à¸› 4 à¹ƒà¸šà¸ˆà¸²à¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹€à¸”à¸·à¸­à¸™à¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™à¸—à¸µà¹ˆà¹„à¸”à¹‰à¸ˆà¸²à¸ API à¸ªà¸–à¸´à¸•à¸´
+          // ถ้ายังไม่ได้โหลดตารางข้อมูล อัปเดตตัวเลขการ์ดสรุป 4 ใบจากข้อมูลเดือนปัจจุบันที่ได้จาก API สถิติ
           if (!isTanksDataLoaded && !isPastMonthMode) {
             const curMonthData = data.months.find(m => m.month_key === curMonthKey);
             if (curMonthData) {
@@ -1876,14 +1850,14 @@
         $('#btnChartBar').addClass('active');
         $('#btnChartPercent').removeClass('active');
         $('#chartHeaderIcon').removeClass('bi-pie-chart-fill').addClass('bi-bar-chart-line-fill');
-        $('#chartMainTitle').html(`à¸ªà¸–à¸´à¸•à¸´à¸à¸²à¸£à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸šà¸›à¸£à¸°à¸ˆà¸³à¸›à¸µ <span id="chartYearLabel">${yearlyDataCache?.thai_year || ''}</span>`);
-        $('#chartModeBadge').text('à¸à¸£à¸²à¸Ÿà¹à¸—à¹ˆà¸‡ (3 à¸ªà¸–à¸²à¸™à¸°)');
+        $('#chartMainTitle').html(`สถิติการตรวจสอบประจำปี <span id="chartYearLabel">${yearlyDataCache?.thai_year || ''}</span>`);
+        $('#chartModeBadge').text('กราฟแท่ง (3 สถานะ)');
         $('#pieMonthSelectContainer').addClass('d-none').removeClass('d-flex');
       } else {
         $('#btnChartPercent').addClass('active');
         $('#btnChartBar').removeClass('active');
         $('#chartHeaderIcon').removeClass('bi-bar-chart-line-fill').addClass('bi-pie-chart-fill');
-        $('#chartModeBadge').text('à¹à¸œà¸™à¸ à¸¹à¸¡à¸´à¸§à¸‡à¸à¸¥à¸¡ (%)');
+        $('#chartModeBadge').text('แผนภูมิวงกลม (%)');
         $('#pieMonthSelectContainer').removeClass('d-none').addClass('d-flex');
         populateChartMonthSelector();
         updatePieTitle();
@@ -1897,15 +1871,15 @@
       sel.empty();
 
       const now = new Date();
-      const thaiMonths = ["à¸¡.à¸„.", "à¸.à¸ž.", "à¸¡à¸µ.à¸„.", "à¹€à¸¡.à¸¢.", "à¸ž.à¸„.", "à¸¡à¸´.à¸¢.", "à¸.à¸„.", "à¸ª.à¸„.", "à¸.à¸¢.", "à¸•.à¸„.", "à¸ž.à¸¢.", "à¸˜.à¸„."];
+      const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
       const curMonthName = thaiMonths[now.getMonth()];
       const curThaiYear = now.getFullYear() + 543;
-      sel.append(`<option value="current">ðŸŸ¢ à¸£à¸­à¸šà¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™ (${curMonthName} ${curThaiYear})</option>`);
+      sel.append(`<option value="current">🟢 รอบปัจจุบัน (${curMonthName} ${curThaiYear})</option>`);
 
       if (yearlyDataCache && yearlyDataCache.months) {
         yearlyDataCache.months.forEach(m => {
           if (m.has_data && m.month_key !== `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`) {
-            sel.append(`<option value="${m.month_key}">ðŸ“ ${m.full_label}</option>`);
+            sel.append(`<option value="${m.month_key}">📁 ${m.full_label}</option>`);
           }
         });
       }
@@ -1920,16 +1894,16 @@
     }
 
     function updatePieTitle() {
-      let label = 'à¸£à¸­à¸šà¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™';
+      let label = 'รอบปัจจุบัน';
       if (selectedPieMonthKey === 'current') {
         const now = new Date();
-        const fullThaiMonths = ["à¸¡à¸à¸£à¸²à¸„à¸¡", "à¸à¸¸à¸¡à¸ à¸²à¸žà¸±à¸™à¸˜à¹Œ", "à¸¡à¸µà¸™à¸²à¸„à¸¡", "à¹€à¸¡à¸©à¸²à¸¢à¸™", "à¸žà¸¤à¸©à¸ à¸²à¸„à¸¡", "à¸¡à¸´à¸–à¸¸à¸™à¸²à¸¢à¸™", "à¸à¸£à¸à¸Žà¸²à¸„à¸¡", "à¸ªà¸´à¸‡à¸«à¸²à¸„à¸¡", "à¸à¸±à¸™à¸¢à¸²à¸¢à¸™", "à¸•à¸¸à¸¥à¸²à¸„à¸¡", "à¸žà¸¤à¸¨à¸ˆà¸´à¸à¸²à¸¢à¸™", "à¸˜à¸±à¸™à¸§à¸²à¸„à¸¡"];
-        label = `${fullThaiMonths[now.getMonth()]} ${now.getFullYear() + 543} (à¸£à¸­à¸šà¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™)`;
+        const fullThaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+        label = `${fullThaiMonths[now.getMonth()]} ${now.getFullYear() + 543} (รอบปัจจุบัน)`;
       } else if (yearlyDataCache && yearlyDataCache.months) {
         const found = yearlyDataCache.months.find(m => m.month_key === selectedPieMonthKey);
         if (found) label = found.full_label;
       }
-      $('#chartMainTitle').html(`à¸ªà¸±à¸”à¸ªà¹ˆà¸§à¸™à¹€à¸›à¸­à¸£à¹Œà¹€à¸‹à¹‡à¸™à¸•à¹Œà¸à¸²à¸£à¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„: <span class="text-danger">${label}</span>`);
+      $('#chartMainTitle').html(`สัดส่วนเปอร์เซ็นต์การตรวจเช็ค: <span class="text-danger">${label}</span>`);
     }
 
     function renderInspectionChart() {
@@ -1944,7 +1918,7 @@
       const legendArea = $('#chartLegendArea');
 
       if (currentChartMode === 'bar') {
-        // â”€â”€â”€ 1. à¸à¸£à¸²à¸Ÿà¹à¸—à¹ˆà¸‡à¸£à¸²à¸¢à¸›à¸µ (3 à¸«à¸¥à¸­à¸”: à¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™, à¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™, à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸•à¸£à¸§à¸ˆ) â”€â”€â”€
+        // ─── 1. กราฟแท่งรายปี (3 หลอด: พร้อมใช้งาน, ไม่พร้อมใช้งาน, ยังไม่ได้ตรวจ) ───
         const labels = yearlyDataCache.months.map(m => m.label);
         const readyData = yearlyDataCache.months.map(m => m.ready);
         const notReadyData = yearlyDataCache.months.map(m => m.not_ready);
@@ -1956,21 +1930,21 @@
             labels: labels,
             datasets: [
               {
-                label: 'à¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™ (à¸–à¸±à¸‡)',
+                label: 'พร้อมใช้งาน (ถัง)',
                 data: readyData,
                 backgroundColor: '#3F7A4C',
                 borderRadius: 4,
                 maxBarThickness: 18
               },
               {
-                label: 'à¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™ (à¸–à¸±à¸‡)',
+                label: 'ไม่พร้อมใช้งาน (ถัง)',
                 data: notReadyData,
                 backgroundColor: '#A04830',
                 borderRadius: 4,
                 maxBarThickness: 18
               },
               {
-                label: 'à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸•à¸£à¸§à¸ˆ (à¸–à¸±à¸‡)',
+                label: 'ยังไม่ได้ตรวจ (ถัง)',
                 data: notCheckedData,
                 backgroundColor: '#D97706',
                 borderRadius: 4,
@@ -1992,7 +1966,7 @@
               tooltip: {
                 callbacks: {
                   label: function(context) {
-                    return ` ${context.dataset.label}: ${context.raw} à¸–à¸±à¸‡`;
+                    return ` ${context.dataset.label}: ${context.raw} ถัง`;
                   }
                 }
               }
@@ -2008,7 +1982,7 @@
           }
         });
 
-        // à¸„à¸³à¸­à¸˜à¸´à¸šà¸²à¸¢à¹à¸•à¹ˆà¸¥à¸°à¸ªà¸µà¸”à¹‰à¸²à¸™à¸¥à¹ˆà¸²à¸‡ (Requirement 1: à¸›à¸£à¸±à¸šà¹à¸•à¹ˆà¸‡à¹ƒà¸«à¹‰à¸”à¸¹à¸”à¸µ à¸žà¸£à¸µà¹€à¸¡à¸µà¸¢à¸¡ à¹à¸¥à¸°à¸­à¹ˆà¸²à¸™à¸‡à¹ˆà¸²à¸¢)
+        // คำอธิบายแต่ละสีด้านล่าง (Requirement 1: ปรับแต่งให้ดูดี พรีเมียม และอ่านง่าย)
         legendArea.html(`
           <div class="row g-2 g-md-3 w-100 justify-content-center text-start">
             <div class="col-12 col-md-4">
@@ -2020,11 +1994,11 @@
                   </div>
                   <div class="flex-grow-1 min-w-0">
                     <div class="d-flex align-items-center justify-content-between mb-1">
-                      <strong class="text-dark fs-6">à¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™</strong>
-                      <span class="badge rounded-pill small px-2 py-0.5" style="background: rgba(63, 122, 76, 0.15); color: #2d5a37; font-size: 0.72rem;">à¸›à¸à¸•à¸´</span>
+                      <strong class="text-dark fs-6">พร้อมใช้งาน</strong>
+                      <span class="badge rounded-pill small px-2 py-0.5" style="background: rgba(63, 122, 76, 0.15); color: #2d5a37; font-size: 0.72rem;">ปกติ</span>
                     </div>
                     <div class="text-secondary small lh-sm" style="font-size: 0.78rem;">
-                      à¸œà¹ˆà¸²à¸™à¸à¸²à¸£à¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„à¹ƒà¸™à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰ à¸ªà¸ à¸²à¸žà¸ªà¸¡à¸šà¸¹à¸£à¸“à¹Œà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰
+                      ผ่านการตรวจเช็คในรอบเดือนนี้ สภาพสมบูรณ์พร้อมใช้
                     </div>
                   </div>
                 </div>
@@ -2039,11 +2013,11 @@
                   </div>
                   <div class="flex-grow-1 min-w-0">
                     <div class="d-flex align-items-center justify-content-between mb-1">
-                      <strong class="text-dark fs-6">à¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™</strong>
-                      <span class="badge rounded-pill small px-2 py-0.5" style="background: rgba(160, 72, 48, 0.15); color: #80301c; font-size: 0.72rem;">à¸Šà¸³à¸£à¸¸à¸”/à¸ªà¹ˆà¸‡à¸‹à¹ˆà¸­à¸¡</span>
+                      <strong class="text-dark fs-6">ไม่พร้อมใช้งาน</strong>
+                      <span class="badge rounded-pill small px-2 py-0.5" style="background: rgba(160, 72, 48, 0.15); color: #80301c; font-size: 0.72rem;">ชำรุด/ส่งซ่อม</span>
                     </div>
                     <div class="text-secondary small lh-sm" style="font-size: 0.78rem;">
-                      à¸žà¸šà¸‚à¹‰à¸­à¸šà¸à¸žà¸£à¹ˆà¸­à¸‡ à¸Šà¸³à¸£à¸¸à¸” à¸«à¸£à¸·à¸­à¹€à¸à¸ˆà¹Œà¸•à¸ à¸•à¹‰à¸­à¸‡à¸ªà¹ˆà¸‡à¸‹à¹ˆà¸­à¸¡à¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¸—à¸±à¸™à¸—à¸µ
+                      พบข้อบกพร่อง ชำรุด หรือเกจ์ตก ต้องส่งซ่อมเปลี่ยนทันที
                     </div>
                   </div>
                 </div>
@@ -2058,11 +2032,11 @@
                   </div>
                   <div class="flex-grow-1 min-w-0">
                     <div class="d-flex align-items-center justify-content-between mb-1">
-                      <strong class="text-dark fs-6">à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸•à¸£à¸§à¸ˆ</strong>
-                      <span class="badge rounded-pill small px-2 py-0.5" style="background: rgba(217, 119, 6, 0.15); color: #92400e; font-size: 0.72rem;">à¸£à¸­à¸•à¸£à¸§à¸ˆà¸£à¸­à¸šà¹ƒà¸«à¸¡à¹ˆ</span>
+                      <strong class="text-dark fs-6">ยังไม่ได้ตรวจ</strong>
+                      <span class="badge rounded-pill small px-2 py-0.5" style="background: rgba(217, 119, 6, 0.15); color: #92400e; font-size: 0.72rem;">รอตรวจรอบใหม่</span>
                     </div>
                     <div class="text-secondary small lh-sm" style="font-size: 0.78rem;">
-                      à¸£à¸­à¹€à¸ˆà¹‰à¸²à¸«à¸™à¹‰à¸²à¸—à¸µà¹ˆà¹€à¸‚à¹‰à¸²à¸•à¸£à¸§à¸ˆà¸›à¸£à¸°à¸ˆà¸³à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¹ƒà¸«à¸¡à¹ˆà¸™à¸µà¹‰
+                      รอเจ้าหน้าที่เข้าตรวจประจำรอบเดือนใหม่นี้
                     </div>
                   </div>
                 </div>
@@ -2072,7 +2046,7 @@
         `);
 
       } else {
-        // â”€â”€â”€ 2. à¹à¸œà¸™à¸ à¸¹à¸¡à¸´à¸§à¸‡à¸à¸¥à¸¡à¸£à¸²à¸¢à¹€à¸”à¸·à¸­à¸™ (Requirement 2: 1.à¸–à¸±à¸‡à¸—à¸µà¹ˆà¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§ 2.à¸–à¸±à¸‡à¸—à¸µà¹ˆà¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„ 3.à¸–à¸±à¸‡à¸—à¸µà¹ˆà¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™) â”€â”€â”€
+        // ─── 2. แผนภูมิวงกลมรายเดือน (Requirement 2: 1.ถังที่ตรวจเช็คแล้ว 2.ถังที่ยังไม่ตรวจเช็ค 3.ถังที่ไม่พร้อมใช้งาน) ───
         let totalVal = 0;
         let checkedVal = 0;
         let notCheckedVal = 0;
@@ -2081,9 +2055,9 @@
         if (selectedPieMonthKey === 'current') {
           const allTanks = getAllTanks();
           totalVal = allTanks.length;
-          checkedVal = allTanks.filter(t => t.Tankcheck === 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§' && isCheckedInCurrentMonth(t.Lastcheck) && t.ReadyorNot === 'Ready' && t.TankStatus).length;
-          notReadyVal = allTanks.filter(t => t.Tankcheck === 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§' && isCheckedInCurrentMonth(t.Lastcheck) && (t.ReadyorNot === 'Not Ready' || !t.TankStatus)).length;
-          notCheckedVal = allTanks.filter(t => t.Tankcheck !== 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§' || !isCheckedInCurrentMonth(t.Lastcheck)).length;
+          checkedVal = allTanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(t.Lastcheck) && t.ReadyorNot === 'Ready' && t.TankStatus).length;
+          notReadyVal = allTanks.filter(t => t.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(t.Lastcheck) && (t.ReadyorNot === 'Not Ready' || !t.TankStatus)).length;
+          notCheckedVal = allTanks.filter(t => t.Tankcheck !== 'เช็คแล้ว' || !isCheckedInCurrentMonth(t.Lastcheck)).length;
         } else {
           const mData = yearlyDataCache.months.find(m => m.month_key === selectedPieMonthKey);
           if (mData) {
@@ -2102,9 +2076,9 @@
           type: 'doughnut',
           data: {
             labels: [
-              '1. à¸–à¸±à¸‡à¸—à¸µà¹ˆà¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§',
-              '2. à¸–à¸±à¸‡à¸—à¸µà¹ˆà¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„',
-              '3. à¸–à¸±à¸‡à¸—à¸µà¹ˆà¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™'
+              '1. ถังที่ตรวจเช็คแล้ว',
+              '2. ถังที่ยังไม่ตรวจเช็ค',
+              '3. ถังที่ไม่พร้อมใช้งาน'
             ],
             datasets: [
               {
@@ -2129,7 +2103,7 @@
                   label: function(context) {
                     const val = context.raw;
                     const pct = totalVal > 0 ? ((val / totalVal) * 100).toFixed(1) : 0;
-                    return ` ${context.label}: ${val} à¸–à¸±à¸‡ (${pct}%)`;
+                    return ` ${context.label}: ${val} ถัง (${pct}%)`;
                   }
                 }
               }
@@ -2137,7 +2111,7 @@
           }
         });
 
-        // à¸„à¸³à¸­à¸˜à¸´à¸šà¸²à¸¢ 3 à¸à¸²à¸£à¹Œà¸”à¹€à¸›à¸­à¸£à¹Œà¹€à¸‹à¹‡à¸™à¸•à¹Œà¸”à¹‰à¸²à¸™à¸¥à¹ˆà¸²à¸‡à¹à¸œà¸™à¸ à¸¹à¸¡à¸´à¸§à¸‡à¸à¸¥à¸¡ (Requirement 1: à¸ªà¸§à¸¢à¸‡à¸²à¸¡ à¸„à¸¡à¸Šà¸±à¸” à¸¡à¸µà¸£à¸°à¸”à¸±à¸š)
+        // คำอธิบาย 3 การ์ดเปอร์เซ็นต์ด้านล่างแผนภูมิวงกลม (Requirement 1: สวยงาม คมชัด มีระดับ)
         legendArea.html(`
           <div class="row g-2 g-md-3 w-100 justify-content-center">
             <div class="col-12 col-md-4">
@@ -2145,14 +2119,14 @@
                 <div class="card-body p-3">
                   <div class="d-flex align-items-center justify-content-center gap-2 mb-2" style="color: #3F7A4C;">
                     <div style="width: 14px; height: 14px; background-color: #3F7A4C; border-radius: 4px;" class="shadow-xs"></div>
-                    <strong class="small">1. à¸–à¸±à¸‡à¸—à¸µà¹ˆà¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§</strong>
+                    <strong class="small">1. ถังที่ตรวจเช็คแล้ว</strong>
                   </div>
                   <div class="d-flex align-items-baseline justify-content-center gap-1.5 my-1">
                     <span class="fw-bold" style="color: #3F7A4C; font-size: 1.85rem; line-height: 1;">${checkedVal}</span>
-                    <span class="text-muted small">à¸–à¸±à¸‡</span>
+                    <span class="text-muted small">ถัง</span>
                     <span class="badge rounded-pill text-white ms-1 shadow-xs" style="background-color: #3F7A4C; font-size: 0.75rem;">${pctChecked}%</span>
                   </div>
-                  <div class="text-secondary small mt-1 lh-sm" style="font-size:0.75rem;">à¸ªà¸ à¸²à¸žà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™ à¸œà¹ˆà¸²à¸™à¸à¸²à¸£à¸•à¸£à¸§à¸ˆà¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰</div>
+                  <div class="text-secondary small mt-1 lh-sm" style="font-size:0.75rem;">สภาพพร้อมใช้งาน ผ่านการตรวจรอบเดือนนี้</div>
                 </div>
               </div>
             </div>
@@ -2161,14 +2135,14 @@
                 <div class="card-body p-3">
                   <div class="d-flex align-items-center justify-content-center gap-2 mb-2" style="color: #D97706;">
                     <div style="width: 14px; height: 14px; background-color: #D97706; border-radius: 4px;" class="shadow-xs"></div>
-                    <strong class="small">2. à¸–à¸±à¸‡à¸—à¸µà¹ˆà¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸•à¸£à¸§à¸ˆà¹€à¸Šà¹‡à¸„</strong>
+                    <strong class="small">2. ถังที่ยังไม่ตรวจเช็ค</strong>
                   </div>
                   <div class="d-flex align-items-baseline justify-content-center gap-1.5 my-1">
                     <span class="fw-bold" style="color: #D97706; font-size: 1.85rem; line-height: 1;">${notCheckedVal}</span>
-                    <span class="text-muted small">à¸–à¸±à¸‡</span>
+                    <span class="text-muted small">ถัง</span>
                     <span class="badge rounded-pill text-white ms-1 shadow-xs" style="background-color: #D97706; font-size: 0.75rem;">${pctNotChecked}%</span>
                   </div>
-                  <div class="text-secondary small mt-1 lh-sm" style="font-size:0.75rem;">à¸£à¸­à¹€à¸ˆà¹‰à¸²à¸«à¸™à¹‰à¸²à¸—à¸µà¹ˆà¹€à¸‚à¹‰à¸²à¸•à¸£à¸§à¸ˆà¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¹ƒà¸«à¸¡à¹ˆà¸™à¸µà¹‰</div>
+                  <div class="text-secondary small mt-1 lh-sm" style="font-size:0.75rem;">รอเจ้าหน้าที่เข้าตรวจรอบเดือนใหม่นี้</div>
                 </div>
               </div>
             </div>
@@ -2177,14 +2151,14 @@
                 <div class="card-body p-3">
                   <div class="d-flex align-items-center justify-content-center gap-2 mb-2" style="color: #A04830;">
                     <div style="width: 14px; height: 14px; background-color: #A04830; border-radius: 4px;" class="shadow-xs"></div>
-                    <strong class="small">3. à¸–à¸±à¸‡à¸—à¸µà¹ˆà¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™</strong>
+                    <strong class="small">3. ถังที่ไม่พร้อมใช้งาน</strong>
                   </div>
                   <div class="d-flex align-items-baseline justify-content-center gap-1.5 my-1">
                     <span class="fw-bold" style="color: #A04830; font-size: 1.85rem; line-height: 1;">${notReadyVal}</span>
-                    <span class="text-muted small">à¸–à¸±à¸‡</span>
+                    <span class="text-muted small">ถัง</span>
                     <span class="badge rounded-pill text-white ms-1 shadow-xs" style="background-color: #A04830; font-size: 0.75rem;">${pctNotReady}%</span>
                   </div>
-                  <div class="text-secondary small mt-1 lh-sm" style="font-size:0.75rem;">à¸žà¸šà¸ˆà¸¸à¸”à¸šà¸à¸žà¸£à¹ˆà¸­à¸‡ / à¹€à¸à¸ˆà¹Œà¸•à¸ / à¸£à¸­à¸‹à¹ˆà¸­à¸¡à¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™</div>
+                  <div class="text-secondary small mt-1 lh-sm" style="font-size:0.75rem;">พบจุดบกพร่อง / เกจ์ตก / รอซ่อมเปลี่ยน</div>
                 </div>
               </div>
             </div>
@@ -2193,47 +2167,47 @@
       }
     }
 
-    // â”€â”€â”€ Modal: à¹à¸ªà¸”à¸‡à¸£à¸²à¸¢à¸¥à¸°à¹€à¸­à¸µà¸¢à¸”à¸–à¸±à¸‡ â”€â”€â”€
+    // ─── Modal: แสดงรายละเอียดถัง ───
     function openTankDetailModal(fireTankId) {
       const tank = getTankById(fireTankId);
       if (!tank) return;
 
       const isChecked = isPastMonthMode 
-        ? (tank.Tankcheck === 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§') 
-        : (tank.Tankcheck === 'à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§' && isCheckedInCurrentMonth(tank.Lastcheck));
+        ? (tank.Tankcheck === 'เช็คแล้ว') 
+        : (tank.Tankcheck === 'เช็คแล้ว' && isCheckedInCurrentMonth(tank.Lastcheck));
       const isReady   = isChecked && tank.ReadyorNot === 'Ready' && tank.TankStatus;
 
-      // à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸«à¸¥à¸±à¸
-      $('#mdFireTank').text(tank.FireTank || 'â€”');
-      $('#mdTypes').text(tank.Types || 'â€”');
-      $('#mdWeight').text(tank['Weight (lb)'] || 'â€”');
-      $('#mdArea').text(tank.Area || 'â€”');
-      $('#mdResponsible').text(tank.Responsible || 'â€”');
+      // ข้อมูลหลัก
+      $('#mdFireTank').text(tank.FireTank || '—');
+      $('#mdTypes').text(tank.Types || '—');
+      $('#mdWeight').text(tank['Weight (lb)'] || '—');
+      $('#mdArea').text(tank.Area || '—');
+      $('#mdResponsible').text(tank.Responsible || '—');
       $('#mdInuse').text(formatDateOnly(tank.Inuse));
-      $('#mdExptank').text(tank.Exptank || 'â€”');
-      $('#mdInspector').text(tank.Inspector || 'â€”');
+      $('#mdExptank').text(tank.Exptank || '—');
+      $('#mdInspector').text(tank.Inspector || '—');
 
-      // à¸§à¸±à¸™à¸•à¸£à¸§à¸ˆà¸¥à¹ˆà¸²à¸ªà¸¸à¸” + badge à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™
+      // วันตรวจล่าสุด + badge รอบเดือน
       const formattedLastcheck = formatDateOnly(tank.Lastcheck);
       if (isChecked) {
-        $('#mdLastcheck').html(`${formattedLastcheck} <span class="badge bg-success text-white ms-1" style="font-size:0.7rem;"><i class="bi bi-check-circle me-1"></i>à¸•à¸£à¸§à¸ˆà¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰à¹à¸¥à¹‰à¸§</span>`);
-        $('#mdTankcheck').html('<span class="badge rounded-pill bg-success"><i class="bi bi-check-lg me-1"></i>à¹€à¸Šà¹‡à¸„à¹à¸¥à¹‰à¸§</span>');
+        $('#mdLastcheck').html(`${formattedLastcheck} <span class="badge bg-success text-white ms-1" style="font-size:0.7rem;"><i class="bi bi-check-circle me-1"></i>ตรวจรอบเดือนนี้แล้ว</span>`);
+        $('#mdTankcheck').html('<span class="badge rounded-pill bg-success"><i class="bi bi-check-lg me-1"></i>เช็คแล้ว</span>');
       } else {
-        const badgeLabel = tank.Lastcheck ? 'à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸à¹ˆà¸­à¸™' : 'à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹€à¸„à¸¢à¸•à¸£à¸§à¸ˆ';
+        const badgeLabel = tank.Lastcheck ? 'รอบเดือนก่อน' : 'ยังไม่เคยตรวจ';
         $('#mdLastcheck').html(`${formattedLastcheck} <span class="badge bg-warning text-dark ms-1" style="font-size:0.7rem;"><i class="bi bi-clock-history me-1"></i>${badgeLabel}</span>`);
-        $('#mdTankcheck').html('<span class="badge rounded-pill bg-warning text-white"><i class="bi bi-clock me-1"></i>à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸•à¸£à¸§à¸ˆà¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰</span>');
+        $('#mdTankcheck').html('<span class="badge rounded-pill bg-warning text-white"><i class="bi bi-clock me-1"></i>ยังไม่ได้ตรวจรอบเดือนนี้</span>');
       }
 
-      // Badge à¸žà¸£à¹‰à¸­à¸¡/à¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡
+      // Badge พร้อม/ไม่พร้อม
       if (!isChecked) {
-        $('#mdReadyorNot').html('<span class="badge rounded-pill bg-warning-subtle text-dark border border-warning-subtle"><i class="bi bi-clock me-1"></i>à¸£à¸­à¸•à¸£à¸§à¸ˆà¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¸™à¸µà¹‰</span>');
+        $('#mdReadyorNot').html('<span class="badge rounded-pill bg-warning-subtle text-dark border border-warning-subtle"><i class="bi bi-clock me-1"></i>รอตรวจรอบเดือนนี้</span>');
       } else if (isReady) {
-        $('#mdReadyorNot').html('<span class="badge rounded-pill bg-success"><i class="bi bi-check-circle me-1"></i>à¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™</span>');
+        $('#mdReadyorNot').html('<span class="badge rounded-pill bg-success"><i class="bi bi-check-circle me-1"></i>พร้อมใช้งาน</span>');
       } else {
-        $('#mdReadyorNot').html('<span class="badge rounded-pill bg-danger"><i class="bi bi-x-circle me-1"></i>à¹„à¸¡à¹ˆà¸žà¸£à¹‰à¸­à¸¡à¹ƒà¸Šà¹‰à¸‡à¸²à¸™</span>');
+        $('#mdReadyorNot').html('<span class="badge rounded-pill bg-danger"><i class="bi bi-x-circle me-1"></i>ไม่พร้อมใช้งาน</span>');
       }
 
-      // à¸«à¸¡à¸²à¸¢à¹€à¸«à¸•à¸¸ (à¹à¸ªà¸”à¸‡à¹€à¸‰à¸žà¸²à¸° Not Ready à¸«à¸£à¸·à¸­à¸¡à¸µà¸‚à¹‰à¸­à¸„à¸§à¸²à¸¡)
+      // หมายเหตุ (แสดงเฉพาะ Not Ready หรือมีข้อความ)
       if (tank.Remark) {
         $('#mdRemark').text(tank.Remark);
         $('#mdRemarkRow').show();
@@ -2241,8 +2215,8 @@
         $('#mdRemarkRow').hide();
       }
 
-      // à¸£à¸¹à¸›à¸ à¸²à¸ž
-      // à¸£à¸¹à¸›à¸ à¸²à¸ž (à¹à¸ªà¸”à¸‡à¹€à¸¡à¸·à¹ˆà¸­à¸à¸”à¸”à¸¹à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸–à¸±à¸‡)
+      // รูปภาพ
+      // รูปภาพ (แสดงเมื่อกดดูข้อมูลถัง)
       const noImg = 'https://placehold.co/140x140?text=No+Pic';
       const detailPicTank = tank.PicTank || (window._liveTanksReferenceMap && window._liveTanksReferenceMap[tank.FireTank]?.PicTank);
       const detailPicArea = tank.PicArea || (window._liveTanksReferenceMap && window._liveTanksReferenceMap[tank.FireTank]?.PicArea);
@@ -2264,7 +2238,7 @@
         $('#mdPicAreaLink').attr('href', '#').addClass('pe-none');
       }
 
-      // à¸›à¸¸à¹ˆà¸¡à¸•à¸£à¸§à¸ˆà¹à¸¥à¸°à¹à¸à¹‰à¹„à¸‚
+      // ปุ่มตรวจและแก้ไข
       if (isPastMonthMode) {
         $('#mdBtnCheck').addClass('d-none');
         $('#mdBtnEdit').addClass('d-none');
@@ -2282,11 +2256,11 @@
       modal.show();
     }
 
-    // â”€â”€â”€ à¸Ÿà¸±à¸‡à¸à¹Œà¸Šà¸±à¸™à¸ªà¸³à¸«à¸£à¸±à¸š Super Admin (P3): à¹€à¸žà¸´à¹ˆà¸¡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸¢à¹‰à¸­à¸™à¸«à¸¥à¸±à¸‡à¹€à¸‚à¹‰à¸² Database â”€â”€â”€
+    // ─── ฟังก์ชันสำหรับ Super Admin (P3): เพิ่มข้อมูลย้อนหลังเข้า Database ───
     function openQuickSeedModal() {
       const user = getCurrentUser();
       if (!user || user.PermitDo < 3) {
-        alert('âš ï¸ à¹€à¸‰à¸žà¸²à¸°à¸œà¸¹à¹‰à¸”à¸¹à¹à¸¥à¸£à¸°à¸šà¸šà¸£à¸°à¸”à¸±à¸š Super Admin (P3) à¹€à¸—à¹ˆà¸²à¸™à¸±à¹‰à¸™à¸—à¸µà¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¹€à¸žà¸´à¹ˆà¸¡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸¢à¹‰à¸­à¸™à¸«à¸¥à¸±à¸‡à¹„à¸”à¹‰');
+        alert('⚠️ เฉพาะผู้ดูแลระบบระดับ Super Admin (P3) เท่านั้นที่สามารถเพิ่มข้อมูลย้อนหลังได้');
         return;
       }
       const total = getAllTanks().length || 116;
@@ -2311,7 +2285,7 @@
       e.preventDefault();
       const user = getCurrentUser();
       if (!user || user.PermitDo < 3) {
-        alert('âš ï¸ à¹€à¸‰à¸žà¸²à¸°à¸œà¸¹à¹‰à¸”à¸¹à¹à¸¥à¸£à¸°à¸šà¸šà¸£à¸°à¸”à¸±à¸š Super Admin (P3) à¹€à¸—à¹ˆà¸²à¸™à¸±à¹‰à¸™');
+        alert('⚠️ เฉพาะผู้ดูแลระบบระดับ Super Admin (P3) เท่านั้น');
         return;
       }
 
@@ -2324,7 +2298,7 @@
       const notReadyCount = parseInt($('#seedNotReadyCount').val() || '0', 10);
 
       const btn = $('#btnSubmitQuickSeed');
-      btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>à¸à¸³à¸¥à¸±à¸‡à¸šà¸±à¸™à¸—à¸¶à¸...');
+      btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>กำลังบันทึก...');
 
       try {
         const payload = {
@@ -2349,11 +2323,11 @@
           data = await res.json();
         } else {
           const text = await res.text();
-          throw new Error(`à¹€à¸‹à¸´à¸£à¹Œà¸Ÿà¹€à¸§à¸­à¸£à¹Œà¸ªà¹ˆà¸‡à¸à¸¥à¸±à¸šà¸£à¸¹à¸›à¹à¸šà¸šà¹„à¸¡à¹ˆà¸–à¸¹à¸à¸•à¹‰à¸­à¸‡ (${res.status}): ${text.slice(0, 100)}`);
+          throw new Error(`เซิร์ฟเวอร์ส่งกลับรูปแบบไม่ถูกต้อง (${res.status}): ${text.slice(0, 100)}`);
         }
 
         if (res.ok && data.success) {
-          alert(`âœ… ${data.message}`);
+          alert(`✅ ${data.message}`);
           const modalInstance = bootstrap.Modal.getInstance(document.getElementById('quickSeedModal'));
           if (modalInstance) modalInstance.hide();
           await populateMonthSelector();
@@ -2362,21 +2336,21 @@
           $('#monthSelect').val(targetKey);
           onMonthChange();
         } else {
-          alert(`âŒ à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¸šà¸±à¸™à¸—à¸¶à¸à¹„à¸”à¹‰: ${data.message || data.error || 'Server error'}`);
+          alert(`❌ ไม่สามารถบันทึกได้: ${data.message || data.error || 'Server error'}`);
         }
       } catch (err) {
-        alert(`âŒ à¹€à¸à¸´à¸”à¸‚à¹‰à¸­à¸œà¸´à¸”à¸žà¸¥à¸²à¸”: ${err.message}`);
+        alert(`❌ เกิดข้อผิดพลาด: ${err.message}`);
       } finally {
-        btn.prop('disabled', false).html('<i class="bi bi-save2 me-1"></i>à¸šà¸±à¸™à¸—à¸¶à¸à¸¥à¸‡ Database');
+        btn.prop('disabled', false).html('<i class="bi bi-save2 me-1"></i>บันทึกลง Database');
       }
     }
 
-    // â”€â”€â”€ à¸Ÿà¸±à¸‡à¸à¹Œà¸Šà¸±à¸™à¸ªà¸³à¸«à¸£à¸±à¸š Super Admin (P3): à¸ˆà¸±à¸”à¸à¸²à¸£ Cloudflare R2 & Retention â”€â”€â”€
-    // â”€â”€â”€ Modal: à¸”à¸²à¸§à¸™à¹Œà¹‚à¸«à¸¥à¸”à¸£à¸¹à¸›à¸ à¸²à¸ž ZIP â”€â”€â”€
+    // ─── ฟังก์ชันสำหรับ Super Admin (P3): จัดการ Cloudflare R2 & Retention ───
+    // ─── Modal: ดาวน์โหลดรูปภาพ ZIP ───
     async function openDownloadImagesModal() {
       const user = getCurrentUser();
       if (!user || user.PermitDo < 2) {
-        alert('âš ï¸ à¹€à¸‰à¸žà¸²à¸°à¸œà¸¹à¹‰à¸”à¸¹à¹à¸¥à¸£à¸°à¸šà¸š (Admin P2 à¸‚à¸¶à¹‰à¸™à¹„à¸›) à¹€à¸—à¹ˆà¸²à¸™à¸±à¹‰à¸™à¸—à¸µà¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¸”à¸²à¸§à¸™à¹Œà¹‚à¸«à¸¥à¸”à¸£à¸¹à¸›à¸ à¸²à¸žà¹„à¸”à¹‰');
+        alert('⚠️ เฉพาะผู้ดูแลระบบ (Admin P2 ขึ้นไป) เท่านั้นที่สามารถดาวน์โหลดรูปภาพได้');
         return;
       }
       // Reset form
@@ -2384,16 +2358,16 @@
       document.getElementById('dlScopeSelect').value = 'current';
       $('#dlMonthPickerWrapper').addClass('d-none');
       $('#dlYearPickerWrapper').addClass('d-none');
-      // à¹‚à¸«à¸¥à¸” option à¹€à¸”à¸·à¸­à¸™à¹„à¸§à¹‰à¸¥à¹ˆà¸§à¸‡à¸«à¸™à¹‰à¸²
+      // โหลด option เดือนไว้ล่วงหน้า
       await populateModalMonthOptions('dlMonthSelect');
       new bootstrap.Modal(document.getElementById('downloadImagesModal')).show();
     }
 
-    // â”€â”€â”€ Modal: à¸ªà¹ˆà¸‡à¸­à¸­à¸ Excel â”€â”€â”€
+    // ─── Modal: ส่งออก Excel ───
     async function openExportExcelModal() {
       const user = getCurrentUser();
       if (!user || user.PermitDo < 2) {
-        alert('âš ï¸ à¹€à¸‰à¸žà¸²à¸°à¸œà¸¹à¹‰à¸”à¸¹à¹à¸¥à¸£à¸°à¸šà¸š (Admin P2 à¸‚à¸¶à¹‰à¸™à¹„à¸›) à¹€à¸—à¹ˆà¸²à¸™à¸±à¹‰à¸™à¸—à¸µà¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¸ªà¹ˆà¸‡à¸­à¸­à¸ Excel à¹„à¸”à¹‰');
+        alert('⚠️ เฉพาะผู้ดูแลระบบ (Admin P2 ขึ้นไป) เท่านั้นที่สามารถส่งออก Excel ได้');
         return;
       }
       // Reset form
@@ -2401,31 +2375,31 @@
       const curYear = new Date().getFullYear();
       $('#excelYearSelect').val(String(curYear));
       $('#excelMonthPickerWrapper').addClass('d-none');
-      // à¹‚à¸«à¸¥à¸” option à¹€à¸”à¸·à¸­à¸™à¹„à¸§à¹‰à¸¥à¹ˆà¸§à¸‡à¸«à¸™à¹‰à¸²
+      // โหลด option เดือนไว้ล่วงหน้า
       await populateModalMonthOptions('excelMonthSelect');
       new bootstrap.Modal(document.getElementById('exportExcelModal')).show();
     }
 
-    // â”€â”€â”€ à¹‚à¸«à¸¥à¸”à¸£à¸²à¸¢à¸à¸²à¸£à¹€à¸”à¸·à¸­à¸™à¸ˆà¸²à¸ API à¹€à¸‚à¹‰à¸² <select> â”€â”€â”€
+    // ─── โหลดรายการเดือนจาก API เข้า <select> ───
     async function populateModalMonthOptions(selectId) {
       try {
         const $sel = $(`#${selectId}`);
         if (!$sel.length) return;
-        $sel.html('<option value="">à¸à¸³à¸¥à¸±à¸‡à¹‚à¸«à¸¥à¸”...</option>');
+        $sel.html('<option value="">กำลังโหลด...</option>');
         const data = await fetchMonthlyList();
         $sel.empty();
         if (data && data.current) {
-          $sel.append(`<option value="current">ðŸ“… ${data.current.month_label} (à¸›à¸±à¸ˆà¸ˆà¸¸à¸šà¸±à¸™)</option>`);
+          $sel.append(`<option value="current">📅 ${data.current.month_label} (ปัจจุบัน)</option>`);
         }
         if (data && data.history && data.history.length > 0) {
-          const grp = $('<optgroup label="ðŸ“‚ à¸›à¸£à¸°à¸§à¸±à¸•à¸´à¸¢à¹‰à¸­à¸™à¸«à¸¥à¸±à¸‡"></optgroup>');
+          const grp = $('<optgroup label="📂 ประวัติย้อนหลัง"></optgroup>');
           data.history.forEach(h => {
-            grp.append(`<option value="${h.month_key}">ðŸ—“ï¸ ${h.month_label} (${h.total_tanks} à¸–à¸±à¸‡)</option>`);
+            grp.append(`<option value="${h.month_key}">🗓️ ${h.month_label} (${h.total_tanks} ถัง)</option>`);
           });
           $sel.append(grp);
         }
         if ($sel.find('option').length === 0) {
-          $sel.append('<option value="">-- à¹„à¸¡à¹ˆà¸žà¸šà¸‚à¹‰à¸­à¸¡à¸¹à¸¥ --</option>');
+          $sel.append('<option value="">-- ไม่พบข้อมูล --</option>');
         }
       } catch (e) {
         console.error('populateModalMonthOptions error:', e);
@@ -2453,13 +2427,13 @@
         const rawVal = document.getElementById('dlMonthSelect').value;
         monthKey = rawVal === 'current' ? null : rawVal;
         if (rawVal === 'current') {
-          // à¹ƒà¸Šà¹‰ scope current à¹à¸—à¸™
+          // ใช้ scope current แทน
           const modal = bootstrap.Modal.getInstance(document.getElementById('downloadImagesModal'));
           if (modal) modal.hide();
           await downloadTankImagesWithOptions({ imageType, scope: 'current' });
           return;
         }
-        if (!monthKey) { alert('à¸à¸£à¸¸à¸“à¸²à¹€à¸¥à¸·à¸­à¸à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™'); return; }
+        if (!monthKey) { alert('กรุณาเลือกรอบเดือน'); return; }
       } else if (scope === 'year') {
         year = parseInt(document.getElementById('dlYearSelect').value, 10);
       }
@@ -2476,7 +2450,7 @@
 
       if (targetScope === 'single_month') {
         const rawVal = document.getElementById('excelMonthSelect').value;
-        if (!rawVal) { alert('à¸à¸£à¸¸à¸“à¸²à¹€à¸¥à¸·à¸­à¸à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™'); return; }
+        if (!rawVal) { alert('กรุณาเลือกรอบเดือน'); return; }
         if (rawVal === 'current') {
           const now = new Date();
           targetMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -2493,7 +2467,7 @@
     function openR2Modal() {
       const user = getCurrentUser();
       if (!user || user.PermitDo < 3) {
-        alert('âš ï¸ à¹€à¸‰à¸žà¸²à¸°à¸œà¸¹à¹‰à¸”à¸¹à¹à¸¥à¸£à¸°à¸šà¸šà¸£à¸°à¸”à¸±à¸š Super Admin (P3) à¹€à¸—à¹ˆà¸²à¸™à¸±à¹‰à¸™à¸—à¸µà¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¸ˆà¸±à¸”à¸à¸²à¸£ R2 à¹„à¸”à¹‰');
+        alert('⚠️ เฉพาะผู้ดูแลระบบระดับ Super Admin (P3) เท่านั้นที่สามารถจัดการ R2 ได้');
         return;
       }
       const modal = new bootstrap.Modal(document.getElementById('r2Modal'));
@@ -2512,8 +2486,8 @@
         if (data.success) {
           if (data.retention) {
             $('#r2KeepYearsText').text(data.retention.keepYears.join(', '));
-            $('#r2DeleteYearsText').text(`${data.retention.deleteBeforeYear - 1} à¹à¸¥à¸°à¹€à¸à¹ˆà¸²à¸à¸§à¹ˆà¸²`);
-            $('#r2CleanupYearLabel').text(`â‰¤ ${data.retention.deleteBeforeYear - 1}`);
+            $('#r2DeleteYearsText').text(`${data.retention.deleteBeforeYear - 1} และเก่ากว่า`);
+            $('#r2CleanupYearLabel').text(`≤ ${data.retention.deleteBeforeYear - 1}`);
           }
           if (data.stats) {
             $('#statBase64Count').text(data.stats.liveTanksWithBase64 ?? 0);
@@ -2533,18 +2507,18 @@
       const user = getCurrentUser();
       if (!user || user.PermitDo < 3) return;
 
-      if (!confirm('à¸¢à¸·à¸™à¸¢à¸±à¸™à¸à¸²à¸£à¹€à¸£à¸´à¹ˆà¸¡à¸¢à¹‰à¸²à¸¢à¸£à¸¹à¸›à¸ à¸²à¸žà¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”à¸ˆà¸²à¸ D1 à¹„à¸›à¸ˆà¸±à¸”à¸«à¸¡à¸§à¸”à¸«à¸¡à¸¹à¹ˆà¹ƒà¸™ Cloudflare R2 ({YYYY}/{MM}/...) à¹à¸¥à¸°à¸¥à¹‰à¸²à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹€à¸à¹ˆà¸²à¸•à¸²à¸¡ Retention Policy (à¸›à¸µ 2023 à¹à¸¥à¸°à¹€à¸à¹ˆà¸²à¸à¸§à¹ˆà¸²)?')) {
+      if (!confirm('ยืนยันการเริ่มย้ายรูปภาพทั้งหมดจาก D1 ไปจัดหมวดหมู่ใน Cloudflare R2 ({YYYY}/{MM}/...) และล้างข้อมูลเก่าตาม Retention Policy (ปี 2023 และเก่ากว่า)?')) {
         return;
       }
 
       const $btn = $('#btnStartR2Migrate');
       const origHtml = $btn.html();
-      $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>à¸à¸³à¸¥à¸±à¸‡à¸¢à¹‰à¸²à¸¢à¸£à¸¹à¸›à¸ à¸²à¸žà¹„à¸›à¸¢à¸±à¸‡ R2...');
+      $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>กำลังย้ายรูปภาพไปยัง R2...');
 
       const $logBox = $('#r2LogBox');
       const $logContent = $('#r2LogContent');
       $logBox.removeClass('d-none');
-      $logContent.html('<div class="text-info">ðŸš€ à¸à¸³à¸¥à¸±à¸‡à¹€à¸£à¸´à¹ˆà¸¡à¸•à¹‰à¸™à¸à¸£à¸°à¸šà¸§à¸™à¸à¸²à¸£à¸¢à¹‰à¸²à¸¢à¸£à¸¹à¸›à¸ à¸²à¸ž Base64 à¸ªà¸¹à¹ˆ Cloudflare R2 à¹à¸¥à¸°à¸ˆà¸±à¸”à¹€à¸à¹‡à¸šà¸•à¸²à¸¡à¹‚à¸Ÿà¸¥à¹€à¸”à¸­à¸£à¹Œà¸£à¸²à¸¢à¸›à¸µ/à¸£à¸²à¸¢à¹€à¸”à¸·à¸­à¸™...</div>');
+      $logContent.html('<div class="text-info">🚀 กำลังเริ่มต้นกระบวนการย้ายรูปภาพ Base64 สู่ Cloudflare R2 และจัดเก็บตามโฟลเดอร์รายปี/รายเดือน...</div>');
 
       try {
         const res = await fetch('/api/r2/migrate', {
@@ -2555,23 +2529,23 @@
         const result = await res.json();
 
         if (result.success) {
-          let logHtml = '<div class="text-success fw-bold">âœ… à¸à¸²à¸£à¸¢à¹‰à¸²à¸¢à¸£à¸¹à¸›à¸ à¸²à¸žà¹à¸¥à¸°à¸ˆà¸±à¸”à¹€à¸à¹‡à¸š Retention à¸ªà¸³à¹€à¸£à¹‡à¸ˆà¸ªà¸¡à¸šà¸¹à¸£à¸“à¹Œ!</div>';
+          let logHtml = '<div class="text-success fw-bold">✅ การย้ายรูปภาพและจัดเก็บ Retention สำเร็จสมบูรณ์!</div>';
           if (result.details && Array.isArray(result.details)) {
             result.details.forEach(line => {
-              logHtml += `<div class="text-light">â–¸ ${line}</div>`;
+              logHtml += `<div class="text-light">▸ ${line}</div>`;
             });
           }
-          logHtml += `<div class="text-warning mt-1">ðŸ“Š à¸£à¸§à¸¡à¸£à¸¹à¸›à¸ à¸²à¸žà¸—à¸µà¹ˆà¸­à¸±à¸›à¹‚à¸«à¸¥à¸”à¹€à¸‚à¹‰à¸² R2: ${result.totalImagesUploaded || 0} à¸£à¸¹à¸›</div>`;
+          logHtml += `<div class="text-warning mt-1">📊 รวมรูปภาพที่อัปโหลดเข้า R2: ${result.totalImagesUploaded || 0} รูป</div>`;
           $logContent.html(logHtml);
           refreshR2Status();
           if (typeof loadTanksFromApi === 'function') {
             loadTanksFromApi();
           }
         } else {
-          $logContent.html(`<div class="text-danger fw-bold">âŒ à¹€à¸à¸´à¸”à¸‚à¹‰à¸­à¸œà¸´à¸”à¸žà¸¥à¸²à¸”: ${result.message || result.error || 'Server error'}</div>`);
+          $logContent.html(`<div class="text-danger fw-bold">❌ เกิดข้อผิดพลาด: ${result.message || result.error || 'Server error'}</div>`);
         }
       } catch (e) {
-        $logContent.html(`<div class="text-danger fw-bold">âŒ à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¸•à¸´à¸”à¸•à¹ˆà¸­ Server à¹„à¸”à¹‰: ${e.message}</div>`);
+        $logContent.html(`<div class="text-danger fw-bold">❌ ไม่สามารถติดต่อ Server ได้: ${e.message}</div>`);
       } finally {
         $btn.prop('disabled', false).html(origHtml);
       }
@@ -2581,18 +2555,18 @@
       const user = getCurrentUser();
       if (!user || user.PermitDo < 3) return;
 
-      if (!confirm('à¸¢à¸·à¸™à¸¢à¸±à¸™à¸à¸²à¸£à¸¥à¹‰à¸²à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸£à¸­à¸šà¹€à¸”à¸·à¸­à¸™à¹à¸¥à¸°à¸£à¸¹à¸›à¸ à¸²à¸žà¸—à¸µà¹ˆà¸«à¸¡à¸”à¸­à¸²à¸¢à¸¸à¸•à¸²à¸¡ Retention Policy (à¸›à¸µ 2023 à¹à¸¥à¸°à¹€à¸à¹ˆà¸²à¸à¸§à¹ˆà¸²) à¸­à¸­à¸à¸ˆà¸²à¸à¸—à¸±à¹‰à¸‡ D1 à¹à¸¥à¸° R2?')) {
+      if (!confirm('ยืนยันการล้างข้อมูลรอบเดือนและรูปภาพที่หมดอายุตาม Retention Policy (ปี 2023 และเก่ากว่า) ออกจากทั้ง D1 และ R2?')) {
         return;
       }
 
       const $btn = $('#btnStartR2Cleanup');
       const origHtml = $btn.html();
-      $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>à¸à¸³à¸¥à¸±à¸‡à¸¥à¹‰à¸²à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹€à¸à¹ˆà¸²...');
+      $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>กำลังล้างข้อมูลเก่า...');
 
       const $logBox = $('#r2LogBox');
       const $logContent = $('#r2LogContent');
       $logBox.removeClass('d-none');
-      $logContent.html('<div class="text-warning">ðŸ§¹ à¸à¸³à¸¥à¸±à¸‡à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸šà¹à¸¥à¸°à¸¥à¹‰à¸²à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹€à¸à¹ˆà¸²à¸—à¸µà¹ˆà¸¡à¸µà¸­à¸²à¸¢à¸¸à¹€à¸à¸´à¸™ Retention (< 2024)...</div>');
+      $logContent.html('<div class="text-warning">🧹 กำลังตรวจสอบและล้างข้อมูลเก่าที่มีอายุเกิน Retention (< 2024)...</div>');
 
       try {
         const res = await fetch('/api/r2/cleanup', {
@@ -2603,19 +2577,19 @@
         const result = await res.json();
 
         if (result.success) {
-          let logHtml = '<div class="text-success fw-bold">âœ… à¸¥à¹‰à¸²à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¹€à¸à¹ˆà¸²à¸•à¸²à¸¡ Retention Policy à¸ªà¸³à¹€à¸£à¹‡à¸ˆ!</div>';
+          let logHtml = '<div class="text-success fw-bold">✅ ล้างข้อมูลเก่าตาม Retention Policy สำเร็จ!</div>';
           if (result.details && Array.isArray(result.details)) {
             result.details.forEach(line => {
-              logHtml += `<div class="text-light">â–¸ ${line}</div>`;
+              logHtml += `<div class="text-light">▸ ${line}</div>`;
             });
           }
           $logContent.html(logHtml);
           refreshR2Status();
         } else {
-          $logContent.html(`<div class="text-danger fw-bold">âŒ à¹€à¸à¸´à¸”à¸‚à¹‰à¸­à¸œà¸´à¸”à¸žà¸¥à¸²à¸”: ${result.message || result.error || 'Server error'}</div>`);
+          $logContent.html(`<div class="text-danger fw-bold">❌ เกิดข้อผิดพลาด: ${result.message || result.error || 'Server error'}</div>`);
         }
       } catch (e) {
-        $logContent.html(`<div class="text-danger fw-bold">âŒ à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¸•à¸´à¸”à¸•à¹ˆà¸­ Server à¹„à¸”à¹‰: ${e.message}</div>`);
+        $logContent.html(`<div class="text-danger fw-bold">❌ ไม่สามารถติดต่อ Server ได้: ${e.message}</div>`);
       } finally {
         $btn.prop('disabled', false).html(origHtml);
       }
@@ -2623,4 +2597,3 @@
   </script>
 </body>
 </html>
-

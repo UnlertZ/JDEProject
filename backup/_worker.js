@@ -206,9 +206,7 @@ async function ensureDatabase(db) {
         pic_area TEXT,
         inspector TEXT,
         responsible TEXT,
-        remark TEXT,
-        eq_type TEXT DEFAULT 'tank',
-        eq_data TEXT
+        remark TEXT
       )
     `).run();
 
@@ -785,8 +783,8 @@ export default {
           }
 
           await env.DB.prepare(`
-            INSERT INTO tanks (fire_tank, types, weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark, eq_type, eq_data)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO tanks (fire_tank, types, weight, area, inuse, lastcheck, tankcheck, ready_or_not, tank_status, exptank, pic_tank, pic_area, inspector, responsible, remark)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `).bind(tankId, body.Types || '', weightVal, body.Area || '', body.Inuse || '', body.Lastcheck || '', body.Tankcheck || 'ยังไม่เช็ค', body.ReadyorNot || 'Not Ready', isReady ? 1 : 0, body.Exptank || '', picTank, picArea, body.Inspector || '', body.Responsible || '', body.Remark || '').run();
 
           return new Response(JSON.stringify({ success: true, picTank, picArea }), { headers: { 'Content-Type': 'application/json' } });
@@ -817,7 +815,7 @@ export default {
                 pic_tank = COALESCE(?, pic_tank), pic_area = COALESCE(?, pic_area),
                 inspector = ?, responsible = ?, remark = ?
             WHERE UPPER(fire_tank) = ?
-          `).bind(body.Types || '', weightVal, body.Area || '', body.Inuse || '', body.Lastcheck || '', body.Tankcheck || 'ยังไม่เช็ค', body.ReadyorNot || 'Not Ready', isReady ? 1 : 0, body.Exptank || '', picTank, picArea, body.Inspector || '', body.Responsible || '', body.Remark || '', body.EqType || 'tank', body.EqData || '{}', tankId).run();
+          `).bind(body.Types || '', weightVal, body.Area || '', body.Inuse || '', body.Lastcheck || '', body.Tankcheck || 'ยังไม่เช็ค', body.ReadyorNot || 'Not Ready', isReady ? 1 : 0, body.Exptank || '', picTank, picArea, body.Inspector || '', body.Responsible || '', body.Remark || '', tankId).run();
 
           return new Response(JSON.stringify({ success: true, picTank, picArea }), { headers: { 'Content-Type': 'application/json' } });
         }
